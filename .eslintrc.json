@@ -9,5 +9,27 @@
         "sourceType": "module"
     },
     "rules": {
-    }
+        "no-unused-vars": "off"
+    },
+    "overrides": [
+        {
+            "files": [
+                "*.js",
+                "*.jsx",
+                "*.ts",
+                "*.tsx"
+            ],
+            "rules": {
+                "no-unused-vars": [
+                    "warn",
+                    {
+                        "vars": "all",
+                        "args": "none",
+                        "ignoreRestSiblings": true
+                    }
+                ],
+                "import/no-unused-modules": "off" // Disable unused imports flagging
+            }
+        }
+    ]
 }
