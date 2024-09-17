@@ -9,4 +9,4 @@ const workPeriods = [
 
 export const getWorkPeriods = (req, res) => {
   res.json(workPeriods);
-}
+};

@@ -5,6 +5,6 @@ const app = express();
 app.use(express.json());
 
 // Define routes in index.js
-app.use('/work_periods/', workPeriodRoutes)
+app.use('/work_periods/', workPeriodRoutes);
 
-export default app;  // Export the app instance
+export default app; // Export the app instance
