@@ -1,5 +1,7 @@
 import express from 'express';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
@@ -14,7 +16,7 @@ const workPeriods = [
   },
 ];
 
-app.get('/work_periods', async (req, res) => {
+app.get('/work-periods', async (req, res) => {
   res.json(workPeriods);
 });
 
