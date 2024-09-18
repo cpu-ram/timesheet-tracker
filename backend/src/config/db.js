@@ -10,9 +10,9 @@ const dbHost = process.env.DB_HOST;
 const dbPort = process.env.DB_PORT;
 
 const pool = new Pool({
-    user: dbUser,
-    host: dbHost,
-    database: dbName,
-    password: dbPassword,
-    port: dbPort,
+  user: dbUser,
+  host: dbHost,
+  database: dbName,
+  password: dbPassword,
+  port: dbPort,
 });
