@@ -1,4 +1,4 @@
-const workPeriods = [
+const workBlockRecords = [
   // Week 1 - Monday (2024-09-16)
   {
     id: 1, startTime: '2024-09-16T06:00:00Z', endTime: '2024-09-16T10:00:00Z', jobId: 101, employeeId: 1,
@@ -170,24 +170,24 @@ const workPeriods = [
   },
 ];
 
-export const fetchWorkPeriods = (
+export const getWorkBlockRecords = (
   employeeId,
   startDate,
   endDate,
-) => workPeriods.filter(
-  (period) => period.employeeId === employeeId
-    && new Date(period.startTime) >= new Date(startDate)
-    && new Date(period.endTime) <= new Date(endDate),
+) => workBlockRecords.filter(
+  (element) => element.employeeId === employeeId
+    && new Date(element.startTime) >= new Date(startDate)
+    && new Date(element.endTime) <= new Date(endDate),
 );
 
-export const insertWorkPeriod = (
+export const addWorkBlockRecord = (
   startTime,
   endTime,
   jobId,
   employeeId,
 ) => {
-  const newId = workPeriods.map((x) => x.id).reduce((x, y) => Math.max(x, y), 0) + 1;
-  workPeriods.push({
+  const newId = workBlockRecords.map((x) => x.id).reduce((x, y) => Math.max(x, y), 0) + 1;
+  workBlockRecords.push({
     id: newId,
     startTime: new DateTime(startTime),
     endTime: new DateTime(endTime),
