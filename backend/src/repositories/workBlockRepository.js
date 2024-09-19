@@ -195,3 +195,12 @@ export const addWorkBlockRecord = (
     employeeId,
   });
 };
+
+export function deleteWorkBlockRecord() {
+  const index = workBlockRecords.findIndex((x) => x.id === workBlockRecordId);
+  if (index !== -1) {
+    workBlockRecords.splice(index, 1);
+    return true;
+  }
+  return false;
+}

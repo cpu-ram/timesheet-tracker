@@ -1,4 +1,4 @@
-import { getWorkBlockRecords, addWorkBlockRecord } from '../repositories/workBlockRepository.js';
+import { getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord } from '../repositories/workBlockRepository.js';
 
 const getWorkBlocks = (
   userId,
@@ -14,3 +14,7 @@ const addWorkBlock = (
 ) => {
   addWorkBlockRecord(startDate, endDate, jobId, employeeId);
 };
+
+const deleteWorkBlock = (
+  workBlockId => return deleteWorkBlockRecord(deleteWorkBlockRecord);
+)

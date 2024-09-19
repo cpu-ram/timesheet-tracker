@@ -1,4 +1,4 @@
-const workPeriods = [
+const workBlocks = [
   // Week 1 - Monday (2024-09-16)
   {
     id: 1, startTime: '2024-09-16T06:00:00Z', endTime: '2024-09-16T10:00:00Z', jobId: 101, userId: 1,
@@ -170,6 +170,6 @@ const workPeriods = [
   },
 ];
 
-export default getWorkPeriods = (req, res) => {
-  res.json(workPeriods);
+export default getWorkBlocks = (req, res) => {
+  res.json(workBlocks);
 };
