@@ -2,19 +2,19 @@ import { getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord } from '
 
 const getWorkBlocks = (
   userId,
-  startDate,
-  endDate,
-) => getWorkBlockRecords(employeeId, startDate, endDate);
+  startDateTime,
+  endDateTime,
+) => getWorkBlockRecords(employeeId, startDateTime, endDateTime);
 
 const addWorkBlock = (
-  startDate,
-  endDate,
+  startDateTime,
+  endDateTime,
   jobId,
   employeeId,
 ) => {
-  addWorkBlockRecord(startDate, endDate, jobId, employeeId);
+  addWorkBlockRecord(startDateTime, endDateTime, jobId, employeeId);
 };
 
 const deleteWorkBlock = (
-  workBlockId => return deleteWorkBlockRecord(deleteWorkBlockRecord);
+  workBlockId => return deleteWorkBlockRecord(workBlockId);
 )
