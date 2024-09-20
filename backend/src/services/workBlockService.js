@@ -1,12 +1,14 @@
-import { getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord } from '../repositories/workBlockRepository.js';
+import {
+  getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord
+} from '../repositories/workBlockRepository.js';
 
-const getWorkBlocks = (
-  userId,
+export const getWorkBlocks = (
+  employeeId,
   startDateTime,
   endDateTime,
 ) => getWorkBlockRecords(employeeId, startDateTime, endDateTime);
 
-const addWorkBlock = (
+export const addWorkBlock = (
   startDateTime,
   endDateTime,
   jobId,
@@ -15,6 +17,5 @@ const addWorkBlock = (
   addWorkBlockRecord(startDateTime, endDateTime, jobId, employeeId);
 };
 
-const deleteWorkBlock = (
-  workBlockId => return deleteWorkBlockRecord(workBlockId);
-)
+export const deleteWorkBlock = workBlockId => deleteWorkBlockRecord(workBlockId);
+

@@ -1,4 +1,4 @@
-import { getWorkBlocks } from 'workBlockService.js';
+import { getWorkBlocks } from './workBlockService.js';
 import path from 'path';
 import * as fs from 'fs';
 import PizZip from 'pizzip';
