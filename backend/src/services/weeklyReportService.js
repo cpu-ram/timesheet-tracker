@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-const function getWeekBoundaries(payPeriodEndDate) {
+function getWeekBoundaries(payPeriodEndDate) {
   if (payPeriodEndDate.getDay() !== 0) throw new Error('payPeriodEndDate must be a Sunday');
 
   const millisecondsInDay = 1000 * 60 * 60 * 24;
@@ -27,28 +27,26 @@ const formatWorkBlocksForDailyReport =
     endTime: jobBlock.endTime,
   }));
 
-export default generateWeeklyReport = (
-  (employeeId, payPeriodEndDate) => {
-    const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
-    const workBlocks = getWorkBlocks(employeeId, beginningOfFirstDay, endOfFinalDay);
-    const formattedWorkBlocks = formatWorkBlocksForDailyReport(workBlocks);
+export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
+  const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
+  const workBlocks = getWorkBlocks(employeeId, beginningOfFirstDay, endOfFinalDay);
+  const formattedWorkBlocks = formatWorkBlocksForDailyReport(workBlocks);
 
-    const uniqueFileName = `weekly-report-${employeeId}-${uuidv4()}.docx`;
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
-    const templatePath = path.resolve(__dirname, '../../../assets/timesheet-template.docx');
-    const content = fs.readFileSync(templatePath, 'binary');
-    const zip = new PizZip(content);
+  const uniqueFileName = `weekly-report-${employeeId}-${uuidv4()}.docx`;
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const templatePath = path.resolve(__dirname, '../../../assets/timesheet-template.docx');
+  const content = fs.readFileSync(templatePath, 'binary');
+  const zip = new PizZip(content);
 
-    const doc = new Docxtemplater(zip);
-    doc.setData(formattedWorkBlocks);
+  const doc = new Docxtemplater(zip);
+  doc.setData(formattedWorkBlocks);
 
-    const buf = doc.getZip().generate({ type: 'nodebuffer' });
-    const outputPath = path.resolve(__dirname, '../../temp/', uniqueFileName);
-    fs.writeFileSync(outputPath, buf);
+  doc.render();
 
-    return outputPath;
+  const buf = doc.getZip().generate({ type: 'nodebuffer' });
+  const outputPath = path.resolve(__dirname, '../../temp/', uniqueFileName);
+  fs.writeFileSync(outputPath, buf);
 
-    doc.render();
-  }
-);
+  return outputPath;
+}
