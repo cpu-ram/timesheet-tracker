@@ -32,18 +32,15 @@ function formatWorkBlocksForDailyReport(jobBlockArray) {
     ) / 10
   );
 
-  let result = {};
-  result = {
-    workBlocks: jobBlockArray.map(jobBlock => ({
-      jobId: jobBlock.jobId,
-      date: format(jobBlock.startTime, 'MM/dd EEE'),
-      startTime: format(jobBlock.startTime, 'p'),
-      endTime: format(jobBlock.endTime, 'p'),
-      hours: calculateNumberOfHours(new Date(jobBlock.startTime), new Date(jobBlock.endTime)),
-    }))
-  }
-
-  return result;
+  let workBlocks = jobBlockArray.map(jobBlock => ({
+    jobId: jobBlock.jobId,
+    date: format(jobBlock.startTime, 'MM/dd EEE'),
+    startTime: format(jobBlock.startTime, 'p'),
+    endTime: format(jobBlock.endTime, 'p'),
+    hours: calculateNumberOfHours(new Date(jobBlock.startTime), new Date(jobBlock.endTime)),
+  }));
+  let wrappedResult = { workBlocks: workBlocks };
+  return wrappedResult;
 }
 
 export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
