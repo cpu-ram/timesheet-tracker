@@ -32,13 +32,18 @@ function formatWorkBlocksForDailyReport(jobBlockArray) {
     ) / 10
   );
 
-  let workBlocks = jobBlockArray.map(jobBlock => ({
-    jobId: jobBlock.jobId,
-    date: format(jobBlock.startTime, 'MM/dd EEE'),
-    startTime: format(jobBlock.startTime, 'p'),
-    endTime: format(jobBlock.endTime, 'p'),
-    hours: calculateNumberOfHours(new Date(jobBlock.startTime), new Date(jobBlock.endTime)),
-  }));
+  let workBlocks = jobBlockArray.map(
+    function (jobBlock) {
+      let result = {
+        jobId: jobBlock.jobId,
+        date: format(jobBlock.startTime, 'MM/dd EEE'),
+        startTime: format(jobBlock.startTime, 'p'),
+        endTime: format(jobBlock.endTime, 'p'),
+        hours: calculateNumberOfHours(new Date(jobBlock.startTime), new Date(jobBlock.endTime)),
+      }
+      return result;
+    }
+  );
   let wrappedResult = { workBlocks: workBlocks };
   return wrappedResult;
 }
