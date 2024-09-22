@@ -6,6 +6,7 @@ import Docxtemplater from 'docxtemplater';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { format } from 'date-fns';
 
 function getWeekBoundaries(payPeriodEndDate) {
   if (payPeriodEndDate.getDay() !== 0) throw new Error('payPeriodEndDate must be a Sunday');
@@ -19,15 +20,31 @@ function getWeekBoundaries(payPeriodEndDate) {
 
   return [beginningOfFirstDay, endOfFinalDay];
 }
-const formatWorkBlocksForDailyReport =
-  jobBlockArray => ({
+function formatWorkBlocksForDailyReport(jobBlockArray) {
+  const calculateNumberOfHours = (startTime, endTime) => (
+    Math.round(
+      (
+        endTime.getTime()
+        - startTime.getTime()
+      )
+      / (1000 * 3600)
+      * 10
+    ) / 10
+  );
+
+  let result = {};
+  result = {
     workBlocks: jobBlockArray.map(jobBlock => ({
       jobId: jobBlock.jobId,
-      date: jobBlock.startTime,
-      startTime: jobBlock.startTime,
-      endTime: jobBlock.endTime,
+      date: format(jobBlock.startTime, 'MM/dd EEE'),
+      startTime: format(jobBlock.startTime, 'p'),
+      endTime: format(jobBlock.endTime, 'p'),
+      hours: calculateNumberOfHours(new Date(jobBlock.startTime), new Date(jobBlock.endTime)),
     }))
-  });
+  }
+
+  return result;
+}
 
 export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
   const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
