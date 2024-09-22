@@ -35,7 +35,7 @@ export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
   const uniqueFileName = `weekly-report-${employeeId}-${uuidv4()}.docx`;
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  const templatePath = path.resolve(__dirname, '../../../assets/timesheet-template.docx');
+  const templatePath = path.resolve(__dirname, '../../assets/timesheet-template.docx');
   const content = fs.readFileSync(templatePath, 'binary');
   const zip = new PizZip(content);
 
