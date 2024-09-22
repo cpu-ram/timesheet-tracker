@@ -20,12 +20,14 @@ function getWeekBoundaries(payPeriodEndDate) {
   return [beginningOfFirstDay, endOfFinalDay];
 }
 const formatWorkBlocksForDailyReport =
-  (jobBlockArray) => jobBlockArray.map(jobBlock => ({
-    jobNumber: jobBlock.jobId,
-    date: jobBlock.startTime,
-    startTime: jobBlock.startTime,
-    endTime: jobBlock.endTime,
-  }));
+  jobBlockArray => ({
+    workBlocks: jobBlockArray.map(jobBlock => ({
+      jobId: jobBlock.jobId,
+      date: jobBlock.startTime,
+      startTime: jobBlock.startTime,
+      endTime: jobBlock.endTime,
+    }))
+  });
 
 export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
   const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
@@ -33,6 +35,7 @@ export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
   const formattedWorkBlocks = formatWorkBlocksForDailyReport(workBlocks);
 
   const uniqueFileName = `weekly-report-${employeeId}-${uuidv4()}.docx`;
+  const singleFileName = 'weekly-report-single-item.docx';
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const templatePath = path.resolve(__dirname, '../../assets/timesheet-template.docx');
@@ -45,7 +48,13 @@ export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
   doc.render();
 
   const buf = doc.getZip().generate({ type: 'nodebuffer' });
-  const outputPath = path.resolve(__dirname, '../../temp/', uniqueFileName);
+  let outputPath;
+  if (process.env.NODE_ENV === 'test') {
+    outputPath = path.resolve(__dirname, '../../temp/', singleFileName);
+  } else {
+    outputPath = path.resolve(__dirname, '../../temp/', uniqueFileName);
+  }
+
   fs.writeFileSync(outputPath, buf);
 
   return outputPath;
