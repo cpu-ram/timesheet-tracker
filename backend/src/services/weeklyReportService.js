@@ -20,6 +20,7 @@ function getWeekBoundaries(payPeriodEndDate) {
 
   return [beginningOfFirstDay, endOfFinalDay];
 }
+
 function formatWorkBlocksForDailyReport(jobBlockArray) {
   const calculateNumberOfHours = (startTime, endTime) => (
     Math.round(
@@ -32,26 +33,45 @@ function formatWorkBlocksForDailyReport(jobBlockArray) {
     ) / 10
   );
 
+  const formatToBasicTime = (dateTime) => format(dateTime, 'p');
+
   let workBlocks = jobBlockArray.map(
-    function (jobBlock) {
+    function (workBlock) {
       let result = {
-        jobId: jobBlock.jobId,
-        date: format(jobBlock.startTime, 'MM/dd EEE'),
-        startTime: format(jobBlock.startTime, 'p'),
-        endTime: format(jobBlock.endTime, 'p'),
-        hours: calculateNumberOfHours(new Date(jobBlock.startTime), new Date(jobBlock.endTime)),
+        jobId: workBlock.jobId,
+        date: format(workBlock.startTime, 'MM/dd EEE'),
+        hours: calculateNumberOfHours(new Date(workBlock.startTime), new Date(workBlock.endTime)),
       }
+
+      const timePropertyNames = ['startTime', 'endTime', 'breakStartTime', 'breakEndTime'];
+      timePropertyNames.forEach((propertyName) => {
+        if (workBlock.hasOwnProperty(propertyName)) {
+          result[propertyName] = formatToBasicTime(workBlock[propertyName]);
+        }
+        else result[propertyName] = '—';
+      });
+
       return result;
     }
   );
-  let wrappedResult = { workBlocks: workBlocks };
-  return wrappedResult;
+  return workBlocks;
 }
 
 export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
+  const reportData = {};
   const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
   const workBlocks = getWorkBlocks(employeeId, beginningOfFirstDay, endOfFinalDay);
-  const formattedWorkBlocks = formatWorkBlocksForDailyReport(workBlocks);
+  reportData['workBlocks'] = formatWorkBlocksForDailyReport(workBlocks);
+  const totalHours = reportData['workBlocks']
+    .map(x => x.hours)
+    .reduce((x, y) => x + y, 0);
+  const regularHours = totalHours > 40 ? 40 : totalHours;
+
+  reportData['totalHours'] = totalHours;
+  reportData['regularHours'] = regularHours;
+  reportData['weekStartDate'] = format(beginningOfFirstDay, 'MMM d, yyyy');
+  reportData['weekEndDate'] = format(endOfFinalDay, 'MMM d, yyyy');
+  reportData['currentDate'] = format(new Date(), 'MMM d, yyyy');
 
   const uniqueFileName = `weekly-report-${employeeId}-${uuidv4()}.docx`;
   const singleFileName = 'weekly-report-single-item.docx';
@@ -62,7 +82,7 @@ export default function generateWeeklyReport(employeeId, payPeriodEndDate) {
   const zip = new PizZip(content);
 
   const doc = new Docxtemplater(zip);
-  doc.setData(formattedWorkBlocks);
+  doc.setData(reportData);
 
   doc.render();
 
