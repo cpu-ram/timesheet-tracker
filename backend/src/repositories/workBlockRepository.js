@@ -1,4 +1,5 @@
 import workBlockRecords from './data/sampleWorkBlocks.js';
+import { jobsDefaultSchedule } from './data/jobsDefaultSchedule.js';
 
 export const getWorkBlockRecords = (
   employeeId,
@@ -37,4 +38,9 @@ export function deleteWorkBlockRecord(workBlockRecordId) {
     return true;
   }
   return false;
+}
+
+export const getDefaultJobsiteProperties = (jobId) => {
+  const defaultProperties = jobsDefaultSchedule.find(x => x.jobId === jobId);
+  return defaultProperties;
 }
