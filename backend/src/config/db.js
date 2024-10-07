@@ -11,3 +11,5 @@ const pool = new Pool({
   port: config.dbPort,
 
 });
+
+export default pool;
