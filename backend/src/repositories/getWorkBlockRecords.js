@@ -4,18 +4,20 @@ import { pgDateFormat } from './utils/pgFormats.js';
 
 export const getWorkBlockRecords = async (
   employeeId,
+  reportedBy,
   startDate,
   endDate,
 ) => {
   const formattedStartDate = format(startDate, pgDateFormat);
   const formattedEndDate = format(endDate, pgDateFormat);
   const query = `
-    SELECT * FROM work_intervals
+    SELECT * FROM work_periods
     WHERE employee_id = $1
-    AND work_start >= $2
-    AND work_end <= $3;
+    AND reported_by = $2
+    AND work_start >= $3
+    AND work_end <= $4;
   `;
-  const values = [employeeId, formattedStartDate, formattedEndDate];
+  const values = [employeeId, reportedBy, formattedStartDate, formattedEndDate];
   try {
     const result = await pool.query(query, values);
     return result.rows;
