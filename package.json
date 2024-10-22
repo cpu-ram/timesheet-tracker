@@ -5,7 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-addWorkBlock": "node backend/tests/addWorkBlock.test.js",
+    "test-generateRecords": "node backend/tests/weeklyReportService.test.js",
+    "test-generateDocxReport": "node backend/tests/generateDocxReport.test.js",
+    "test-deleteRecord": "node backend/tests/deleterecord.test.js"
   },
   "keywords": [],
   "author": "",
