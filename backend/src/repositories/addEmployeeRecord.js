@@ -1,6 +1,6 @@
-import pool from '../config/db.js';
+import dbPool from '../config/dbPool.js';
 
-export async function addEmployee(
+export default async function addEmployeeRecord(
   employee_name = null,
   employee_nickname = null,
   title = null,
@@ -12,7 +12,7 @@ export async function addEmployee(
   `;
   const values = [employee_name, employee_nickname, titles[title], email];
   try {
-    const result = await pool.query(query, values);
+    const result = await dbPool.query(query, values);
     return true;
   } catch (error) {
     throw new Error("Unable to add employee");

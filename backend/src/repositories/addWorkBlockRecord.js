@@ -1,4 +1,4 @@
-import pool from '../config/db.js';
+import dbPool from '../config/dbPool.js';
 import { format } from 'date-fns';
 
 export const addWorkBlockRecord = async (
@@ -19,7 +19,7 @@ export const addWorkBlockRecord = async (
   const values = [projectId, reportedById, employeeId, startTime, endTime,
     breakStartTime, breakEndTime, date];
   try {
-    const result = await pool.query(query, values);
+    const result = await dbPool.query(query, values);
     return true;
   } catch (error) {
     throw new Error('Unable to add record');

@@ -1,5 +1,6 @@
 import {
-  getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord
+  getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord,
+  getDefaultJobsitePropertiesRecord, addProjectRecord, addEmployeeRecord
 } from '../repositories/workBlockRepository.js';
 
 export const getWorkBlocks = (
@@ -12,12 +13,12 @@ export const getWorkBlocks = (
 export const addWorkBlock = (
   employeeId,
   reportedById,
-  projectId,
-  startDateTime,
-  endDateTime,
-  breakStartTime,
-  breakEndTime,
-  date
+  projectId = null,
+  startDateTime = null,
+  endDateTime = null,
+  breakStartTime = null,
+  breakEndTime = null,
+  date = null,
 ) => {
   addWorkBlockRecord(
     employeeId,
@@ -33,8 +34,27 @@ export const addWorkBlock = (
 
 export const deleteWorkBlock = workBlockId => deleteWorkBlockRecord(workBlockId);
 
-export function getDefaultJobsiteProperties(jobId) {
-  return getDefaultJobsitePropertiesRecord(jobId);
+export async function getDefaultJobsiteProperties(jobId) {
+  const defaultProperties = await getDefaultJobsitePropertiesRecord(jobId);
+  const renameMap = {
+    default_work_start_time: 'workStartTime',
+    default_work_end_time: 'workEndTime',
+    default_break_start_time: 'breakStartTime',
+    default_break_end_time: 'breakEndTime'
+  };
+
+  const result = Object.fromEntries(
+    Object.entries(defaultProperties).map(([key, value]) => {
+      const newKey = renameMap[key];
+      if (value) {
+        const [hours, minutes] = value.split(":").map(Number);
+        return [newKey, { hours, minutes }];
+      }
+      return [newKey, null];
+    }
+    )
+  );
+  return result;
 }
 
 export function addProject(
@@ -53,4 +73,13 @@ export function addProject(
     defaultStartTime, defaultEndTime,
     defaultBreakStartTime, defaultBreakEndTime
   )
+}
+
+export function addEmployee(
+  employee_name = null,
+  employee_nickname = null,
+  title = null,
+  email = null,
+) {
+  return addEmployeeRecord();
 }

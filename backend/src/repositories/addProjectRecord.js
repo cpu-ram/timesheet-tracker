@@ -1,6 +1,6 @@
-import pool from '../config/db.js';
+import dbPool from '../config/dbPool.js';
 
-export async function addProjectToDb(
+export default async function addProjectRecord(
   id,
   type = null,
   address = null,
@@ -22,7 +22,7 @@ export async function addProjectToDb(
   const values = [id, type, address, name, supervisorId, defaultWorkStartTime, defaultWorkEndTime,
     defaultBreakStartTime, defaultBreakEndTime];
   try {
-    const result = await pool.query(query, values);
+    const result = await dbPool.query(query, values);
     return true;
   } catch (error) {
     throw new Error("Unable to add employee");

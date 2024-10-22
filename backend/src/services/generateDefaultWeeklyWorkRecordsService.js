@@ -1,7 +1,8 @@
-import { addWorkBlockRecord, getDefaultJobsiteProperties } from '../repositories/workBlockRepository.js';
+import { addWorkBlock, getDefaultJobsiteProperties } from './workBlockService.js';
+import { format } from 'date-fns';
 
-export function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
-  const defaultProperties = getDefaultJobsiteProperties(jobId);
+export async function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
+  const defaultProperties = await getDefaultJobsiteProperties(jobId);
 
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
@@ -22,18 +23,21 @@ export function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
 
   for (const day of workWeekDaysArray) {
     const startTime = new Date(day);
-    startTime.setHours(defaultProperties.startTime.hours);
-    startTime.setMinutes(defaultProperties.startTime.minutes);
+    startTime.setHours(defaultProperties.workStartTime.hours);
+    startTime.setMinutes(defaultProperties.workStartTime.minutes);
     const endTime = new Date(day);
-    endTime.setHours(defaultProperties.endTime.hours);
-    endTime.setMinutes(defaultProperties.endTime.minutes);
+    endTime.setHours(defaultProperties.workEndTime.hours);
+    endTime.setMinutes(defaultProperties.workEndTime.minutes);
 
-    addWorkBlockRecord(
+    addWorkBlock(
+      employeeId,
+      employeeId,
+      jobId,
       startTime,
       endTime,
-      jobId,
-      employeeId,
-    )
+      null,
+      null,
+      format(startTime, 'yyyy-MM-dd'),
+    );
   }
-
 }
