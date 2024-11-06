@@ -1,7 +1,7 @@
-import { addWorkBlock, getDefaultJobsiteProperties } from './workBlockService.js';
 import { format } from 'date-fns';
+import { addWorkBlock, getDefaultJobsiteProperties } from './workBlockService.js';
 
-export async function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
+export default async function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
   const defaultProperties = await getDefaultJobsiteProperties(jobId);
 
   const currentDate = new Date();
@@ -9,7 +9,7 @@ export async function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
   const currentDayOfWeek = currentDate.getDay();
 
   const initialDay = currentDate;
-  if (currentDayOfWeek == 1 || currentDayOfWeek == 0) {
+  if (currentDayOfWeek === 1 || currentDayOfWeek === 0) {
     initialDay.setDate(currentDate.getDate() - currentDayOfWeek - 6);
   } else initialDay.setDate(currentDate.getDate() - currentDayOfWeek + 1);
 

@@ -8,6 +8,6 @@ const dbConfig = {
   dbHost: String(process.env.DB_HOST),
   dbName: String(process.env.DB_NAME),
   dbPort: Number(process.env.DB_PORT),
-}
+};
 
 export default dbConfig;
