@@ -1,25 +1,26 @@
 {
   "name": "timesheet-tracker",
   "version": "1.0.0",
-  "description": "## Overview",
+  "description": "A timesheet tracking application",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "test-addWorkBlock": "node backend/tests/addWorkBlock.test.js",
-    "test-generateRecords": "node backend/tests/weeklyReportService.test.js",
+    "test-generateRecords": "node backend/tests/generateRecords.test.js",
     "test-generateDocxReport": "node backend/tests/generateDocxReport.test.js",
-    "test-deleteRecord": "node backend/tests/deleterecord.test.js"
+    "test-deleteRecord": "node backend/tests/deleteRecord.test.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "date-fns": "^4.1.0",
+    "date-fns": "^2.29.3",
     "docxtemplater": "^3.50.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "pg": "^8.13.1",
     "pizzip": "^3.1.7",
     "uuid": "^10.0.0"
   },
