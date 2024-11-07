@@ -1,7 +1,8 @@
 import {
   getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord,
-  getDefaultJobsitePropertiesRecord, addProjectRecord, addEmployeeRecord,
+  addProjectRecord, addEmployeeRecord,
 } from '../repositories/workBlockRepository.js';
+import getDefaultJobsitePropertiesRecord from '../repositories/getDefaultJobsitePropertiesRecord.js';
 
 export const getWorkBlocks = (
   employeeId,
