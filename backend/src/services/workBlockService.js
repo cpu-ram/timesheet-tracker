@@ -37,6 +37,7 @@ export const deleteWorkBlock = (workBlockId) => deleteWorkBlockRecord(workBlockI
 
 export async function getDefaultJobsiteProperties(jobId) {
   const defaultProperties = await getDefaultJobsitePropertiesRecord(jobId);
+  if (!defaultProperties) return null;
   const renameMap = {
     default_work_start_time: 'workStartTime',
     default_work_end_time: 'workEndTime',

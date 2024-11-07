@@ -11,7 +11,7 @@ const getDefaultJobsitePropertiesRecord = async (jobId) => {
   const values = [jobId];
   try {
     const result = await dbPool.query(query, values);
-    return result.rows[0];
+    return result.rows[0] ?? null;
   } catch (error) {
     throw new Error('Unable to fetch default jobsite properties');
   }

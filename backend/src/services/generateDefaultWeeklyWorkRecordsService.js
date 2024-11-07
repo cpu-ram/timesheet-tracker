@@ -22,12 +22,16 @@ export default async function generateDefaultWeeklyWorkRecords(jobId, employeeId
   ];
 
   for (const day of workWeekDaysArray) {
-    const startTime = new Date(day);
-    startTime.setHours(defaultProperties.workStartTime.hours);
-    startTime.setMinutes(defaultProperties.workStartTime.minutes);
-    const endTime = new Date(day);
-    endTime.setHours(defaultProperties.workEndTime.hours);
-    endTime.setMinutes(defaultProperties.workEndTime.minutes);
+    const startTime = null;
+    const endTime = null;
+    if (defaultProperties) {
+      startTime = new Date(day);
+      startTime.setHours(defaultProperties.workStartTime.hours);
+      startTime.setMinutes(defaultProperties.workStartTime.minutes);
+      endTime = new Date(day);
+      endTime.setHours(defaultProperties.workEndTime.hours);
+      endTime.setMinutes(defaultProperties.workEndTime.minutes);
+    }
 
     addWorkBlock(
       employeeId,
