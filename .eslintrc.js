@@ -1,16 +1,25 @@
-{
-  "env": {
-    "browser": true,
-    "es2021": true,
-    "node": true
+export default {
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+    jest: true
   },
-  "extends": "airbnb",
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module"
+  extends: [
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'airbnb',
+    'prettier',
+    'prettier/react'
+  ],
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module"
   },
-  "rules": {
-    "import/extensions": [
+  plugins: ['prettier'],
+  rules: {
+    'prettier/prettier': 'error',
+    'import/extensions': [
       "error",
       "ignorePackages",
       {
@@ -20,7 +29,7 @@
         "tsx": "always"
       }
     ],
-    "no-restricted-syntax": [
+    'no-restricted-syntax': [
       "error",
       {
         "selector": "ForInStatement",
@@ -36,4 +45,4 @@
       }
     ]
   }
-}
+};
