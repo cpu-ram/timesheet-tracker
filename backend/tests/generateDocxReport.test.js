@@ -11,4 +11,7 @@ if (date.getDay() > 1) {
 }
 
 const outputLocation = await generateWeeklyReport(10, date);
+test('Report returns some output location', () => {
+  expect(outputLocation).toBeTruthy();
+});
 console.log(outputLocation);
