@@ -41,7 +41,7 @@ export default async function generateDefaultWeeklyWorkRecords(jobId, employeeId
       endTime,
       null,
       null,
-      format(startTime, 'yyyy-MM-dd'),
+      startime === null ? null : format(startTime, 'yyyy-MM-dd'),
     );
   }
 }
