@@ -23,7 +23,4 @@ async function promptTime(timeName) {
   return result;
 }
 
-export default (async () => {
-  const userInput = await promptUser();
-  console.log(userInput);
-});
+export default promptUser;
