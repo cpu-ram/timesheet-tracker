@@ -10,7 +10,6 @@ export default {
     'plugin:@typescript-eslint/recommended',
     'airbnb',
     'prettier',
-    'prettier/react'
   ],
   parserOptions: {
     ecmaVersion: "latest",
@@ -29,6 +28,7 @@ export default {
         "tsx": "always"
       }
     ],
+    'no-unused-vars': 'warn',
     'no-restricted-syntax': [
       "error",
       {
