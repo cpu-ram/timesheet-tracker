@@ -1,24 +1,30 @@
 import chalk from 'chalk';
 import { input } from '@inquirer/prompts';
 import WorkBlock from '../models/WorkBlock.js';
-// import { startOfDay, endOfDay } from 'date-fns';
 
-function italic(x) { return chalk.italic(x); }
+function italic(x) {
+  return chalk.italic(x);
+}
 
 async function promptUser() {
   const result = {};
   const elements = ['workStartTime', 'workEndTime', 'breakStartTime', 'breakEndTime'];
 
-  elements.forEach(async (element) => {
-    result[element] = await this.promptTime(element);
-  });
-
+  for (const element of elements) {
+    result[element] = await promptTime(element);
+  }
   return result;
 }
 
 async function promptTime(timeName) {
-  const result = input(
-    `Enter ${timeName} in ${italic('HH:mm')} or ${italic('hh:mm am / hh:mm pm')} `,
-  );
+  const result = await input({
+    message: `Enter ${timeName} in ${italic('HH:mm')} or ${italic('hh:mm am / hh:mm pm')}`
+  });
   return result;
 }
+
+(async () => {
+  const userInput = await promptUser();
+  console.log(userInput);
+  console.log('Node.js path:', process.execPath);
+})();
