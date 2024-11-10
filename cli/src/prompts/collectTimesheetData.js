@@ -23,8 +23,7 @@ async function promptTime(timeName) {
   return result;
 }
 
-(async () => {
+export default (async () => {
   const userInput = await promptUser();
   console.log(userInput);
-  console.log('Node.js path:', process.execPath);
-})();
+});
