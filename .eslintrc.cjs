@@ -1,0 +1,48 @@
+export default {
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+    jest: true
+  },
+  extends: [
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'airbnb',
+    'prettier',
+  ],
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module"
+  },
+  plugins: ['prettier'],
+  rules: {
+    'prettier/prettier': 'error',
+    'import/extensions': [
+      "error",
+      "ignorePackages",
+      {
+        "js": "always",
+        "jsx": "always",
+        "ts": "always",
+        "tsx": "always"
+      }
+    ],
+    'no-unused-vars': 'warn',
+    'no-restricted-syntax': [
+      "error",
+      {
+        "selector": "ForInStatement",
+        "message": "for...in statements are not allowed. Use Object.keys or Object.entries instead."
+      },
+      {
+        "selector": "LabeledStatement",
+        "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain."
+      },
+      {
+        "selector": "WithStatement",
+        "message": "`with` is disallowed in strict mode because it makes code unpredictable and difficult to optimize."
+      }
+    ]
+  }
+};
