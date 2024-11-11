@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { input } from '@inquirer/prompts';
+import { input, confirm } from '@inquirer/prompts';
 import WorkBlock from '../models/WorkBlock.js';
 
 function italic(x) {
@@ -8,11 +8,22 @@ function italic(x) {
 
 async function promptUser() {
   const result = {};
-  const elements = ['workStartTime', 'workEndTime', 'breakStartTime', 'breakEndTime'];
 
-  for (const element of elements) {
-    result[element] = await promptTime(element);
+  result['workStartTime'] = await promptTime('work start time');
+  result['workEndTime'] = await promptTime('work end time');
+
+  const hadBreak = await confirm(
+    {
+      message: 'Did you take a break?',
+      default: false,
+    }
+  );
+
+  if (hadBreak) {
+    result['breakStartTime'] = await promptTime('break start time');
+    result['breakEndTime'] = await promptTime('break end time');
   }
+
   return result;
 }
 
