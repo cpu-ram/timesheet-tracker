@@ -1,7 +1,7 @@
-import collectData from './collectTimesheetData.js';
+import promptData from './promptTimesheetData.js';
 
-const data = await collectData();
+const data = await promptData();
 console.log(data);
-test('collectTimesheetData', () => {
+test('promptTimesheetData', () => {
   expect(data).toBeTruthy();
 });
