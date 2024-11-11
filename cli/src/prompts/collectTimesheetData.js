@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { input, confirm } from '@inquirer/prompts';
+import { parse, format } from 'date-fns';
 import WorkBlock from '../models/WorkBlock.js';
 
 function italic(x) {
@@ -29,9 +30,13 @@ async function promptUser() {
 
 async function promptTime(timeName) {
   const result = await input({
-    message: `Enter ${timeName} in ${italic('HH:mm')} or ${italic('hh:mm am / hh:mm pm')}`
+    message: `Enter ${timeName} in the ${italic('\"military format\"')}  — HH:mm')}`
   });
   return result;
+}
+
+function validateTime(timeString) {
+
 }
 
 export default promptUser;
