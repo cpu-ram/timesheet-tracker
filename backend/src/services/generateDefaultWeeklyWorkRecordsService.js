@@ -3,6 +3,7 @@ import { addWorkBlock, getDefaultJobsiteProperties } from './workBlockService.js
 
 export default async function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
   const defaultProperties = await getDefaultJobsiteProperties(jobId);
+  if (!defaultProperties) throw new Error('Fatal error. No default properties found.');
 
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
