@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { input, confirm } from '@inquirer/prompts';
 
-import promptWorkBlockData from './promptWorkBlockData';
+import promptWorkBlockData from './promptWorkBlockData.js';
 import { generateWorkWeekDays } from '../../../utils/dateUtils.js';
 
 function italic(x) {
