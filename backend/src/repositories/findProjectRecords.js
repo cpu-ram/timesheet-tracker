@@ -1,6 +1,6 @@
 import dbPool from '../config/dbPool.js';
 
-export async function findJobsiteRecords(queryString) {
+export async function findProjectRecords(queryString) {
   const query = `
     SELECT project_id, project_address, project_name, employee_name as supervisor_name, employee_nickname as supervisor_nickname from
     projects full outer join employees on projects.supervisor_id=employees.employee_id 
