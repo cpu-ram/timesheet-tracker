@@ -1,12 +1,21 @@
-const express = require('express');
+import express from 'express';
+import { workPeriodRouter } from './routes/workPeriodRouter.js';
+import { jobsiteRouter } from './routes/jobsiteRouter.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
+if (process.env.NODE_ENV === 'development') {
+  app.use((req, res, next) => {
+    console.log('Request details:', { method: req.method, url: req.url, body: req.body });
+    next();
+  })
+}
 
-app.listen(PORT, () => {
-  console.log('Server is running on port ${PORT}');
-});
+// Define routes in index.js
+app.use('/work_periods/', workPeriodRouter);
+app.use('/jobsites/', jobsiteRouter);
+app.get('/', (req, res) => res.json('Hello!'));
+
+
+export default app; // Export the app instance
