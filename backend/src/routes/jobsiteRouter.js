@@ -3,6 +3,6 @@ import { getJobsites } from '../controllers/jobsiteController.js';
 
 const jobsiteRouter = express.Router();
 jobsiteRouter.get('/', (req, res) => res.json(''));
-jobsiteRouter.use('/:query', getJobsites);
+jobsiteRouter.get('/:query', getJobsites);
 
 export { jobsiteRouter };
