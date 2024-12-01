@@ -1,6 +1,6 @@
 import dbPool from '../config/dbPool.js';
 
-export const getDefaultJobsitePropertiesRecord = async (jobId) => {
+export const getDefaultProjectPropertiesRecord = async (jobId) => {
   const query = `
     SELECT 
     default_work_start_time, default_work_end_time, 

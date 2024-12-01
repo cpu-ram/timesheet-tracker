@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
-import { addWorkBlock, getDefaultJobsiteProperties } from './workBlockService.js';
+import { addWorkBlock } from './workBlockService.js';
+import { getDefaultJobsiteProperties } from './jobsiteService.js';
 
 export default async function generateDefaultWeeklyWorkRecords(jobId, employeeId) {
   const defaultProperties = await getDefaultJobsiteProperties(jobId);

@@ -170,8 +170,8 @@ const workBlocks = [
   },
 ];
 
-const getWorkBlocks = (req, res) => {
+const getWorkPeriods = (req, res) => {
   res.json(workBlocks);
 };
 
-export default getWorkBlocks;
+export { getWorkPeriods };

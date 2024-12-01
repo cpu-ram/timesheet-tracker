@@ -1,6 +1,6 @@
 import dbPool from '../config/dbPool.js';
 
-export default async function addProjectRecord(
+export async function addProjectRecord(
   id,
   type = null,
   address = null,
