@@ -17,8 +17,8 @@ export async function addJobsite(
     address,
     name,
     supervisorId,
-    defaultStartTime,
-    defaultEndTime,
+    defaultWorkStartTime,
+    defaultWorkEndTime,
     defaultBreakStartTime,
     defaultBreakEndTime,
   );

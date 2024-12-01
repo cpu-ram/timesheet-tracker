@@ -17,9 +17,12 @@ export async function addProjectRecord(
     default_work_start_time, default_work_end_time, 
     default_break_start_time, default_break_end_time
     )
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);
+    VALUES($1, $2, $3, $4, $5, 
+    $6, $7, 
+    $8, $9);
   `;
-  const values = [id, type, address, name, supervisorId, defaultWorkStartTime, defaultWorkEndTime,
+  const values = [id, type, address, name, supervisorId,
+    defaultWorkStartTime, defaultWorkEndTime,
     defaultBreakStartTime, defaultBreakEndTime];
   try {
     const result = await dbPool.query(query, values);
