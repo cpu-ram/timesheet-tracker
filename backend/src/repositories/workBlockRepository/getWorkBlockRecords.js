@@ -1,6 +1,6 @@
-import dbPool from '../config/dbPool.js';
+import dbPool from '../../config/dbPool.js';
 import { format } from 'date-fns';
-import { pgDateFormat } from './utils/pgFormats.js';
+import { pgDateFormat } from '../utils/pgFormats.js';
 
 export const getWorkBlockRecords = async (
   employeeId,

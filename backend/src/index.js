@@ -1,5 +1,5 @@
 import express from 'express';
-import { workPeriodRouter } from './routes/workPeriodRouter.js';
+import { workBlockRouter } from './routes/workBlockRouter.js';
 import { jobsiteRouter } from './routes/jobsiteRouter.js';
 
 const app = express();
@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Define routes in index.js
-app.use('/work_periods/', workPeriodRouter);
+app.use('/workBlocks/', workBlockRouter);
 app.use('/jobsites/', jobsiteRouter);
 app.get('/', (req, res) => res.json('Hello!'));
 

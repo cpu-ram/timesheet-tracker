@@ -1,4 +1,4 @@
-import dbPool from '../config/dbPool.js';
+import dbPool from '../../config/dbPool.js';
 
 export async function findProjectRecords(queryString) {
   const query = `
