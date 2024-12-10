@@ -6,7 +6,7 @@ export async function getJobsite(jobId) {
     default_work_start_time: 'workStartTime',
     default_work_end_time: 'workEndTime',
     default_break_start_time: 'breakStartTime',
-    default_break_end_time: 'breakEndTime', // extend this renameMap to include the new fields
+    default_break_end_time: 'breakEndTime',
 
     project_id: 'jobsiteId',
     project_type: 'jobsiteType',
@@ -18,10 +18,6 @@ export async function getJobsite(jobId) {
 
   const result = Object.fromEntries(
     Object.entries(defaultProperties).map(([key, value]) => {
-      /* add logic to check if renameMap has a matching key, 
-      and then perform the logic that is within the if block, first isolating it to a separate function, 
-      otherwise return the key-value pair as is
-      */
       const newKey = renameMap[key];
       if (value) {
         if (newTimeFields.includes(newKey)) {
