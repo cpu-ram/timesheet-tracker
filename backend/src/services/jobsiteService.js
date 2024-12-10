@@ -1,4 +1,4 @@
-import { findProjectRecords, addProjectRecord, getDefaultProjectPropertiesRecord } from '../repositories/projectRepository.js';
+import { findProjectRecords, addProjectRecord, fetchDefaultProjectPropertiesRecord } from '../repositories/projectRepository.js';
 
 export async function addJobsite(
   id,
@@ -25,7 +25,7 @@ export async function addJobsite(
 }
 
 export async function getDefaultJobsiteProperties(jobId) {
-  const defaultProperties = await getDefaultProjectPropertiesRecord(jobId);
+  const defaultProperties = await fetchDefaultProjectPropertiesRecord(jobId);
   const renameMap = {
     default_work_start_time: 'workStartTime',
     default_work_end_time: 'workEndTime',
@@ -50,3 +50,4 @@ export async function findJobsites(queryString) {
   return await findProjectRecords(queryString);
 }
 
+export { getJobsite } from './jobsiteServices/getJobsite.js';
