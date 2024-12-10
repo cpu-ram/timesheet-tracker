@@ -1,8 +1,13 @@
-import { addJobsite, findJobsites, getDefaultJobsiteProperties, } from '../services/jobsiteService.js'
+import { addJobsite, findJobsites, getDefaultJobsiteProperties, getJobsite } from '../services/jobsiteService.js'
 
-export const getJobsites = async (req, res) => {
-  const result = await findJobsites(req.params.query);
+export const findJobsitesHandler = async (req, res) => {
+  const result = await findJobsites(req.query.query);
   res.json(result);
+}
+
+export const getJobsiteHandler = async (req, res) => {
+  const result = await getJobsite(req.params.id);
+  res.json(result)
 }
 
 export const addJobsiteHandler = async (req, res) => {
