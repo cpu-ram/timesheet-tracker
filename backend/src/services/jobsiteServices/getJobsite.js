@@ -1,7 +1,7 @@
 import { fetchProjectRecord } from '../../repositories/projectRepository.js';
 
 export async function getJobsite(jobId) {
-  const defaultProperties = await fetchProjectRecord(jobId);
+  const jobsiteRecord = await fetchProjectRecord(jobId);
   const renameMap = {
     default_work_start_time: 'workStartTime',
     default_work_end_time: 'workEndTime',
@@ -17,7 +17,7 @@ export async function getJobsite(jobId) {
   const newTimeFields = ['workStartTime', 'workEndTime', 'breakStartTime', 'breakEndTime'];
 
   const result = Object.fromEntries(
-    Object.entries(defaultProperties).map(([key, value]) => {
+    Object.entries(jobsiteRecord).map(([key, value]) => {
       const newKey = renameMap[key];
       if (value) {
         if (newTimeFields.includes(newKey)) {
