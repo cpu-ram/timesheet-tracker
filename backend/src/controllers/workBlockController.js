@@ -2,7 +2,7 @@ import { addWorkBlock, getWorkBlocks } from "../services/workBlockService.js";
 
 export const getWorkBlocksController = (req, res) => {
   try {
-    const workBlocks = getWorkBlocks();
+    const workBlocks = getWorkBlocks(req.query.employeeId, req.query.reportedById, req.query.startDateTime, req.query.endDateTime);
     res.status(200).json({ success: true, workBlocks });
   }
   catch (error) {
