@@ -1,8 +1,13 @@
-import { sampleWorkBlocks } from "../../tests/fixtures/workBlocks.js";
 import { addWorkBlock, getWorkBlocks } from "../services/workBlockService.js";
 
 export const getWorkBlocksController = (req, res) => {
-  res.json(sampleWorkBlocks);
+  try {
+    const workBlocks = getWorkBlocks();
+    res.status(200).json({ success: true, workBlocks });
+  }
+  catch (error) {
+    throw error;
+  }
 };
 
 export const addWorkBlockController = (req, res) => {
