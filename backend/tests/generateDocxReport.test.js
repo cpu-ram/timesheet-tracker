@@ -3,14 +3,15 @@ import generateWeeklyReport from '../src/services/weeklyReportService.js';
 
 dotenv.config();
 
-const date = new Date();
-if (date.getDay() > 1) {
-  date.setDate(date.getDate() - date.getDay() + 7);
+const finalDayOfWeek = new Date();
+if (finalDayOfWeek.getDay() > 1) {
+  finalDayOfWeek.setDate(finalDayOfWeek.getDate() - finalDayOfWeek.getDay() + 7);
 } else {
-  date.setDate(date.getDate() - date.getDay());
+  finalDayOfWeek.setDate(finalDayOfWeek.getDate() - finalDayOfWeek.getDay());
 }
+finalDayOfWeek.setHours(0, 0, 0, 0);
 
-const outputLocation = await generateWeeklyReport(10, date);
+const outputLocation = await generateWeeklyReport(10, finalDayOfWeek);
 test('Report returns some output location', () => {
   expect(outputLocation).toBeTruthy();
 });
