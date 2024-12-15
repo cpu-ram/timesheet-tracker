@@ -1,6 +1,6 @@
 name: Close Linked Issues on PR Closure
 
-on: 
+on:
   pull_request:
     types: [closed]
 
@@ -8,7 +8,15 @@ jobs:
   close_linked_issues:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Close linked issues
-        uses: peter-evans/close-issue@v2
-        with: 
-          issue-type: linked
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          issues=$(gh pr view $pr_number --json closingIssuesReferences -q '.closingIssuesReferences[].number')
+          for issue in $issues; do
+            gh issue close $issue --repo ${{ github.repository }} --comment "Closed automatically on PR merge."
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
