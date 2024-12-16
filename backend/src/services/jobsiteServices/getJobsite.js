@@ -1,7 +1,16 @@
 import { fetchProjectRecord } from '../../repositories/projectRepository.js';
 
 export async function getJobsite(jobId) {
-  const jobsiteRecord = await fetchProjectRecord(jobId);
+  let jobsiteRecord = undefined;
+  try {
+    jobsiteRecord = await fetchProjectRecord(jobId);
+  }
+  catch (error) {
+    throw new Error(error);
+  }
+  if (jobsiteRecord === null) {
+    return null;
+  }
   const renameMap = {
     default_work_start_time: 'workStartTime',
     default_work_end_time: 'workEndTime',

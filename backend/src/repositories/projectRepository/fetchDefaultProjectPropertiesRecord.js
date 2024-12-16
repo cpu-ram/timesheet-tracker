@@ -9,10 +9,12 @@ export const fetchDefaultProjectPropertiesRecord = async (jobId) => {
     WHERE project_id=$1;
   `;
   const values = [jobId];
+  let result = undefined;
   try {
-    const result = await dbPool.query(query, values);
-    return result.rows[0];
+    result = await dbPool.query(query, values);
   } catch (error) {
     throw new Error('Unable to fetch default jobsite properties');
   }
+  if (result.rowCount === 0) return null;
+  else return result.rows[0];
 }

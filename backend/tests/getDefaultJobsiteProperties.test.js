@@ -1,0 +1,1 @@
+import { getDefaultJobsiteProperties } from "../src/services/jobsiteService.js";
