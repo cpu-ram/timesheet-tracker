@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "start-db": "node backend/local/run-postgres.js"
+    "start-db": "node backend/local/run-postgres.js",
+    "dev": "nodemon backend/server.js"
   },
   "keywords": [],
   "author": "Your Name",
