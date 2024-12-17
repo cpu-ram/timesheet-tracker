@@ -2,12 +2,40 @@ import {
   getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord
 } from '../repositories/workBlockRepository.js';
 
-export const getWorkBlocks = (
+export async function getWorkBlocks(
   employeeId,
   reportedById,
   startDateTime,
   endDateTime,
-) => getWorkBlockRecords(employeeId, reportedById, startDateTime, endDateTime);
+) {
+  let queryResult = await getWorkBlockRecords(employeeId, reportedById, startDateTime, endDateTime);
+  const renameMap = {
+    work_period_id: 'workBlockId',
+    project_id: 'jobsiteId',
+    reported_by: 'reportedBy',
+    employee_id: 'employeeId',
+    work_start: 'workStartTime',
+    work_end: 'workEndTime',
+    break_start: 'breakStartTime',
+    break_end: 'breakEndTime',
+    temp_location: 'tempLocation',
+    supervisor_id: 'supervisorId',
+    temp_jobsite_description: 'tempJobsiteDescription',
+  };
+
+  let result = queryResult.map(x => {
+    return Object.fromEntries(
+      Object.entries(x).map(([oldKey, value]) => {
+        if (renameMap.hasOwnProperty(oldKey)) {
+          return [renameMap[oldKey], value];
+        }
+        else return [oldKey, value];
+      })
+    );
+  })
+
+  return result;
+}
 
 export const addWorkBlock = (
   employeeId,
