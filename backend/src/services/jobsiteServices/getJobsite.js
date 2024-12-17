@@ -8,10 +8,10 @@ export async function getJobsite(jobId) {
     default_break_start_time: 'breakStartTime',
     default_break_end_time: 'breakEndTime',
 
-    project_id: 'jobsiteId',
-    project_type: 'jobsiteType',
-    project_address: 'jobsiteAddress',
-    project_name: 'jobsiteName',
+    project_id: 'id',
+    project_type: 'type',
+    project_address: 'address',
+    project_name: 'name',
     supervisor_id: 'supervisorId',
   };
   const newTimeFields = ['workStartTime', 'workEndTime', 'breakStartTime', 'breakEndTime'];

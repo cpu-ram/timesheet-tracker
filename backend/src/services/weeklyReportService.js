@@ -1,4 +1,5 @@
 import { getWorkBlocks } from './workBlockService.js';
+import { getJobsite } from './jobsiteService.js';
 import path from 'path';
 import * as fs from 'fs';
 import PizZip from 'pizzip';
@@ -35,32 +36,39 @@ function formatWorkBlocksForDailyReport(workBlockArray) {
 
   const formatToBasicTime = (dateTime) => format(dateTime, 'p');
 
-  let workBlocks = workBlockArray.map(
+  let formattedWorkBlocks = workBlockArray.map(
     function (workBlock) {
       let result = {
-        jobId: workBlock.project_id.toUpperCase(),
-        date: format(workBlock.work_start, 'MM/dd EEE'),
-        hours: calculateNumberOfHours(new Date(workBlock.work_start), new Date(workBlock.work_end)),
+        jobId: workBlock.jobsiteId.toUpperCase(),
+        date: format(workBlock.workStartTime, 'MM/dd EEE'),
+        hours: calculateNumberOfHours(new Date(workBlock.workStartTime), new Date(workBlock.workEndTime)),
+        jobsiteAddress: workBlock.jobsiteAddress || '',
       }
 
-      const timePropertyNames = ['work_start', 'work_end', 'break_start', 'break_end'];
+      const timePropertyNames = ['workStartTime', 'workEndTime', 'breakStartTime', 'breakEndTime'];
       timePropertyNames.forEach((propertyName) => {
         if (workBlock.hasOwnProperty(propertyName) && workBlock[propertyName] != null) {
           result[propertyName] = formatToBasicTime(workBlock[propertyName]);
         }
         else result[propertyName] = '—';
       });
-
       return result;
     }
   );
-  return workBlocks;
+
+  return formattedWorkBlocks;
 }
 
 export default async function generateWeeklyReport(employeeId, payPeriodEndDate) {
   const reportData = {};
   const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
   const workBlocks = await getWorkBlocks(employeeId, employeeId, beginningOfFirstDay, endOfFinalDay);
+
+  for (const workBlock of workBlocks) {
+    const jobsite = await getJobsite(workBlock.jobsiteId)
+    workBlock.jobsiteAddress = jobsite.address;
+  };
+
   reportData['workBlocks'] = formatWorkBlocksForDailyReport(workBlocks);
   const totalHours = reportData['workBlocks']
     .map(x => x.hours)
