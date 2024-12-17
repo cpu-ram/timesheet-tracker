@@ -19,7 +19,7 @@ jobs:
         run: |
           pr_number=${{ github.event.pull_request.number }}
           body=$(gh pr view $pr_number --json body -q '.body')
-          issues=$(echo "$body" | grep -oE 'Fixes #[0-9]+' | awk '{print $2}')
+          issues=$(echo "$body" | grep -ioE '(Fixes|Resolves|Closes) #[0-9]+' | awk '{print $2}')
           for issue in $issues; do
             gh issue close $issue --repo ${{ github.repository }} --comment "Closed automatically on PR merge."
           done
