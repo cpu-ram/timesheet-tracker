@@ -6,8 +6,14 @@ export const findJobsitesHandler = async (req, res) => {
 }
 
 export const getJobsiteHandler = async (req, res) => {
-  const result = await getJobsite(req.params.id);
-  res.json(result)
+  let result = undefined;
+  try {
+    result = await getJobsite(req.params.id);
+  }
+  catch (error) {
+    res.status(500).json(error);
+  }
+  res.json(result);
 }
 
 export const addJobsiteHandler = async (req, res) => {

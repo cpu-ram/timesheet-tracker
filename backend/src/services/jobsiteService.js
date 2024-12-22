@@ -25,7 +25,16 @@ export async function addJobsite(
 }
 
 export async function getDefaultJobsiteProperties(jobId) {
-  const defaultProperties = await fetchDefaultProjectPropertiesRecord(jobId);
+  let queryResult = undefined;
+  try {
+    queryResult = await fetchDefaultProjectPropertiesRecord(jobId);
+  }
+  catch (error) {
+    throw new Error(error);
+  }
+  if (queryResult.rowCount === 0) {
+    return null;
+  }
   const renameMap = {
     default_work_start_time: 'workStartTime',
     default_work_end_time: 'workEndTime',
@@ -34,7 +43,7 @@ export async function getDefaultJobsiteProperties(jobId) {
   };
 
   const result = Object.fromEntries(
-    Object.entries(defaultProperties).map(([key, value]) => {
+    Object.entries(queryResult).map(([key, value]) => {
       const newKey = renameMap[key];
       if (value) {
         const [hours, minutes] = value.split(':').map(Number);
