@@ -8,7 +8,13 @@ export async function getWorkBlocks(
   startDateTime,
   endDateTime,
 ) {
-  let queryResult = await getWorkBlockRecords(employeeId, reportedById, startDateTime, endDateTime);
+  let queryResult = undefined;
+  try {
+    queryResult = await getWorkBlockRecords(employeeId, reportedById, startDateTime, endDateTime);
+  }
+  catch (error) { throw new Error(error); }
+  if (queryResult.rowCount === 0) return null;
+
   const renameMap = {
     work_period_id: 'workBlockId',
     project_id: 'jobsiteId',
