@@ -56,7 +56,14 @@ export async function getDefaultJobsiteProperties(jobId) {
 }
 
 export async function findJobsites(queryString) {
-  return await findProjectRecords(queryString);
+  let result = undefined;
+  try {
+    result = await findProjectRecords(queryString);
+  }
+  catch (error) { throw new Error(error) };
+  if (result.rowCount === 0) return null;
+
+  return result;
 }
 
 export { getJobsite } from './jobsiteServices/getJobsite.js';
