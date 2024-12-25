@@ -1,6 +1,6 @@
 import dbPool from '../../config/dbPool.js';
 
-export default async function addEmployeeRecord(
+export async function addEmployeeRecord(
   employee_name = null,
   employee_nickname = null,
   title = null,
