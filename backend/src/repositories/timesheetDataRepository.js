@@ -3,8 +3,19 @@ import { format } from 'date-fns';
 import { pgDateFormat } from './utils/pgFormats.js';
 
 export async function fetchTimesheetDataRecords(employeeId, from, to) {
-  const formattedFrom = format(from, pgDateFormat);
-  const formattedTo = format(to, pgDateFormat);
+  let formattedTo = undefined;
+  let formattedFrom = undefined;
+  try {
+    formattedFrom = format(from, pgDateFormat);
+    formattedTo = format(to, pgDateFormat);
+  }
+  catch (error) {
+    if (error instanceof RangeError
+    ) {
+      throw new Error('Invalid date format');
+    }
+    throw new Error("Unable to fetch timesheet data");
+  }
   const query = `
     SELECT 
       projects.project_address as projectAddress,
