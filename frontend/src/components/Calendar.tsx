@@ -1,12 +1,18 @@
+import { useState } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { startOfWeek, addDays, isSameDay } from 'date-fns';
+import { startOfWeek, startOfDay, addDays, isSameDay } from 'date-fns';
 import { GlobalStyles } from '@mui/material';
+import { capitalize } from 'lodash/capitalize';
 
 const Calendar = () => {
   const today = new Date();
   const lastWeekStart = addDays(startOfWeek(today, { weekStartsOn: 1 }), -7);
   const days = Array.from({ length: 14 }).map((_, index) => addDays(lastWeekStart, index));
 
+  const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(today)); //check for bugs and possible need for additional updates
+  const handleDateClick = (date: Date) => {
+    return setSelectedDate(date);
+  }
   return (
     <>
       <GlobalStyles styles={{ body: { placeItems: 'start' } }} />
@@ -37,7 +43,15 @@ const Calendar = () => {
             <Grid container spacing={1} id="days">
               {days.slice(startIndex, startIndex + 7).map((day, index) => (
                 <Grid item xs={1.71} sm={1.71} key={index} style={{ padding: '8px', display: 'flex', justifyContent: 'center' }}>
-                  <Typography variant="h6" align="center">{day.toLocaleString('default', { day: 'numeric' })}</Typography>
+                  <Typography variant="h6" align="center"
+                    style={{
+                      cursor: 'pointer',
+                      backgroundColor: isSameDay(day, selectedDate) ? 'lightcoral' : 'transparent'
+                    }}
+                    onClick={() => handleDateClick(day)}>
+
+                    {day.toLocaleString('default', { day: 'numeric' })}
+                  </Typography>
                 </Grid>
               ))}
             </Grid>

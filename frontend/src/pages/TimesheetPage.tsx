@@ -1,10 +1,11 @@
 import Calendar from '../components/Calendar.tsx';
+import { capitalize } from 'lodash';
 
 const TimesheetPage = ({ selectedUser }) => {
   return (
     <div>
       <p>
-        You are logged in as {selectedUser.nickname}
+        Hello, {capitalize(selectedUser.nickname)}
         <Calendar>
 
         </Calendar>
