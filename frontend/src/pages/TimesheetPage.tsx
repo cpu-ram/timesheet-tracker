@@ -1,15 +1,18 @@
+import { useState } from 'react';
+import { startOfDay } from 'date-fns';
 import Calendar from '../components/Calendar.tsx';
 import { capitalize } from 'lodash';
 
 const TimesheetPage = ({ selectedUser }) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date()));
+
   return (
     <div>
-      <p>
+      <span>
         Hello, {capitalize(selectedUser.nickname)}
-        <Calendar>
-
+        <Calendar {...{ selectedDate, setSelectedDate }}>
         </Calendar>
-      </p>
+      </span>
     </div>
   )
 }
