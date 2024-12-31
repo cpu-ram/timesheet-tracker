@@ -12,6 +12,7 @@ export async function fetchEmployeeRecords() {
   let result = undefined;
   try {
     result = await dbPool.query(query);
+    if (result.rowCount === 0) return null;
     return result.rows;
   }
   catch (error) {
