@@ -39,6 +39,7 @@ export async function getDefaultJobsiteProperties(jobId) {
         const [hours, minutes] = value.split(':').map(Number);
         return [key, { hours, minutes }];
       }
+      else return [key, value];
     }),
   );
 

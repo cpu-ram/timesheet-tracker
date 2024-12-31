@@ -6,8 +6,8 @@ export async function findProjectRecords(queryString) {
       project_id as id, 
       project_address as address, 
       project_name as name, 
-      employees.employee_name as supervisorName, 
-      employees.employee_nickname as supervisorNickname 
+      employees.employee_name as "supervisorName", 
+      employees.employee_nickname as "supervisorNickname" 
     FROM
       projects 
     FULL OUTER JOIN 
