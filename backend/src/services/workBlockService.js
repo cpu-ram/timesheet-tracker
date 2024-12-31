@@ -8,37 +8,11 @@ export async function getWorkBlocks(
   startDateTime,
   endDateTime,
 ) {
-  let queryResult = undefined;
+  let result = undefined;
   try {
-    queryResult = await getWorkBlockRecords(employeeId, reportedById, startDateTime, endDateTime);
+    result = await getWorkBlockRecords(employeeId, reportedById, startDateTime, endDateTime);
   }
   catch (error) { throw new Error(error); }
-  if (queryResult.rowCount === 0) return null;
-
-  const renameMap = {
-    work_period_id: 'workBlockId',
-    project_id: 'jobsiteId',
-    reported_by: 'reportedBy',
-    employee_id: 'employeeId',
-    work_start: 'workStartTime',
-    work_end: 'workEndTime',
-    break_start: 'breakStartTime',
-    break_end: 'breakEndTime',
-    temp_location: 'tempLocation',
-    supervisor_id: 'supervisorId',
-    temp_jobsite_description: 'tempJobsiteDescription',
-  };
-
-  let result = queryResult.map(x => {
-    return Object.fromEntries(
-      Object.entries(x).map(([oldKey, value]) => {
-        if (renameMap.hasOwnProperty(oldKey)) {
-          return [renameMap[oldKey], value];
-        }
-        else return [oldKey, value];
-      })
-    );
-  })
 
   return result;
 }

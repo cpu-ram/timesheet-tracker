@@ -23,6 +23,7 @@ export async function findProjectRecords(queryString) {
   const values = [queryString];
   try {
     const result = await dbPool.query(query, values);
+    if (result.rowCount === 0) return null;
     return result.rows;
   }
   catch (err) {

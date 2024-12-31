@@ -13,12 +13,9 @@ export async function getEmployees() {
   let result = undefined;
   try {
     result = await fetchEmployeeRecords();
+    return result;
   }
   catch (error) {
     throw error;
   }
-  if (result.rowCount === 0) {
-    return null;
-  }
-  return result;
 }
