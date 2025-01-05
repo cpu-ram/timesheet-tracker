@@ -18,13 +18,14 @@ export async function fetchTimesheetDataRecords(employeeId, from, to) {
   }
   const query = `
     SELECT 
-      projects.project_address as "projectAddress",
-      projects.project_name as "projectName",
-      projects.project_id as "projectId",
-      work_start as "workPeriodStart",
+      work_periods.work_period_id as "workBlockId",
+      projects.project_address as "jobsiteAddress",
+      projects.project_name as "jobsiteName",
+      projects.project_id as "jobsiteId",
+      work_start as "workBlockStart",
       break_start as "breakStart",
       break_end as "breakEnd",
-      work_end as "workPeriodEnd"
+      work_end as "workBlockEnd"
     FROM
       work_periods 
     LEFT JOIN 
