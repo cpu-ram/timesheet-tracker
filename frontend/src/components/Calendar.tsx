@@ -18,7 +18,7 @@ const Calendar = ({ selectedDate, setSelectedDate }: CalendarProps) => {
   return (
     <>
       <GlobalStyles styles={{ body: { placeItems: 'start' } }} />
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Grid container item xs={12} key="dayNames">
           {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day, index) => (
             <Grid item xs={1.71} sm={1.71} key={index} style={{ padding: '8px', display: 'flex', justifyContent: 'center' }}>
