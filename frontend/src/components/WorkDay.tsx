@@ -14,7 +14,7 @@ const workDay = ({ workData, selectedDate }) => {
                 </Typography>
               </Grid>
               <Grid item xs={3}>
-                <Typography align='center'>
+                <Typography>
                   {
                     workBlock.workBlockStart ?
                       format(workBlock.workBlockStart, 'hh:mm a')
@@ -33,13 +33,13 @@ const workDay = ({ workData, selectedDate }) => {
 
                 </Typography>
               </Grid>
-              <Grid item xs={3}>
-                <Typography align='center' component='div'>
+              <Grid item xs={3} sx={{ borderLeft: 1, borderColor: 'divider' }}>
+                <Typography component='div' sx={{ paddingLeft: 2 }}>
                   {
                     (workBlock.workBlockStart && workBlock.workBlockEnd) ?
-                      <Typography component='span'>
+                      <>
                         {(new Date(workBlock.workBlockEnd).getTime() - new Date(workBlock.workBlockStart).getTime()) / 1000 / 60 / 60 + 'h'}
-                      </Typography>
+                      </>
                       :
                       <i>—</i>
                   }
@@ -57,7 +57,7 @@ const workDay = ({ workData, selectedDate }) => {
                 </Typography>
               </Grid>
               <Grid item xs={3}>
-                <Typography align='center'>
+                <Typography>
                   {workBlock.workBlockEnd ?
                     format(workBlock.workBlockEnd, 'hh:mm a')
                     :
@@ -83,6 +83,7 @@ const workDay = ({ workData, selectedDate }) => {
         workData ?
           <Grid container>
             <Grid item xs={12} sx={{ borderBottom: 1, borderColor: 'divider', mb: 1 }} />
+            <Grid item xs={2}></Grid>
             <Grid item xs={3}>
               <Typography align='center'>
                 <b>
