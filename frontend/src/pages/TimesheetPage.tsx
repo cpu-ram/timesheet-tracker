@@ -4,6 +4,7 @@ import { startOfDay, format } from 'date-fns';
 import { capitalize } from 'lodash';
 import Calendar from '../components/Calendar.tsx';
 import WorkDay from '../components/WorkDay.tsx';
+import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 
 
@@ -25,9 +26,11 @@ const TimesheetPage = ({ selectedUser }) => {
   return (
     <div>
       Hello, {capitalize(selectedUser.nickname)}
+
       <Calendar {...{ selectedDate, setSelectedDate }}>
       </Calendar>
 
+      <AddWorkBlockForm></AddWorkBlockForm>
       <WorkDay {...{ workData, selectedDate }}>
       </WorkDay>
 
