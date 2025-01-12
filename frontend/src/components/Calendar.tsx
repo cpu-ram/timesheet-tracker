@@ -13,7 +13,7 @@ const Calendar = ({ selectedDate, setSelectedDate }: CalendarProps) => {
   const days = Array.from({ length: 14 }).map((_, index) => addDays(lastWeekStart, index));
 
   const handleDateClick = (date: Date) => {
-    return setSelectedDate(date);
+    setSelectedDate(date);
   }
   return (
     <>

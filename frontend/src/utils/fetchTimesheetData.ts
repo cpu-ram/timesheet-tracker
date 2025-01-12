@@ -5,8 +5,8 @@ const fetchTimesheetData = async ({ date, userId }) => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   const timesheetDataSubPath = '/reports/weekly/data';
 
-
   try {
+
     const response = await fetch(`${baseUrl}${timesheetDataSubPath}?employeeId=${userId}&from=${dateString}&to=${dateString}`);
     if (!response.ok) {
       throw new Error('Failed to fetch timesheet data');

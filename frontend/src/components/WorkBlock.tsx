@@ -37,7 +37,7 @@ const WorkBlock = (
               workBlockStart ?
                 format(workBlockStart, 'hh:mm a')
                 :
-                <i>[workStart absent]</i>}
+                <i>[work start absent]</i>}
           </Typography>
         </Grid>
         <Grid item xs={7}>
@@ -51,12 +51,20 @@ const WorkBlock = (
 
           </Typography>
         </Grid>
-        <Grid item xs={3} sx={{ borderLeft: 1, borderColor: 'divider' }}>
+        <Grid item xs={3} sx={{ borderLeft: 1, borderColor: 'info.main' }}>
           <Typography component='div' sx={{ paddingLeft: 2 }}>
             {
               (workBlockStart && workBlockEnd) ?
                 <>
-                  {(new Date(workBlockEnd).getTime() - new Date(workBlockStart).getTime()) / 1000 / 60 / 60 + 'h'}
+                  {
+                    (() => {
+                      const scale = 100;
+                      const workBlockMilliseconds = (workBlockEnd.getTime() - workBlockStart.getTime());
+                      const roundedWorkBlockHours = Math.round(workBlockMilliseconds / (3600 * 1000) * scale) / scale;
+                      return roundedWorkBlockHours + 'h';
+                    }
+                    )()
+                  }
                 </>
                 :
                 <i>—</i>
@@ -65,7 +73,7 @@ const WorkBlock = (
         </Grid>
         <Grid item xs={7}>
           <Typography>
-            {jobsiteAddress || <i>[jobsiteAddress absent]</i>}
+            {jobsiteAddress || <i>[jobsite address absent]</i>}
           </Typography>
         </Grid>
 
@@ -79,13 +87,13 @@ const WorkBlock = (
             {workBlockEnd ?
               format(workBlockEnd, 'hh:mm a')
               :
-              <i>—</i>
+              <i>[work end absent]</i>
             }
           </Typography>
         </Grid>
         <Grid item xs={7}>
           <Typography>
-            {jobsiteId.toUpperCase() || <i>[jobsiteId absent]</i>}
+            {jobsiteId ? jobsiteId.toUpperCase() : <i>[jobsiteId absent]</i>}
           </Typography>
         </Grid>
       </Grid>

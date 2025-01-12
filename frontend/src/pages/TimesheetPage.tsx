@@ -12,6 +12,33 @@ const TimesheetPage = ({ selectedUser }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date()));
   const [workData, setWorkData] = useState([]);
 
+  const handleAddWorkBlock = async (workBlockData) => {
+    event.preventDefault();
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+    try {
+      const response = await fetch(`${baseUrl}/workBlocks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          employeeId: selectedUser.id,
+          reportedById: selectedUser.id,
+          startTime: workBlockData.startTime ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.startTime.toString() + ".000Z" : null,
+          endTime: workBlockData.endTime ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.endTime.toString() + ".000Z" : null,
+          date: selectedDate
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit work block');
+      }
+    }
+    catch (error) {
+      throw new Error(error);
+    }
+  }
+
+
   useEffect(() => {
     const fetchData = async () => {
       if (selectedDate) {
@@ -25,12 +52,11 @@ const TimesheetPage = ({ selectedUser }) => {
 
   return (
     <div>
-      Hello, {capitalize(selectedUser.nickname)}
 
       <Calendar {...{ selectedDate, setSelectedDate }}>
       </Calendar>
 
-      <AddWorkBlockForm></AddWorkBlockForm>
+      <AddWorkBlockForm {...{ handleAddWorkBlock }}></AddWorkBlockForm>
       <WorkDay {...{ workData, selectedDate }}>
       </WorkDay>
 
