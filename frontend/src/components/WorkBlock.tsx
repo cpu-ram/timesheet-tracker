@@ -26,7 +26,7 @@ const WorkBlock = (
   return (
     <div>
       <Grid container key={id} sx={{ borderTop: 1, borderColor: 'divider' }} spacing='0'>
-        <Grid item xs={2}>
+        <Grid item xs={1.5}>
           <Typography>
             From:
           </Typography>
@@ -40,13 +40,13 @@ const WorkBlock = (
                 <i>[work start absent]</i>}
           </Typography>
         </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={7.5}>
           <Typography>
             {jobsiteName || <i>[jobsiteName absent]</i>}
           </Typography>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs={1.5}>
           <Typography>
 
           </Typography>
@@ -71,13 +71,13 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={7.5}>
           <Typography>
             {jobsiteAddress || <i>[jobsite address absent]</i>}
           </Typography>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs={1.5}>
           <Typography>
             To:
           </Typography>
@@ -91,7 +91,7 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={7.5}>
           <Typography>
             {jobsiteId ? jobsiteId.toUpperCase() : <i>[jobsiteId absent]</i>}
           </Typography>

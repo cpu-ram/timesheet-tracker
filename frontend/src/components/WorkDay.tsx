@@ -4,18 +4,22 @@ import { WorkBlock } from './WorkBlock.tsx';
 
 const workDay = ({ workData, selectedDate }) => {
   return (
-    <div>
-      {workData ?
-        workData.map((workBlock) => (
-          workBlock ?
-            WorkBlock({ ...workBlock })
-            :
-            null
-        ))
-        :
-        <Typography key='0' sx={{ fontStyle: 'italic' }}>
-          No work records available for {format(selectedDate, 'EEEE, MMM d')}
-        </Typography>
+    <div style={{ padding: '0 0 0 1rem' }}>
+      <Typography variant='h6' sx={{ pt: 1, pb: 1 }}>
+        Work Day data:
+      </Typography>
+      {
+        workData ?
+          workData.map((workBlock) => (
+            workBlock ?
+              WorkBlock({ ...workBlock })
+              :
+              null
+          ))
+          :
+          <Typography key='0' sx={{ fontStyle: 'italic' }}>
+            No work records available for {format(selectedDate, 'EEEE, MMM d')}
+          </Typography>
       }
       {
         workData ?
@@ -40,7 +44,7 @@ const workDay = ({ workData, selectedDate }) => {
           null
       }
 
-    </div>
+    </div >
   );
 }
 
