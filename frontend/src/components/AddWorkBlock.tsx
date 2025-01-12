@@ -55,6 +55,22 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
     handleToggleSwitch();
   }
 
+  const handleDiscard = () => {
+    setFormData({
+      startTime: null,
+      endTime: null,
+      jobsiteId: '',
+      supervisor: '',
+      address: '',
+      jobsiteName: '',
+      additionalNotes: '',
+      tempJobsiteId: '',
+      tempJobsiteName: '',
+      tempJobisteAddress: '',
+    });
+    handleToggleSwitch();
+  }
+
   const handleToggleSwitch = () => {
     setToggleIsExpanded(!toggleIsExpanded)
   }
@@ -66,7 +82,7 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
         sx={{
           flexDirection: 'row-reverse',
         }}>
-        <Typography sx={{ fontWeight: "bold", paddingLeft: 1 }}>Add work block</Typography>
+        <Typography variant="h6" sx={{ paddingLeft: 1 }}>Add work block</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Box sx={{ padding: 2 }}>
@@ -152,7 +168,8 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12}>
+
+            <Grid item>
               <Button
                 variant="contained"
                 onClick={handleSubmit}
@@ -161,6 +178,25 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
                 Submit
               </Button>
             </Grid>
+
+            <Grid item>
+              <Button
+                variant='contained'
+                onClick={handleDiscard}
+                value="Discard"
+                sx={{
+                  backgroundColor: "#e2e3e5",
+                  color: "black",
+                  "&:hover": {
+                    backgroundColor: "#d6d8db"
+                  }
+                }}
+              >
+                Discard
+              </Button>
+            </Grid>
+
+
           </Grid>
         </Box>
       </AccordionDetails>
