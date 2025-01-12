@@ -20,6 +20,8 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
     tempJobisteAddress: '',
   });
 
+  const [toggleIsExpanded, setToggleIsExpanded] = useState(false);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -49,10 +51,15 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleAddWorkBlock(formData);
+    handleToggleSwitch();
+  }
+
+  const handleToggleSwitch = () => {
+    setToggleIsExpanded(!toggleIsExpanded)
   }
 
   return (
-    <Accordion>
+    <Accordion expanded={toggleIsExpanded} onChange={handleToggleSwitch}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>Add Work Block</Typography>
       </AccordionSummary>
