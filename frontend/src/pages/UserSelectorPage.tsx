@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { User } from '../types/userType.tsx';
 import { Link } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { List, ListItem, Typography } from '@mui/material';
 
 interface UserSelectionPageProps {
   selectedUser: User | null;
@@ -33,19 +35,27 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }: UserSelectionPagePr
   }
 
   return (
-    <div>
-      <h2>Select a User</h2>
-      {selectedUser && <p>Currently Selected: {selectedUser.nickname}</p>}
-
-      <ul>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      minHeight: '100vh',
+      padding: '20px',
+    }}>
+      <Typography variant='h6'>Select the user:</Typography>
+      <List>
         {users.map((user) => (
-          <li key={user.id}>
-            <button onClick={() => handleUserSelect(user)}>{user.nickname}</button>
-          </li>
+          <ListItem key={user.id} style={{ fontWeight: 'bold' }}>
+            <Button onClick={() => handleUserSelect(user)}>{user.nickname}</Button>
+          </ListItem>
         ))}
-      </ul>
-
-      <Link to="/timesheet">Continue to timesheet</Link>
+      </List>
+      <Link to="/timesheet">
+        <Button variant="contained" color="secondary-light">
+          Continue to timesheet
+        </Button>
+      </Link>
     </div>
   )
 }
