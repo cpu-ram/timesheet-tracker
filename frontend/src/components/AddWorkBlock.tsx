@@ -3,7 +3,8 @@ import { Grid, TextField, Typography, Box, Button } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
+import ExpandIcon from '@mui/icons-material/ExpandMore';
 import { Temporal } from '@js-temporal/polyfill';
 
 const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
@@ -60,8 +61,12 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
 
   return (
     <Accordion expanded={toggleIsExpanded} onChange={handleToggleSwitch}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Add Work Block</Typography>
+      <AccordionSummary
+        expandIcon={toggleIsExpanded ? <ExpandIcon /> : <AddIcon />}
+        sx={{
+          flexDirection: 'row-reverse',
+        }}>
+        <Typography sx={{ fontWeight: "bold", paddingLeft: 1 }}>Add work block</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Box sx={{ padding: 2 }}>
@@ -159,7 +164,7 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
           </Grid>
         </Box>
       </AccordionDetails>
-    </Accordion>
+    </Accordion >
   );
 };
 
