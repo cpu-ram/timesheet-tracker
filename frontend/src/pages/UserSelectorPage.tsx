@@ -1,15 +1,18 @@
-import { useState, useEffect } from 'react';
-import { User } from '../types/userType.tsx';
+import React, { useEffect, useState } from 'react';
+import { Typography, List, ListItem, Button, Container, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Button } from '@mui/material';
-import { List, ListItem, Typography } from '@mui/material';
+
+interface User {
+  id: string;
+  nickname: string;
+}
 
 interface UserSelectionPageProps {
   selectedUser: User | null;
   setSelectedUser: (user: User) => void;
-};
+}
 
-const UserSelectorPage = ({ selectedUser, setSelectedUser }: UserSelectionPageProps) => {
+const UserSelectorPage: React.FC<UserSelectionPageProps> = ({ selectedUser, setSelectedUser }) => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
@@ -25,40 +28,36 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }: UserSelectionPagePr
       } catch (error) {
         console.error(error);
       }
-    }
+    };
 
     fetchUsers();
   }, []);
 
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
-  }
+  };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      justifyContent: 'flex-start',
-      minHeight: '100vh',
-      padding: '20px',
-    }}>
-      <Typography variant='h6'>Select the user:</Typography>
-      <List>
-        {users.map((user) => (
-          <ListItem key={user.id} style={{ fontWeight: 'bold' }}>
-            <Button onClick={() => handleUserSelect(user)}>{user.nickname}</Button>
-          </ListItem>
-        ))}
-      </List>
-      <Link to="/timesheet">
-        <Button variant="contained" color="secondary-light">
-          Continue to timesheet
-        </Button>
-      </Link>
-    </div>
-  )
-}
-
+    <Container maxWidth="sm" sx={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
+      <Box sx={{ textAlign: 'center', width: '100%' }}>
+        <Typography variant='h5' gutterBottom>Select the user:</Typography>
+        <List>
+          {users.map((user) => (
+            <ListItem key={user.id} sx={{ justifyContent: 'center' }}>
+              <Button variant="outlined" onClick={() => handleUserSelect(user)}>{user.nickname}</Button>
+            </ListItem>
+          ))}
+        </List>
+        <Box sx={{ marginTop: 2 }}>
+          <Link to="/timesheet" style={{ textDecoration: 'none' }}>
+            <Button variant="contained" color="primary">
+              Go to Timesheet
+            </Button>
+          </Link>
+        </Box>
+      </Box>
+    </Container>
+  );
+};
 
 export default UserSelectorPage;
