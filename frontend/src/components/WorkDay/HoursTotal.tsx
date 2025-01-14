@@ -1,35 +1,19 @@
 import { Grid, Typography } from '@mui/material';
-import { format } from 'date-fns';
-import { WorkBlock } from './WorkBlock.tsx';
 
-const workDay = ({ workData, selectedDate }) => {
+const HoursTotal = ({ workData }) => {
   return (
-    <div style={{ padding: '0 0 0 1rem' }}>
-      <Typography variant='h6' sx={{ pt: 1, pb: 1 }}>
-        Work Day data:
-      </Typography>
+    <>
       {
         workData ?
-          workData.map((workBlock) => (
-            workBlock ?
-              WorkBlock({ ...workBlock })
-              :
-              null
-          ))
-          :
-          <Typography key='0' sx={{ fontStyle: 'italic' }}>
-            No work records available for {format(selectedDate, 'EEEE, MMM d')}
-          </Typography>
-      }
-      {
-        workData ?
-          <Grid container>
+          (<Grid container>
             <Grid item xs={12} sx={{ borderBottom: 1, borderColor: 'divider', mb: 1 }} />
+
             <Grid item xs={1.5}>
               <Typography align='right'>
                 <b>Total:</b>
               </Typography>
             </Grid>
+
             <Grid item xs={3}>
               <Typography align='left'>
                 <b style={{ whiteSpace: 'pre' }}>
@@ -45,12 +29,12 @@ const workDay = ({ workData, selectedDate }) => {
               </Typography>
             </Grid>
           </Grid>
+          )
           :
-          null
+          (null)
       }
-
-    </div >
-  );
+    </>
+  )
 }
 
-export default workDay;
+export default HoursTotal;

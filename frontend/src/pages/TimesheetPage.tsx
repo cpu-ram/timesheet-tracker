@@ -3,7 +3,7 @@ import { Grid, Typography, Box } from '@mui/material';
 import { startOfDay, format } from 'date-fns';
 import { capitalize } from 'lodash';
 import Calendar from '../components/Calendar.tsx';
-import WorkDay from '../components/WorkDay.tsx';
+import WorkDay from '../components/WorkDay/WorkDay.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 
