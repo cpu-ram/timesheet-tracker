@@ -9,6 +9,7 @@ interface WorkBlockProps {
   jobsiteId: number;
   jobsiteAddress: string;
   jobsiteName: string;
+  editMode: boolean
 }
 
 const WorkBlock = (
@@ -20,7 +21,8 @@ const WorkBlock = (
     breakEnd,
     jobsiteId,
     jobsiteAddress,
-    jobsiteName
+    jobsiteName,
+    editMode
   }: WorkBlockProps
 ) => {
   return (

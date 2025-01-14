@@ -5,8 +5,8 @@ import { capitalize } from 'lodash';
 import Calendar from '../components/Calendar.tsx';
 import WorkDay from '../components/WorkDay/WorkDay.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
+import AddWorkBlockContainer from '../components/AddWorkBlockContainer.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
-
 
 const TimesheetPage = ({ selectedUser }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date()));
@@ -55,8 +55,9 @@ const TimesheetPage = ({ selectedUser }) => {
 
       <Calendar {...{ selectedDate, setSelectedDate }}>
       </Calendar>
-
-      <AddWorkBlockForm {...{ handleAddWorkBlock }}></AddWorkBlockForm>
+      <AddWorkBlockContainer>
+        <AddWorkBlockForm {...{ handleEnteredData: handleAddWorkBlock }}></AddWorkBlockForm>
+      </AddWorkBlockContainer>
       <WorkDay {...{ workData, selectedDate }}>
       </WorkDay>
 

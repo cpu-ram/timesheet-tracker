@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ExpandIcon from '@mui/icons-material/ExpandMore';
 import { Temporal } from '@js-temporal/polyfill';
 
-const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
+const AddWorkBlockForm = ({ handleEnteredData }) => {
   const [formData, setFormData] = useState({
     startTime: null as Temporal.PlainTime,
     endTime: null as Temporal.PlainTime,
@@ -51,7 +51,7 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleAddWorkBlock(formData);
+    handleEnteredData(formData);
     handleToggleSwitch();
   }
 
@@ -76,131 +76,118 @@ const AddWorkBlockForm = ({ handleAddWorkBlock }) => {
   }
 
   return (
-    <Accordion expanded={toggleIsExpanded} onChange={handleToggleSwitch}>
-      <AccordionSummary
-        expandIcon={toggleIsExpanded ? <ExpandIcon /> : <AddIcon />}
-        sx={{
-          flexDirection: 'row-reverse',
-        }}>
-        <Typography variant="h6" sx={{ paddingLeft: 1 }}>Add work block</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Box sx={{ padding: 2 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={2}>
-              <TextField
-                label="Start Time"
-                type="time"
-                name="startTime"
-                value={formData.startTime ? formData.startTime.toString({ smallestUnit: 'minute' }) : ''}
-                onChange={handleStartTimeChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  step: 600, // 10 minutes
-                }}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={6} md={2}>
-              <TextField
-                label="End Time"
-                type="time"
-                name="endTime"
-                value={formData.endTime ? formData.endTime.toString({ smallestUnit: 'minute' }) : ''}
-                onChange={handleEndTimeChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  step: 600, // 10 minutes
-                }}
-                fullWidth
-              />
-            </Grid>
+    <Box sx={{ padding: 2 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={6} md={2}>
+          <TextField
+            label="Start Time"
+            type="time"
+            name="startTime"
+            value={formData.startTime ? formData.startTime.toString({ smallestUnit: 'minute' }) : ''}
+            onChange={handleStartTimeChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 600, // 10 minutes
+            }}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} md={2}>
+          <TextField
+            label="End Time"
+            type="time"
+            name="endTime"
+            value={formData.endTime ? formData.endTime.toString({ smallestUnit: 'minute' }) : ''}
+            onChange={handleEndTimeChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 600, // 10 minutes
+            }}
+            fullWidth
+          />
+        </Grid>
 
-            <Grid item xs={12} style={{ padding: 0 }}>
-            </Grid>
+        <Grid item xs={12} style={{ padding: 0 }}>
+        </Grid>
 
-            <Grid item xs={12} md={2}>
-              <TextField
-                label="Jobsite ID"
-                name="jobsiteId"
-                value={formData.jobsiteId}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={6} md={2}>
-              <TextField
-                label="Supervisor"
-                name="supervisor"
-                value={formData.supervisor}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={6} md={2}>
-              <TextField
-                label="Address"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={6} md={2}>
-              <TextField
-                label="Jobsite Name"
-                name="jobsiteName"
-                value={formData.jobsiteName}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Additional notes"
-                name="additionalNotes"
-                value={formData.additionalNotes}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
+        <Grid item xs={12} md={2}>
+          <TextField
+            label="Jobsite ID"
+            name="jobsiteId"
+            value={formData.jobsiteId}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} md={2}>
+          <TextField
+            label="Supervisor"
+            name="supervisor"
+            value={formData.supervisor}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} md={2}>
+          <TextField
+            label="Address"
+            name="address"
+            value={formData.address}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} md={2}>
+          <TextField
+            label="Jobsite Name"
+            name="jobsiteName"
+            value={formData.jobsiteName}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Additional notes"
+            name="additionalNotes"
+            value={formData.additionalNotes}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
 
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                value="Submit"
-              >
-                Submit
-              </Button>
-            </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            value="Save"
+          >
+            Save
+          </Button>
+        </Grid>
 
-            <Grid item>
-              <Button
-                variant='contained'
-                onClick={handleDiscard}
-                value="Discard"
-                sx={{
-                  backgroundColor: "#e2e3e5",
-                  color: "black",
-                  "&:hover": {
-                    backgroundColor: "#d6d8db"
-                  }
-                }}
-              >
-                Discard
-              </Button>
-            </Grid>
-
-
-          </Grid>
-        </Box>
-      </AccordionDetails>
-    </Accordion >
+        <Grid item>
+          <Button
+            variant='contained'
+            onClick={handleDiscard}
+            value="Discard"
+            sx={{
+              backgroundColor: "#e2e3e5",
+              color: "black",
+              "&:hover": {
+                backgroundColor: "#d6d8db"
+              }
+            }}
+          >
+            Discard
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
