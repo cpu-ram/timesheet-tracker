@@ -1,16 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Grid, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { startOfDay, format } from 'date-fns';
-import { capitalize } from 'lodash';
+import { useTheme } from '@mui/material/styles';
+
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+
 import Calendar from '../components/Calendar.tsx';
-import WorkDay from '../components/WorkDay/WorkDay.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
-import AddWorkBlockContainer from '../components/AddWorkBlockContainer.tsx';
+import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
+import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 
 const TimesheetPage = ({ selectedUser }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date()));
   const [workData, setWorkData] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [addMode, setAddMode] = useState(false);
+  const theme = useTheme();
 
   const handleAddWorkBlock = async (workBlockData) => {
     event.preventDefault();
@@ -38,6 +47,19 @@ const TimesheetPage = ({ selectedUser }) => {
     }
   }
 
+  const handleSetEditMode = () => {
+    setEditMode(true);
+  }
+  const handleCancelEdit = () => {
+    setEditMode(false);
+  }
+  const handleSetAddMode = () => {
+    setAddMode(true);
+  }
+  const handleCancelAdd = () => {
+    setAddMode(false);
+  }
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,18 +73,64 @@ const TimesheetPage = ({ selectedUser }) => {
   }, [selectedDate, selectedUser])
 
   return (
-    <div>
-
+    <>
       <Calendar {...{ selectedDate, setSelectedDate }}>
       </Calendar>
-      <AddWorkBlockContainer>
-        <AddWorkBlockForm {...{ handleEnteredData: handleAddWorkBlock }}></AddWorkBlockForm>
-      </AddWorkBlockContainer>
-      <WorkDay {...{ workData, selectedDate }}>
-      </WorkDay>
+      <Box sx={{ pb: 1 }}>
+        <Box
+          alignItems='center'
+          justifyContent='flex-start'
+          sx={{ display: 'flex' }}
+        >
+          <Typography variant='h6' sx={{ pt: 1, pb: 1 }}>
+            Workday data
+          </Typography>
 
-    </div>
-  )
+          {editMode ?
+            (<>
+              <Button display='flex'>
+                Save
+              </Button>
+
+              <Button
+                onClick={() => handleCancelEdit()}
+                sx={{ color: theme.palette.error.light }}
+              >
+                Cancel
+              </Button>
+            </>
+            )
+            :
+            (
+              <>
+                <IconButton display='flex' onClick={() => handleSetEditMode()}>
+                  <EditIcon sx={{ color: editMode ? 'grey' : theme.palette.primary.dark }} />
+                </IconButton>
+              </>
+            )
+          }
+        </Box>
+        {
+          addMode ?
+            (
+              <AddWorkBlockForm {...{ handleEnteredData: handleAddWorkBlock, handleDiscard: handleCancelAdd }}>
+              </AddWorkBlockForm >
+            )
+            :
+            (
+              <Button onClick={() => handleSetAddMode()} variant='contained' sx={{ bgColor: theme.palette.secondary.light }}>
+                <AddIcon />
+              </Button>
+            )
+
+        }
+      </Box >
+
+      <DayWorkBlocks {...{ workData, editMode }}>
+      </DayWorkBlocks>
+      <HoursTotal {...{ workData }}></HoursTotal>
+    </>
+  );
 }
 
 export default TimesheetPage;

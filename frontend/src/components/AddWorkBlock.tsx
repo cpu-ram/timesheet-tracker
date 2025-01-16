@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import { Grid, TextField, Typography, Box, Button } from '@mui/material';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AddIcon from '@mui/icons-material/Add';
-import ExpandIcon from '@mui/icons-material/ExpandMore';
+import { Grid, TextField, Box, Button } from '@mui/material';
 import { Temporal } from '@js-temporal/polyfill';
 
-const AddWorkBlockForm = ({ handleEnteredData }) => {
+const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
   const [formData, setFormData] = useState({
     startTime: null as Temporal.PlainTime,
     endTime: null as Temporal.PlainTime,
@@ -20,8 +15,6 @@ const AddWorkBlockForm = ({ handleEnteredData }) => {
     tempJobsiteName: '',
     tempJobisteAddress: '',
   });
-
-  const [toggleIsExpanded, setToggleIsExpanded] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -52,28 +45,7 @@ const AddWorkBlockForm = ({ handleEnteredData }) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleEnteredData(formData);
-    handleToggleSwitch();
-  }
-
-  const handleDiscard = () => {
-    setFormData({
-      startTime: null,
-      endTime: null,
-      jobsiteId: '',
-      supervisor: '',
-      address: '',
-      jobsiteName: '',
-      additionalNotes: '',
-      tempJobsiteId: '',
-      tempJobsiteName: '',
-      tempJobisteAddress: '',
-    });
-    handleToggleSwitch();
-  }
-
-  const handleToggleSwitch = () => {
-    setToggleIsExpanded(!toggleIsExpanded)
-  }
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -173,7 +145,7 @@ const AddWorkBlockForm = ({ handleEnteredData }) => {
         <Grid item>
           <Button
             variant='contained'
-            onClick={handleDiscard}
+            onClick={() => handleDiscard()}
             value="Discard"
             sx={{
               backgroundColor: "#e2e3e5",
