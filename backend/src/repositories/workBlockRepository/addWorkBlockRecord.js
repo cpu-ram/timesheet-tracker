@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 export const addWorkBlockRecord = async (
   employeeId,
   reportedById = null,
-  projectId = null,
+  jobsiteId = null,
   startTime = null,
   endTime = null,
   breakStartTime = null,
@@ -16,7 +16,7 @@ export const addWorkBlockRecord = async (
     work_start, work_end, break_start, break_end, date)
     VALUES($1, $2, $3, $4, $5, $6, $7, $8);
   `;
-  const values = [projectId, reportedById, employeeId, startTime, endTime,
+  const values = [jobsiteId, reportedById, employeeId, startTime, endTime,
     breakStartTime, breakEndTime, date];
   try {
     const result = await dbPool.query(query, values);

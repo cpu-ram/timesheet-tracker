@@ -12,7 +12,7 @@ export async function getJobsite(jobId) {
 
   const result = Object.fromEntries(
     Object.entries(jobsiteRecord).map(([key, value]) => {
-      if (timeFields.includes(key)) {
+      if (timeFields.includes(key) && !!value) {
         const [hours, minutes] = value.split(':').map(Number);
         return [key, { hours, minutes }];
       }

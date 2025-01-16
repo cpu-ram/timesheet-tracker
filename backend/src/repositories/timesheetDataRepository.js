@@ -25,7 +25,8 @@ export async function fetchTimesheetDataRecords(employeeId, from, to) {
       work_start as "workBlockStart",
       break_start as "breakStart",
       break_end as "breakEnd",
-      work_end as "workBlockEnd"
+      work_end as "workBlockEnd",
+      date as "workBlockDate"
     FROM
       work_periods 
     LEFT JOIN 

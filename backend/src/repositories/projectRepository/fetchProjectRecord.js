@@ -1,6 +1,6 @@
 import dbPool from '../../config/dbPool.js';
 
-export const fetchProjectRecord = async (projectId) => {
+export const fetchProjectRecord = async (jobsiteId) => {
   const query = `
     SELECT 
       default_work_start_time AS "workStartTime",
@@ -19,7 +19,7 @@ export const fetchProjectRecord = async (projectId) => {
     WHERE 
       project_id=$1;
   `;
-  const values = [projectId];
+  const values = [jobsiteId];
   try {
     const result = await dbPool.query(query, values);
     if (result.rowCount === 0) return null;

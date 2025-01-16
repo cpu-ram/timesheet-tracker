@@ -20,7 +20,7 @@ export async function getWorkBlocks(
 export const addWorkBlock = (
   employeeId,
   reportedById,
-  projectId = null,
+  jobsiteId = null,
   startDateTime = null,
   endDateTime = null,
   breakStartTime = null,
@@ -30,7 +30,7 @@ export const addWorkBlock = (
   addWorkBlockRecord(
     employeeId,
     reportedById,
-    projectId,
+    jobsiteId,
     startDateTime,
     endDateTime,
     breakStartTime,
