@@ -1,4 +1,4 @@
-import { addWorkBlock, getWorkBlocks } from "../services/workBlockService.js";
+import { addWorkBlock, getWorkBlocks, deleteWorkBlock } from "../services/workBlockService.js";
 
 export const getWorkBlocksController = (req, res) => {
   try {
@@ -36,7 +36,14 @@ export const addWorkBlockController = (req, res) => {
 
     res.status(201).json({ success: true, message: 'Work block added successfully' });
   }
-  catch (error) {
-    throw error;
+
+  const deleteWorkBlockController = (req, res) => {
+    try {
+      const result = deleteWorkBlock(req.query.id);
+      res.status(200).json("Work block deleted successfully");
+    }
+    catch (error) {
+      throw new error(error);
+    }
   }
 }
