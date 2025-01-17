@@ -37,13 +37,18 @@ export const addWorkBlockController = (req, res) => {
     res.status(201).json({ success: true, message: 'Work block added successfully' });
   }
 
-  const deleteWorkBlockController = (req, res) => {
-    try {
-      const result = deleteWorkBlock(req.query.id);
-      res.status(200).json("Work block deleted successfully");
-    }
-    catch (error) {
-      throw new error(error);
-    }
+  catch (error) {
+    throw new Error(error);
   }
 }
+
+export const deleteWorkBlockController = (req, res) => {
+  try {
+    const result = deleteWorkBlock(Number(req.params.workBlockId));
+    res.status(200).json("Work block deleted successfully");
+  }
+  catch (error) {
+    throw new error(error);
+  }
+}
+

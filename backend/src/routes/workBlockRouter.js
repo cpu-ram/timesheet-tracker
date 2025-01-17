@@ -4,6 +4,6 @@ import { getWorkBlocksController, addWorkBlockController, deleteWorkBlockControl
 const workBlockRouter = express.Router();
 workBlockRouter.get('/', getWorkBlocksController);
 workBlockRouter.post('/', addWorkBlockController);
-workBlockRouter.delete('/', deleteWorkBlockController);
+workBlockRouter.delete('/:workBlockId', deleteWorkBlockController);
 
 export { workBlockRouter };
