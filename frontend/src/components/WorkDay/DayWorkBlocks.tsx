@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import { Typography } from '@mui/material';
 import { WorkBlock } from '../WorkBlock.tsx';
 
-const DayWorkBlocks = ({ workData, editMode }) => {
+const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock = (() => { }), handleEditWorkBlock = (() => { }) }) => {
 
   return (
     <>
@@ -11,7 +10,7 @@ const DayWorkBlocks = ({ workData, editMode }) => {
           (
             workData.map((workBlock) => (
               workBlock ?
-                <WorkBlock {...workBlock} editMode={editMode} key={workBlock.workBlockId} />
+                <WorkBlock {...workBlock} handleDeleteWorkBlock={handleDeleteWorkBlock} handleEditWorkBlock={handleEditWorkBlock} editMode={editMode} key={workBlock.workBlockId} />
                 :
                 null
             ))

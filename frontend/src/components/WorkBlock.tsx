@@ -16,7 +16,7 @@ interface WorkBlockProps {
 
 const WorkBlock = (
   {
-    id,
+    workBlockId,
     workBlockStart,
     workBlockEnd,
     breakStart,
@@ -24,12 +24,14 @@ const WorkBlock = (
     jobsiteId,
     jobsiteAddress,
     jobsiteName,
-    editMode
+    editMode,
+    handleDeleteWorkBlock,
+    handleEditWorkBlock
   }: WorkBlockProps
 ) => {
   return (
     <div>
-      <Grid container key={id} sx={{ borderTop: 1, borderColor: 'divider' }} spacing='0'>
+      <Grid container key={workBlockId} sx={{ borderTop: 1, borderColor: 'divider' }} spacing='0'>
         <Grid item xs={editMode ? 2.5 : 1.5}>
           <Typography>
             From:
@@ -59,7 +61,10 @@ const WorkBlock = (
               editMode ?
                 (
                   <>
-                    <DeleteIcon sx={{ color: 'error.main' }} />
+                    <DeleteIcon
+                      sx={{ color: 'error.main' }}
+                      onClick={() => handleDeleteWorkBlock(workBlockId)}
+                    />
                     <EditIcon sx={{ color: 'info.main' }} />
                   </>
                 )

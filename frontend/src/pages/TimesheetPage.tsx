@@ -22,7 +22,6 @@ const TimesheetPage = ({ selectedUser }) => {
   const theme = useTheme();
 
   const handleAddWorkBlock = async (workBlockData) => {
-    event.preventDefault();
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
     try {
       const response = await fetch(`${baseUrl}/workBlocks`, {
@@ -46,6 +45,27 @@ const TimesheetPage = ({ selectedUser }) => {
       throw new Error(error);
     }
   }
+
+  const handleDeleteWorkBlock = async (workBlockId) => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
+    try {
+      const response = await fetch(`${baseUrl}/workBlocks/${workBlockId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete work block');
+      }
+    }
+    catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  const handleEditWorkBlock = (() => { });
 
   const handleSetEditMode = () => {
     setEditMode(true);
@@ -126,7 +146,7 @@ const TimesheetPage = ({ selectedUser }) => {
         }
       </Box >
 
-      <DayWorkBlocks {...{ workData, editMode }}>
+      <DayWorkBlocks {...{ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
       </DayWorkBlocks>
       <HoursTotal {...{ workData }}></HoursTotal>
     </>
