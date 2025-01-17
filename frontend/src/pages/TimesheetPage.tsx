@@ -21,6 +21,13 @@ const TimesheetPage = ({ selectedUser }) => {
   const [addMode, setAddMode] = useState(false);
   const theme = useTheme();
 
+  const fetchData = async () => {
+    if (selectedDate) {
+      const timesheetData = await fetchTimesheetData({ date: selectedDate, userId: selectedUser.id });
+      setWorkData(timesheetData);
+    }
+  };
+
   const handleAddWorkBlock = async (workBlockData) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
     try {
@@ -40,6 +47,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to submit work block');
       }
+      fetchData();
     }
     catch (error) {
       throw new Error(error);
@@ -59,6 +67,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to delete work block');
       }
+      fetchData();
     }
     catch (error) {
       throw new Error(error);
@@ -82,13 +91,6 @@ const TimesheetPage = ({ selectedUser }) => {
 
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (selectedDate) {
-        const timesheetData = await fetchTimesheetData({ date: selectedDate, userId: selectedUser.id });
-        setWorkData(timesheetData);
-      }
-    };
-
     fetchData();
   }, [selectedDate, selectedUser])
 
