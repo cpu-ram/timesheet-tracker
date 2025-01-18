@@ -41,7 +41,10 @@ const TimesheetPage = ({ selectedUser }) => {
           reportedById: selectedUser.id,
           startTime: workBlockData.startTime ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.startTime.toString() + ".000Z" : null,
           endTime: workBlockData.endTime ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.endTime.toString() + ".000Z" : null,
-          date: selectedDate
+          date: selectedDate,
+          tempJobsiteId: workBlockData.jobsiteId,
+          tempJobsiteName: workBlockData.jobsiteName,
+          tempJobsiteAddress: workBlockData.address
         }),
       });
       if (!response.ok) {
@@ -110,15 +113,12 @@ const TimesheetPage = ({ selectedUser }) => {
 
           {editMode ?
             (<>
-              <Button display='flex'>
-                Save
-              </Button>
-
               <Button
                 onClick={() => handleCancelEdit()}
-                sx={{ color: theme.palette.error.light }}
+                sx={{ color: theme.palette.primary, marginLeft: 0.75, fontSize: 12, padding: 0.2 }}
+                variant='outlined'
               >
-                Cancel
+                Done
               </Button>
             </>
             )

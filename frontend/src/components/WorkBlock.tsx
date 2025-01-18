@@ -65,7 +65,7 @@ const WorkBlock = (
                       sx={{ color: 'error.main' }}
                       onClick={() => handleDeleteWorkBlock(workBlockId)}
                     />
-                    <EditIcon sx={{ color: 'info.main' }} />
+                    <EditIcon sx={{ color: 'info.main', paddingRight: 1 }} />
                   </>
                 )
                 :
