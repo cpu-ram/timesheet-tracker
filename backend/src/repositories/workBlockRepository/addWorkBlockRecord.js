@@ -10,14 +10,28 @@ export const addWorkBlockRecord = async (
   breakStartTime = null,
   breakEndTime = null,
   date = null,
+  tempJobsiteId = null,
+  tempJobsiteName = null,
+  tempJobsiteAddress = null,
+  additionalNotes = null
 ) => {
   const query = `
-    INSERT INTO work_periods(project_id, reported_by, employee_id,
-    work_start, work_end, break_start, break_end, date)
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8);
+    INSERT INTO work_periods(
+      project_id, reported_by, employee_id,
+      work_start, work_end, break_start, break_end, date,
+      temp_project_id, temp_project_name, temp_project_location, additional_notes
+    )
+    VALUES(
+      $1, $2, $3, 
+      $4, $5, $6, $7, $8,
+      $9, $10, $11, $12
+    );
   `;
-  const values = [jobsiteId, reportedById, employeeId, startTime, endTime,
-    breakStartTime, breakEndTime, date];
+  const values = [
+    jobsiteId, reportedById, employeeId,
+    startTime, endTime, breakStartTime, breakEndTime, date,
+    tempJobsiteId, tempJobsiteName, tempJobsiteAddress, additionalNotes
+  ];
   try {
     const result = await dbPool.query(query, values);
     return true;

@@ -1,3 +1,4 @@
+import { add } from "date-fns";
 import { addWorkBlock, getWorkBlocks, deleteWorkBlock } from "../services/workBlockService.js";
 
 export const getWorkBlocksController = (req, res) => {
@@ -21,6 +22,10 @@ export const addWorkBlockController = (req, res) => {
       breakStartTime,
       breakEndTime,
       date,
+      tempJobsiteId,
+      tempJobsiteName,
+      tempJobsiteAddress,
+      additionalNotes
     } = req.body;
 
     const result = addWorkBlock(
@@ -32,6 +37,10 @@ export const addWorkBlockController = (req, res) => {
       breakStartTime,
       breakEndTime,
       date,
+      tempJobsiteId,
+      tempJobsiteName,
+      tempJobsiteAddress,
+      additionalNotes
     );
 
     res.status(201).json({ success: true, message: 'Work block added successfully' });

@@ -26,6 +26,10 @@ export const addWorkBlock = (
   breakStartTime = null,
   breakEndTime = null,
   date = null,
+  tempJobsiteId = null,
+  tempJobsiteName = null,
+  tempJobsiteAddress = null,
+  additionalNotes = null
 ) => {
   addWorkBlockRecord(
     employeeId,
@@ -36,6 +40,10 @@ export const addWorkBlock = (
     breakStartTime,
     breakEndTime,
     date,
+    tempJobsiteId,
+    tempJobsiteName,
+    tempJobsiteAddress,
+    additionalNotes
   );
 };
 
