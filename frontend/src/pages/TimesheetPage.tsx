@@ -88,7 +88,7 @@ const TimesheetPage = ({ selectedUser }) => {
   const handleSetAddMode = () => {
     setAddMode(true);
   }
-  const handleCancelAdd = () => {
+  const handleDiscard = () => {
     setAddMode(false);
   }
 
@@ -135,7 +135,7 @@ const TimesheetPage = ({ selectedUser }) => {
         {
           addMode ?
             (
-              <AddWorkBlockForm {...{ handleEnteredData: handleAddWorkBlock, handleDiscard: handleCancelAdd }}>
+              <AddWorkBlockForm {...{ handleEnteredData: handleAddWorkBlock, handleDiscard }}>
               </AddWorkBlockForm >
             )
             :

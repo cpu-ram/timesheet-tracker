@@ -45,6 +45,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleEnteredData(formData);
+    handleDiscard();
   };
 
   return (
@@ -145,7 +146,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
         <Grid item>
           <Button
             variant='contained'
-            onClick={() => handleDiscard()}
+            onClick={handleDiscard}
             value="Discard"
             sx={{
               backgroundColor: "#e2e3e5",
