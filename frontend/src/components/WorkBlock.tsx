@@ -44,7 +44,14 @@ const WorkBlock = (
           <Typography>
             {
               workBlockStart ?
-                format(workBlockStart, 'hh:mm a')
+                workBlockStart.toPlainTime().toLocaleString(
+                  'en-US',
+                  {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                  }
+                ).toLowerCase()
                 :
                 <i>[work start absent]</i>}
           </Typography>
@@ -84,8 +91,8 @@ const WorkBlock = (
                   {
                     (() => {
                       const scale = 100;
-                      const workBlockMilliseconds = (workBlockEnd.getTime() - workBlockStart.getTime());
-                      const roundedWorkBlockHours = Math.round(workBlockMilliseconds / (3600 * 1000) * scale) / scale;
+                      const workBlockHours = workBlockStart.until(workBlockEnd).total({ unit: 'hours' });
+                      const roundedWorkBlockHours = Math.round(workBlockHours * scale) / scale;
                       return roundedWorkBlockHours + 'h';
                     }
                     )()
@@ -110,7 +117,14 @@ const WorkBlock = (
         <Grid item xs={3}>
           <Typography>
             {workBlockEnd ?
-              format(workBlockEnd, 'hh:mm a')
+              workBlockEnd.toPlainTime().toLocaleString(
+                'en-US',
+                {
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true,
+                }
+              ).toLowerCase()
               :
               <i>[work end absent]</i>
             }

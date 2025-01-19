@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { Temporal } from '@js-temporal/polyfill';
 
 const fetchTimesheetData = async ({ date, userId }) => {
   const dateString = format(date, 'yyyy-MM-dd');
@@ -19,13 +20,13 @@ const fetchTimesheetData = async ({ date, userId }) => {
           {
             ...workBlock,
             workBlockStart:
-              workBlock.workBlockStart ? new Date(workBlock.workBlockStart) : null,
+              workBlock.workBlockStart ? Temporal.PlainDateTime.from(workBlock.workBlockStart) : null,
             workBlockEnd:
-              workBlock.workBlockEnd ? new Date(workBlock.workBlockEnd) : null,
+              workBlock.workBlockEnd ? Temporal.PlainDateTime.from(workBlock.workBlockEnd) : null,
             breakStart:
-              workBlock.breakStart ? new Date(workBlock.breakStart) : null,
+              workBlock.breakStart ? Temporal.PlainDateTime.from(workBlock.breakStart) : null,
             breakEnd:
-              workBlock.breakEnd ? new Date(workBlock.breakEnd) : null
+              workBlock.breakEnd ? Temporal.PlainDateTime.from(workBlock.breakEnd) : null
           }
         ))
         :

@@ -20,7 +20,7 @@ const HoursTotal = ({ workData }) => {
                   {'    '}
                   {workData ? workData.reduce((acc, workBlock) => (
                     workBlock.workBlockStart && workBlock.workBlockEnd ?
-                      acc + (new Date(workBlock.workBlockEnd).getTime() - new Date(workBlock.workBlockStart).getTime()) / 1000 / 60 / 60
+                      acc + workBlock.workBlockStart.until(workBlock.workBlockEnd).total({ unit: 'hours' })
                       :
                       acc
                   ), 0) : 0}
