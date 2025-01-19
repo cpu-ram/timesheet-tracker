@@ -25,6 +25,7 @@ export const addWorkBlockController = (req, res) => {
       tempJobsiteId,
       tempJobsiteName,
       tempJobsiteAddress,
+      tempSupervisorName,
       additionalNotes
     } = req.body;
 
@@ -40,6 +41,7 @@ export const addWorkBlockController = (req, res) => {
       tempJobsiteId,
       tempJobsiteName,
       tempJobsiteAddress,
+      tempSupervisorName,
       additionalNotes
     );
 

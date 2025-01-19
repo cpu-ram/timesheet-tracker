@@ -27,13 +27,16 @@ export async function fetchTimesheetDataRecords(employeeId, from, to) {
       break_end as "breakEnd",
       work_end as "workBlockEnd",
       date as "workBlockDate",
+      coalesce(employees.employee_nickname, employees.employee_name, work_periods.temp_supervisor_name) as "supervisorName",
       additional_notes as "additionalNotes"
     FROM
-      work_periods 
+      work_periods
     LEFT JOIN 
       projects
     ON
       work_periods.project_id=projects.project_id
+    LEFT JOIN 
+      employees on projects.supervisor_id=employees.employee_id
     WHERE
       date >= $1 
     AND

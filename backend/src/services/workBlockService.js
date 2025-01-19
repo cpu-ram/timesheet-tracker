@@ -29,6 +29,7 @@ export const addWorkBlock = (
   tempJobsiteId = null,
   tempJobsiteName = null,
   tempJobsiteAddress = null,
+  tempSupervisorName = null,
   additionalNotes = null
 ) => {
   addWorkBlockRecord(
@@ -43,6 +44,7 @@ export const addWorkBlock = (
     tempJobsiteId,
     tempJobsiteName,
     tempJobsiteAddress,
+    tempSupervisorName,
     additionalNotes
   );
 };
