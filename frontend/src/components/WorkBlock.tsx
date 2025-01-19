@@ -29,7 +29,7 @@ const WorkBlock = (
     additionalNotes,
     editMode,
     handleDeleteWorkBlock,
-    handleEditWorkBlock
+    handleSelectForEdit
   }: WorkBlockProps
 ) => {
   return (
@@ -75,7 +75,10 @@ const WorkBlock = (
                       sx={{ color: 'error.main' }}
                       onClick={() => handleDeleteWorkBlock(workBlockId)}
                     />
-                    <EditIcon sx={{ color: 'info.main', paddingRight: 1 }} />
+                    <EditIcon
+                      sx={{ color: 'info.main', paddingRight: 1 }}
+                      onClick={() => handleSelectForEdit(workBlockId)}
+                    />
                   </>
                 )
                 :

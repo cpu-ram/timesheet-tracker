@@ -19,6 +19,7 @@ const TimesheetPage = ({ selectedUser }) => {
   const [workData, setWorkData] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
+
   const theme = useTheme();
 
   const fetchData = async () => {
@@ -39,12 +40,12 @@ const TimesheetPage = ({ selectedUser }) => {
         body: JSON.stringify({
           employeeId: selectedUser.id,
           reportedById: selectedUser.id,
-          startTime: workBlockData.startTime ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.startTime.toString() + ".000Z" : null,
-          endTime: workBlockData.endTime ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.endTime.toString() + ".000Z" : null,
+          startTime: workBlockData.workBlockStart ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
+          endTime: workBlockData.workBlockEnd ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
           date: selectedDate,
           tempJobsiteId: workBlockData.jobsiteId,
           tempJobsiteName: workBlockData.jobsiteName,
-          tempJobsiteAddress: workBlockData.address,
+          tempJobsiteAddress: workBlockData.jobsiteAddress,
           tempSupervisorName: workBlockData.supervisorName,
           additionalNotes: workBlockData.additionalNotes
         }),
@@ -137,7 +138,7 @@ const TimesheetPage = ({ selectedUser }) => {
         {
           addMode ?
             (
-              <AddWorkBlockForm {...{ handleEnteredData: handleAddWorkBlock, handleDiscard }}>
+              <AddWorkBlockForm {...{ ...workData, handleEnteredData: handleAddWorkBlock, handleDiscard }}>
               </AddWorkBlockForm >
             )
             :

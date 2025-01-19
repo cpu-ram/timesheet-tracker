@@ -1,7 +1,18 @@
+import { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
 import { WorkBlock } from '../WorkBlock.tsx';
+import AddWorkBlockForm from '../AddWorkBlock.tsx';
 
-const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock = (() => { }), handleEditWorkBlock = (() => { }) }) => {
+const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }) => {
+  const [selectedForEditId, setSelectedForEditId] = useState(null);
+
+  useEffect(() => {
+    setSelectedForEditId(null);
+  }, [workData]);
+
+  const handleSelectForEdit = (workBlockId) => {
+    setSelectedForEditId(workBlockId);
+  }
 
   return (
     <>
@@ -10,7 +21,12 @@ const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock = (() => { })
           (
             workData.map((workBlock) => (
               workBlock ?
-                <WorkBlock {...workBlock} handleDeleteWorkBlock={handleDeleteWorkBlock} handleEditWorkBlock={handleEditWorkBlock} editMode={editMode} key={workBlock.workBlockId} />
+                (
+                  editMode && (workBlock.workBlockId === selectedForEditId) ?
+                    <AddWorkBlockForm {...workBlock} key={workBlock.workBlockId} />
+                    :
+                    <WorkBlock {...{ ...workBlock, handleDeleteWorkBlock, handleSelectForEdit, editMode }} key={workBlock.workBlockId} />
+                )
                 :
                 null
             ))

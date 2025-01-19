@@ -2,15 +2,19 @@ import React, { useState } from 'react';
 import { Grid, TextField, Box, Button } from '@mui/material';
 import { Temporal } from '@js-temporal/polyfill';
 
-const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
+const AddWorkBlockForm = ({
+  workBlockStart = null, workBlockEnd = null, jobsiteId = null, supervisorName = null, jobsiteAddress = null,
+  jobsiteName = null, additionalNotes = null, handleEnteredData, handleDiscard
+}) => {
+
   const [formData, setFormData] = useState({
-    startTime: null as Temporal.PlainTime,
-    endTime: null as Temporal.PlainTime,
-    jobsiteId: '',
-    supervisorName: '',
-    address: '',
-    jobsiteName: '',
-    additionalNotes: ''
+    workBlockStart: workBlockStart ? workBlockStart.toPlainTime() : '',
+    workBlockEnd: workBlockEnd ? workBlockEnd.toPlainTime() : '',
+    jobsiteId: jobsiteId ?? null,
+    supervisorName: supervisorName ?? null,
+    jobsiteAddress: jobsiteAddress ?? null,
+    jobsiteName: jobsiteName ?? null,
+    additionalNotes: additionalNotes ?? null
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +30,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
     const [hour, minute] = time.split(':').map(Number);
     setFormData((prevData) => ({
       ...prevData,
-      startTime: Temporal.PlainTime.from({ hour, minute: minute ?? 0 }),
+      workBlockStart: Temporal.PlainTime.from({ hour, minute: minute ?? 0 }),
     }));
   };
 
@@ -35,7 +39,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
     const [hour, minute] = time.split(':').map(Number);
     setFormData((prevData) => ({
       ...prevData,
-      endTime: Temporal.PlainTime.from({ hour, minute: minute ?? 0 }),
+      workBlockEnd: Temporal.PlainTime.from({ hour, minute: minute ?? 0 }),
     }));
   };
 
@@ -53,7 +57,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
             label="Start Time"
             type="time"
             name="startTime"
-            value={formData.startTime ? formData.startTime.toString({ smallestUnit: 'minute' }) : ''}
+            value={formData.workBlockStart ? formData.workBlockStart.toString({ smallestUnit: 'minute' }) : ''}
             onChange={handleStartTimeChange}
             InputLabelProps={{
               shrink: true,
@@ -69,7 +73,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
             label="End Time"
             type="time"
             name="endTime"
-            value={formData.endTime ? formData.endTime.toString({ smallestUnit: 'minute' }) : ''}
+            value={formData.workBlockEnd ? formData.workBlockEnd.toString({ smallestUnit: 'minute' }) : ''}
             onChange={handleEndTimeChange}
             InputLabelProps={{
               shrink: true,
@@ -88,7 +92,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
           <TextField
             label="Jobsite ID"
             name="jobsiteId"
-            value={formData.jobsiteId}
+            value={formData.jobsiteId ?? ''}
             onChange={handleInputChange}
             fullWidth
             inputProps={{
@@ -100,7 +104,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
           <TextField
             label="Supervisor"
             name="supervisorName"
-            value={formData.supervisorName}
+            value={formData.supervisorName ?? ''}
             onChange={handleInputChange}
             fullWidth
             inputProps={{
@@ -111,8 +115,8 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
         <Grid item xs={6} md={2}>
           <TextField
             label="Address"
-            name="address"
-            value={formData.address}
+            name="jobsiteAddress"
+            value={formData.jobsiteAddress ?? ''}
             onChange={handleInputChange}
             fullWidth
             inputProps={{
@@ -124,7 +128,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
           <TextField
             label="Jobsite Name"
             name="jobsiteName"
-            value={formData.jobsiteName}
+            value={formData.jobsiteName ?? ''}
             onChange={handleInputChange}
             fullWidth
             inputProps={{
@@ -136,7 +140,7 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
           <TextField
             label="Additional notes"
             name="additionalNotes"
-            value={formData.additionalNotes}
+            value={formData.additionalNotes ?? ''}
             onChange={handleInputChange}
             fullWidth
             inputProps={{
