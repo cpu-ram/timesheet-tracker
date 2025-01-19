@@ -44,7 +44,9 @@ const TimesheetPage = ({ selectedUser }) => {
           date: selectedDate,
           tempJobsiteId: workBlockData.jobsiteId,
           tempJobsiteName: workBlockData.jobsiteName,
-          tempJobsiteAddress: workBlockData.address
+          tempJobsiteAddress: workBlockData.address,
+          tempSupervisorName: workBlockData.supervisorName,
+          additionalNotes: workBlockData.additionalNotes
         }),
       });
       if (!response.ok) {

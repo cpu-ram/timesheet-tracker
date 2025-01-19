@@ -24,6 +24,8 @@ const WorkBlock = (
     jobsiteId,
     jobsiteAddress,
     jobsiteName,
+    supervisorName,
+    additionalNotes,
     editMode,
     handleDeleteWorkBlock,
     handleEditWorkBlock

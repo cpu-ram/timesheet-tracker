@@ -7,13 +7,10 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
     startTime: null as Temporal.PlainTime,
     endTime: null as Temporal.PlainTime,
     jobsiteId: '',
-    supervisor: '',
+    supervisorName: '',
     address: '',
     jobsiteName: '',
-    additionalNotes: '',
-    tempJobsiteId: '',
-    tempJobsiteName: '',
-    tempJobisteAddress: '',
+    additionalNotes: ''
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,8 +96,8 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
         <Grid item xs={6} md={2}>
           <TextField
             label="Supervisor"
-            name="supervisor"
-            value={formData.supervisor}
+            name="supervisorName"
+            value={formData.supervisorName}
             onChange={handleInputChange}
             fullWidth
           />
