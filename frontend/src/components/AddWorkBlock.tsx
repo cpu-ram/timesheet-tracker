@@ -91,6 +91,9 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
             value={formData.jobsiteId}
             onChange={handleInputChange}
             fullWidth
+            inputProps={{
+              autoComplete: 'off'
+            }}
           />
         </Grid>
         <Grid item xs={6} md={2}>
@@ -100,6 +103,9 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
             value={formData.supervisorName}
             onChange={handleInputChange}
             fullWidth
+            inputProps={{
+              autoComplete: 'off'
+            }}
           />
         </Grid>
         <Grid item xs={6} md={2}>
@@ -109,6 +115,9 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
             value={formData.address}
             onChange={handleInputChange}
             fullWidth
+            inputProps={{
+              autoComplete: 'off'
+            }}
           />
         </Grid>
         <Grid item xs={6} md={2}>
@@ -118,6 +127,9 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
             value={formData.jobsiteName}
             onChange={handleInputChange}
             fullWidth
+            inputProps={{
+              autoComplete: 'off'
+            }}
           />
         </Grid>
         <Grid item xs={12}>
@@ -127,6 +139,9 @@ const AddWorkBlockForm = ({ handleEnteredData, handleDiscard }) => {
             value={formData.additionalNotes}
             onChange={handleInputChange}
             fullWidth
+            inputProps={{
+              autoComplete: 'off'
+            }}
           />
         </Grid>
 
