@@ -1,5 +1,6 @@
 import { add } from "date-fns";
-import { addWorkBlock, getWorkBlocks, deleteWorkBlock } from "../services/workBlockService.js";
+import { addWorkBlock, getWorkBlocks, deleteWorkBlock, updateWorkBlock } from "../services/workBlockService.js";
+import exp from "constants";
 
 export const getWorkBlocksController = (req, res) => {
   try {
@@ -60,6 +61,33 @@ export const deleteWorkBlockController = (req, res) => {
   }
   catch (error) {
     throw new error(error);
+  }
+}
+
+export const updateWorkBlockController = (req, res) => {
+  try {
+    const {
+      startTime,
+      endTime,
+      tempJobsiteId,
+      tempJobsiteName,
+      tempJobsiteAddress,
+      tempSupervisorName,
+      additionalNotes
+    } = req.body;
+    const workBlockId = req.params.workBlockId;
+
+    const result = updateWorkBlock(
+      workBlockId, startTime, endTime,
+      tempJobsiteId, tempJobsiteName,
+      tempJobsiteAddress, tempSupervisorName,
+      additionalNotes
+    );
+
+    res.status(201).json({ success: true, message: 'Work block updated successfully' });
+  }
+  catch (error) {
+    throw new Error(error);
   }
 }
 

@@ -1,5 +1,5 @@
 import {
-  getWorkBlockRecords, addWorkBlockRecord, deleteWorkBlockRecord
+  getWorkBlockRecords, addWorkBlockRecord, updateWorkBlockRecord, deleteWorkBlockRecord
 } from '../repositories/workBlockRepository.js';
 
 export async function getWorkBlocks(
@@ -48,5 +48,27 @@ export const addWorkBlock = (
     additionalNotes
   );
 };
+
+export const updateWorkBlock = (
+  workBlockId,
+  startTime,
+  endTime,
+  tempJobsiteId,
+  tempJobsiteName,
+  tempJobsiteAddress,
+  tempSupervisorName,
+  additionalNotes
+) => {
+  updateWorkBlockRecord(
+    workBlockId,
+    startTime,
+    endTime,
+    tempJobsiteId,
+    tempJobsiteName,
+    tempJobsiteAddress,
+    tempSupervisorName,
+    additionalNotes
+  )
+}
 
 export const deleteWorkBlock = (workBlockId) => deleteWorkBlockRecord(workBlockId);
