@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { startOfWeek, startOfDay, addDays, isSameDay, compareAsc } from 'date-fns';
 import { GlobalStyles } from '@mui/material';
@@ -8,6 +9,9 @@ interface CalendarProps {
 }
 
 const Calendar = ({ selectedDate, setSelectedDate }: CalendarProps) => {
+
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const today = startOfDay(new Date());
   const lastWeekStart = addDays(startOfWeek(today, { weekStartsOn: 1 }), -7);
   const days = Array.from({ length: 14 }).map((_, index) => addDays(lastWeekStart, index));
@@ -35,7 +39,7 @@ const Calendar = ({ selectedDate, setSelectedDate }: CalendarProps) => {
           ))}
         </Grid>
 
-        {[0, 7].map((startIndex) => (
+        {(isExpanded ? [0, 7] : [7]).map((startIndex) => (
           <Grid container item xs={12} key={startIndex}>
             <Grid container spacing={1} key="month-header">
               {days.slice(startIndex, startIndex + 7).map((day, index) => {
