@@ -29,7 +29,7 @@ const WorkBlock = (
     additionalNotes,
     editMode,
     handleDeleteWorkBlock,
-    handleSelectForEdit
+    handleSelectForEdit,
   }: WorkBlockProps
 ) => {
   return (

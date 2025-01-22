@@ -59,6 +59,39 @@ const TimesheetPage = ({ selectedUser }) => {
       throw new Error(error);
     }
   }
+  const handleEditWorkBlock = async ({ workBlockId, workBlockData }) => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
+    try {
+      const response = await fetch(`${baseUrl}/workBlocks/${workBlockId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body:
+            JSON.stringify({
+              workBlockId: workBlockId,
+              startTime: workBlockData.workBlockStart ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
+              endTime: workBlockData.workBlockEnd ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
+              tempJobsiteId: workBlockData.jobsiteId,
+              tempJobsiteName: workBlockData.jobsiteName,
+              tempJobsiteAddress: workBlockData.jobsiteAddress,
+              tempSupervisorName: workBlockData.supervisorName,
+              additionalNotes: workBlockData.additionalNotes
+            })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update work block');
+      }
+      fetchData();
+    }
+    catch (error) {
+      throw new Error(error);
+    }
+  }
 
   const handleDeleteWorkBlock = async (workBlockId) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -79,8 +112,6 @@ const TimesheetPage = ({ selectedUser }) => {
       throw new Error(error);
     }
   }
-
-  const handleEditWorkBlock = (() => { });
 
   const handleSetEditMode = () => {
     setEditMode(true);
