@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import CompressIcon from '@mui/icons-material/Compress';
 
 import Calendar from '../components/Calendar.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
@@ -135,58 +136,120 @@ const TimesheetPage = ({ selectedUser }) => {
     <>
       <Calendar {...{ selectedDate, setSelectedDate }}>
       </Calendar>
+
       <Box sx={{ pb: 1 }}>
         <Box
           alignItems='center'
           justifyContent='flex-start'
-          sx={{ display: 'flex' }}
+          sx={{
+            display: 'flex',
+            paddingTop: 1,
+          }}
         >
-          <Typography variant='h6' sx={{ pt: 1, pb: 1 }}>
-            Workday data
-          </Typography>
 
-          {editMode ?
-            (<>
-              <Button
-                onClick={() => handleCancelEdit()}
-                sx={{ color: theme.palette.primary, marginLeft: 0.75, fontSize: 12, padding: 0.2 }}
-                variant='outlined'
-              >
-                Done
-              </Button>
-            </>
-            )
-            :
-            (
-              <>
-                <IconButton display='flex' onClick={() => handleSetEditMode()}>
-                  <EditIcon sx={{ color: editMode ? 'grey' : theme.palette.primary.dark }} />
-                </IconButton>
+          <Box sx={{
+            marginLeft: 0.5,
+          }}>
+            {addMode ?
+              (
+                <>
+                  <Button
+                    onClick={() => handleDiscard()}
+                    variant='outlined'
+                    sx={{
+                      backgroundColor: theme.palette.info.dark,
+                      color: 'white',
+                    }}
+                  >
+                    <CompressIcon />
+                  </Button>
+                </>
+              )
+              :
+              (
+                <>
+                  <Button
+                    onClick={() => handleSetAddMode()}
+                    variant='outlined'
+                    sx={{
+                      backgroundColor: theme.palette.info.light,
+                      color: 'white',
+                    }}>
+                    <AddIcon />
+                  </Button>
+                </>
+              )
+            }
+          </Box>
+
+          <Box sx={{
+            marginLeft: 0.75,
+          }}>
+            {editMode ?
+              (<>
+                <Button
+                  onClick={() => handleCancelEdit()}
+                  sx={{
+                    color: 'white',
+                    backgroundColor: theme.palette.info.dark
+                  }}
+                  variant='outlined'
+                >
+                  <Typography variant='h7' sx={{
+                    padding: 0,
+                    margin: 0,
+                  }}>
+                    Done
+                  </Typography>
+                </Button>
               </>
-            )
-          }
+              )
+
+              :
+
+              (
+                <>
+                  <Button
+                    display='flex'
+                    onClick={() => handleSetEditMode()}
+                    sx={{
+                      border: `1px solid ${theme.palette.primary.dark}`,
+                      backgroundColor: theme.palette.primary.dark,
+                    }}
+                  >
+                    <EditIcon
+                      sx={{
+                        padding: 0,
+                        margin: 0,
+                        fontSize: '1.3rem',
+                        color: 'white',
+                      }} />
+                  </Button>
+                </>
+              )
+            }
+          </Box>
+
         </Box>
+
         {
           addMode ?
             (
               <AddWorkBlockForm {...{ ...workData, handleEnteredData: handleAddWorkBlock, handleDiscard }}>
-              </AddWorkBlockForm >
+              </AddWorkBlockForm>
             )
             :
-            (
-              <Button onClick={() => handleSetAddMode()} variant='contained' sx={{ bgColor: theme.palette.secondary.light }}>
-                <AddIcon />
-              </Button>
-            )
-
+            (<></>)
         }
-      </Box >
 
-      <DayWorkBlocks {...{ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
-      </DayWorkBlocks>
-      <HoursTotal {...{ workData }}></HoursTotal>
+        <DayWorkBlocks {...{ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
+        </DayWorkBlocks>
+        <HoursTotal {...{ workData }}></HoursTotal>
+
+      </Box >
     </>
   );
 }
+
 
 export default TimesheetPage;

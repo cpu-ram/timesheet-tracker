@@ -34,7 +34,14 @@ const WorkBlock = (
 ) => {
   return (
     <div>
-      <Grid container key={workBlockId} sx={{ borderTop: 1, borderColor: 'divider' }} spacing='0'>
+      <Grid
+        container key={workBlockId}
+        sx={{
+          borderTop: 1,
+          borderColor: 'divider',
+          paddingTop: 0.75,
+          paddingBottom: 0.75
+        }} spacing='0'>
         <Grid item xs={editMode ? 2.5 : 1.5}>
           <Typography>
             From:

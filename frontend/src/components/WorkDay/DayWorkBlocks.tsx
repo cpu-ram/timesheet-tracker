@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
+import { Box } from '@mui/system';
+
 import { WorkBlock } from '../WorkBlock.tsx';
 import AddWorkBlockForm from '../AddWorkBlock.tsx';
 
@@ -22,7 +24,9 @@ const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWo
   }
 
   return (
-    <>
+    <Box sx={{
+      paddingTop: 1.2,
+    }}>
       {
         workData ?
           (
@@ -45,7 +49,7 @@ const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWo
             </Typography>
           )
       }
-    </>
+    </Box>
   );
 }
 
