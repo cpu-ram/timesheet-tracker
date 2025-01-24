@@ -3,12 +3,13 @@ import { Typography, Box } from '@mui/material';
 import { startOfDay, format } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
+import { TextField } from '@mui/material';
 
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import CompressIcon from '@mui/icons-material/Compress';
+import SearchIcon from '@mui/icons-material/Search';
 
 import Calendar from '../components/Calendar.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
@@ -21,6 +22,8 @@ const TimesheetPage = ({ selectedUser }) => {
   const [workData, setWorkData] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
+  const [jobsiteSearchActive, setJobsiteSearchActive] = useState(false);
+  const [jobsiteSearchResults, setJobsiteSearchResults] = useState('');
 
   const theme = useTheme();
 
@@ -136,17 +139,24 @@ const TimesheetPage = ({ selectedUser }) => {
   }, [selectedDate, selectedUser])
 
   return (
-    <Box>
+    <Box sx={{
+      paddingTop: 0,
+      paddingBottom: 0,
+      paddingLeft: 0,
+      paddingRight: 0,
+      margin: 0
+    }}>
       <Calendar {...{ selectedDate, setSelectedDate }}>
       </Calendar>
 
-      <Grid container spacing={0}
-        container sx={{
+      <Grid name='buttons'
+        container spacing={0}
+        sx={{
           display: 'flex',
           justifyContent: 'flex-start',
           gap: 1,
           paddingTop: 1,
-          paddingLeft: 1.25,
+          paddingLeft: 1,
         }}>
 
         {
@@ -158,7 +168,13 @@ const TimesheetPage = ({ selectedUser }) => {
 
         {
           !addMode && !editMode ?
-            <Grid sx={{ display: 'flex', gap: 1 }}>
+            <Grid item
+              sx={{
+                display: 'flex',
+                gap: 1,
+                padding: 0,
+                margin: 0,
+              }}>
               <Button
                 display='flex'
                 onClick={() => handleSetAddMode()}
@@ -188,18 +204,49 @@ const TimesheetPage = ({ selectedUser }) => {
 
         {
           addMode ?
-            <>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '100%',
+                padding: 1,
+                paddingRight: 2,
+                gap: 1,
+              }}
+              spacing={2}
+            >
               <Button
                 onClick={() => handleDiscard()}
                 variant='outlined'
                 sx={{
                   backgroundColor: theme.palette.info.dark,
                   color: 'white',
+                  margin: 0,
+                  padding: 0,
                 }}
               >
                 <CompressIcon />
               </Button>
-            </>
+
+              <TextField
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <SearchIcon />
+                  ),
+                }}
+                sx={{
+                  '& .MuiInputBase-input': {
+                    paddingLeft: 1,
+                  },
+                  '& .MuiInputBase-input::placeholder': {
+                    fontStyle: 'italic',
+                    color: 'gray',
+                  }
+                }}
+                placeholder='Find a jobsite'
+              />
+            </Box>
             :
             <></>
         }
@@ -224,16 +271,17 @@ const TimesheetPage = ({ selectedUser }) => {
             :
             <></>
         }
-      </Grid>
-      {
-        addMode ?
+      </Grid >
+
+      <Grid container name='addWorkBlock'>
+        {
+          addMode &&
           (
             <AddWorkBlockForm {...{ ...workData, handleEnteredData: handleAddWorkBlock, handleDiscard }}>
-            </AddWorkBlockForm>
+            </AddWorkBlockForm >
           )
-          :
-          <></>
-      }
+        }
+      </Grid>
 
       <DayWorkBlocks {...{ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
       </DayWorkBlocks>

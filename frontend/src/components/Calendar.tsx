@@ -4,6 +4,7 @@ import { startOfWeek, startOfDay, addDays, isSameDay, compareAsc } from 'date-fn
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import { useTheme } from '@mui/material/styles';
+import { Box } from '@mui/material';
 
 interface CalendarProps {
   selectedDate: Date;
@@ -24,7 +25,7 @@ const Calendar = ({ selectedDate, setSelectedDate }: CalendarProps) => {
     setSelectedDate(date);
   }
   return (
-    <>
+    <Box>
       <GlobalStyles
         styles={{
           body: { placeItems: 'start' },
@@ -35,10 +36,9 @@ const Calendar = ({ selectedDate, setSelectedDate }: CalendarProps) => {
         xs={12}
         sx={{
           display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
           alignItems: 'center',
         }}
+        spacing={2}
       >
 
         <Grid container item
@@ -204,7 +204,7 @@ const Calendar = ({ selectedDate, setSelectedDate }: CalendarProps) => {
         </Grid>
 
       </Grid >
-    </>
+    </Box >
   );
 };
 
