@@ -3,7 +3,7 @@ import { Typography, Box } from '@mui/material';
 import { startOfDay, format } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import { TextField } from '@mui/material';
+import { TextField, Autocomplete } from '@mui/material';
 
 import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
@@ -16,15 +16,15 @@ import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
+import { json } from 'stream/consumers';
 
 const TimesheetPage = ({ selectedUser }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date()));
   const [workData, setWorkData] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
-  const [jobsiteSearchActive, setJobsiteSearchActive] = useState(false);
   const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
-
+  const [selectedJobsite, setSelectedJobsite] = useState(null);
   const theme = useTheme();
 
   const fetchData = async () => {
@@ -116,12 +116,31 @@ const TimesheetPage = ({ selectedUser }) => {
       throw new Error(error);
     }
   }
-  const handleSearchJobsites = async (event: React.ChangeEvent<HtmlInputElement>) => {
-    const query = event.target.value;
+  const handleSearchJobsites = async (event, value) => {
+    const query = value;
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/jobsites?query=${query}`);
-    const responseData = await response.json();
-    setJobsiteSearchResults(responseData || []);
+
+    if (query.trim() === '') {
+      setJobsiteSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${baseUrl}/jobsites?query=${query}`);
+      const responseData = await response.json();
+      const mappedResponseData =
+        responseData ?
+          responseData.map(jobsite => JSON.stringify(jobsite))
+          :
+          null;
+      setJobsiteSearchResults(mappedResponseData || []);
+    } catch (error) {
+      console.error('Error fetching job sites:', error);
+      setJobsiteSearchResults([]);
+    }
+  };
+  const handleSelectJobsite = async (event, value) => {
+    setSelectedJobsite(value);
   }
 
   const handleSetEditMode = () => {
@@ -146,6 +165,7 @@ const TimesheetPage = ({ selectedUser }) => {
 
   return (
     <Box sx={{
+      flex: 1,
       paddingTop: 0,
       paddingBottom: 0,
       paddingLeft: 0,
@@ -156,7 +176,10 @@ const TimesheetPage = ({ selectedUser }) => {
       </Calendar>
 
       <Grid name='buttons'
-        container spacing={0}
+        container
+        spacing={0}
+        item
+        xs={12}
         sx={{
           display: 'flex',
           justifyContent: 'flex-start',
@@ -210,11 +233,21 @@ const TimesheetPage = ({ selectedUser }) => {
 
         {
           addMode ?
-            <Box>
+            <Box
+              xs={12}
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flex: 1,
+                gap: 1,
+                padding: 0,
+                margin: 0,
+              }}>
               <Box
+                xs={12}
                 sx={{
                   display: 'flex',
-                  flexDirection: 'row',
+                  alignItems: 'center',
                   width: '100%',
                   padding: 1,
                   paddingRight: 2,
@@ -225,46 +258,36 @@ const TimesheetPage = ({ selectedUser }) => {
                 <Button
                   onClick={() => handleDiscard()}
                   variant='outlined'
+                  display='flex'
                   sx={{
                     backgroundColor: theme.palette.info.dark,
                     color: 'white',
                     margin: 0,
-                    padding: 0,
                   }}
                 >
                   <CompressIcon />
                 </Button>
 
-                <TextField
-                  onChange={handleSearchJobsites}
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <SearchIcon />
-                    ),
-                    autoComplete: 'off',
-                  }}
+                <Autocomplete
+                  options={jobsiteSearchResults}
+                  getOptionLabel={(option) => option}
+                  onInputChange={handleSearchJobsites}
+                  onChange={handleSelectJobsite}
+                  renderInput={(params) =>
+                    <TextField
+                      {...params}
+                      label="Search Jobsites"
+                      fullWidth
+                      sx={{ fontSize: '16px' }}
+                    />
+                  }
                   sx={{
-                    '& .MuiInputBase-input': {
-                      paddingLeft: 1,
-                    },
-                    '& .MuiInputBase-input::placeholder': {
-                      fontStyle: 'italic',
-                      color: 'gray',
-                    }
+                    flexGrow: 1,
+                    minWidth: 0,
+                    fontSize: '16px',
                   }}
-                  placeholder='Find a jobsite'
                 />
-              </Box>
 
-              <Box xs={12} sx={{
-                display: 'block',
-              }}>
-                {jobsiteSearchResults.map((jobsite) => (
-                  <Typography xs={12} key={jobsite.id}>
-                    {JSON.stringify(jobsite)}
-                  </Typography>
-                ))}
               </Box>
             </Box>
             :
