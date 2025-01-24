@@ -3,7 +3,7 @@ import dbPool from '../../config/dbPool.js';
 export async function findProjectRecords(queryString) {
   const query = `
     SELECT 
-      project_id as id, 
+      UPPER(project_id) as id, 
       project_address as address, 
       project_name as name, 
       employees.employee_name as "supervisorName", 
