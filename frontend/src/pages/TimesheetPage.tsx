@@ -147,6 +147,7 @@ const TimesheetPage = ({ selectedUser }) => {
           }}
         >
 
+
           <Box sx={{
             marginLeft: 0.5,
           }}>
@@ -213,8 +214,7 @@ const TimesheetPage = ({ selectedUser }) => {
                     display='flex'
                     onClick={() => handleSetEditMode()}
                     sx={{
-                      border: `1px solid ${theme.palette.primary.dark}`,
-                      backgroundColor: theme.palette.primary.dark,
+                      backgroundColor: theme.palette.primary.light,
                     }}
                   >
                     <EditIcon
