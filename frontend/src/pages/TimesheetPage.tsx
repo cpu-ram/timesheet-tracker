@@ -23,7 +23,7 @@ const TimesheetPage = ({ selectedUser }) => {
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const [jobsiteSearchActive, setJobsiteSearchActive] = useState(false);
-  const [jobsiteSearchResults, setJobsiteSearchResults] = useState('');
+  const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
 
   const theme = useTheme();
 
@@ -97,7 +97,6 @@ const TimesheetPage = ({ selectedUser }) => {
       throw new Error(error);
     }
   }
-
   const handleDeleteWorkBlock = async (workBlockId) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -116,6 +115,13 @@ const TimesheetPage = ({ selectedUser }) => {
     catch (error) {
       throw new Error(error);
     }
+  }
+  const handleSearchJobsites = async (event: React.ChangeEvent<HtmlInputElement>) => {
+    const query = event.target.value;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/jobsites?query=${query}`);
+    const responseData = await response.json();
+    setJobsiteSearchResults(responseData || []);
   }
 
   const handleSetEditMode = () => {
@@ -204,48 +210,62 @@ const TimesheetPage = ({ selectedUser }) => {
 
         {
           addMode ?
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                width: '100%',
-                padding: 1,
-                paddingRight: 2,
-                gap: 1,
-              }}
-              spacing={2}
-            >
-              <Button
-                onClick={() => handleDiscard()}
-                variant='outlined'
+            <Box>
+              <Box
                 sx={{
-                  backgroundColor: theme.palette.info.dark,
-                  color: 'white',
-                  margin: 0,
-                  padding: 0,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  width: '100%',
+                  padding: 1,
+                  paddingRight: 2,
+                  gap: 1,
                 }}
+                spacing={2}
               >
-                <CompressIcon />
-              </Button>
+                <Button
+                  onClick={() => handleDiscard()}
+                  variant='outlined'
+                  sx={{
+                    backgroundColor: theme.palette.info.dark,
+                    color: 'white',
+                    margin: 0,
+                    padding: 0,
+                  }}
+                >
+                  <CompressIcon />
+                </Button>
 
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <SearchIcon />
-                  ),
-                }}
-                sx={{
-                  '& .MuiInputBase-input': {
-                    paddingLeft: 1,
-                  },
-                  '& .MuiInputBase-input::placeholder': {
-                    fontStyle: 'italic',
-                    color: 'gray',
-                  }
-                }}
-                placeholder='Find a jobsite'
-              />
+                <TextField
+                  onChange={handleSearchJobsites}
+                  fullWidth
+                  InputProps={{
+                    startAdornment: (
+                      <SearchIcon />
+                    ),
+                    autoComplete: 'off',
+                  }}
+                  sx={{
+                    '& .MuiInputBase-input': {
+                      paddingLeft: 1,
+                    },
+                    '& .MuiInputBase-input::placeholder': {
+                      fontStyle: 'italic',
+                      color: 'gray',
+                    }
+                  }}
+                  placeholder='Find a jobsite'
+                />
+              </Box>
+
+              <Box xs={12} sx={{
+                display: 'block',
+              }}>
+                {jobsiteSearchResults.map((jobsite) => (
+                  <Typography xs={12} key={jobsite.id}>
+                    {JSON.stringify(jobsite)}
+                  </Typography>
+                ))}
+              </Box>
             </Box>
             :
             <></>
