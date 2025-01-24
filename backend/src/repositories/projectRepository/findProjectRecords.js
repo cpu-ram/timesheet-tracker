@@ -10,7 +10,7 @@ export async function findProjectRecords(queryString) {
       employees.employee_nickname as "supervisorNickname" 
     FROM
       projects 
-    FULL OUTER JOIN 
+    LEFT OUTER JOIN 
       employees 
     ON 
       projects.supervisor_id=employees.employee_id 
