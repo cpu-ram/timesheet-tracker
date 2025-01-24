@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import { startOfDay, format } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
 
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -116,12 +117,14 @@ const TimesheetPage = ({ selectedUser }) => {
 
   const handleSetEditMode = () => {
     setEditMode(true);
+    setAddMode(false);
   }
   const handleCancelEdit = () => {
     setEditMode(false);
   }
   const handleSetAddMode = () => {
     setAddMode(true);
+    setEditMode(false);
   }
   const handleDiscard = () => {
     setAddMode(false);
@@ -133,121 +136,110 @@ const TimesheetPage = ({ selectedUser }) => {
   }, [selectedDate, selectedUser])
 
   return (
-    <>
+    <Box>
       <Calendar {...{ selectedDate, setSelectedDate }}>
       </Calendar>
 
-      <Box sx={{ pb: 1 }}>
-        <Box
-          alignItems='center'
-          justifyContent='flex-start'
-          sx={{
-            display: 'flex',
-            paddingTop: 1,
-          }}
-        >
+      <Grid container spacing={0}
+        container sx={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          gap: 1,
+          paddingTop: 1,
+          paddingLeft: 1.25,
+        }}>
 
+        {
+          (editMode && addMode) ?
+            <Typography> Error</Typography>
+            :
+            <></>
+        }
 
-          <Box sx={{
-            marginLeft: 0.5,
-          }}>
-            {addMode ?
-              (
-                <>
-                  <Button
-                    onClick={() => handleDiscard()}
-                    variant='outlined'
-                    sx={{
-                      backgroundColor: theme.palette.info.dark,
-                      color: 'white',
-                    }}
-                  >
-                    <CompressIcon />
-                  </Button>
-                </>
-              )
-              :
-              (
-                <>
-                  <Button
-                    onClick={() => handleSetAddMode()}
-                    variant='outlined'
-                    sx={{
-                      backgroundColor: theme.palette.info.light,
-                      color: 'white',
-                    }}>
-                    <AddIcon />
-                  </Button>
-                </>
-              )
-            }
-          </Box>
+        {
+          !addMode && !editMode ?
+            <Grid sx={{ display: 'flex', gap: 1 }}>
+              <Button
+                display='flex'
+                onClick={() => handleSetAddMode()}
+                variant='outlined'
+                sx={{
+                  backgroundColor: theme.palette.primary.light,
+                  color: 'white',
+                }}>
+                <AddIcon />
+              </Button>
 
-          <Box sx={{
-            marginLeft: 0.75,
-          }}>
-            {editMode ?
-              (<>
-                <Button
-                  onClick={() => handleCancelEdit()}
-                  sx={{
-                    color: 'white',
-                    backgroundColor: theme.palette.info.dark
-                  }}
-                  variant='outlined'
-                >
-                  <Typography variant='h7' sx={{
-                    padding: 0,
-                    margin: 0,
-                  }}>
-                    Done
-                  </Typography>
-                </Button>
-              </>
-              )
-
-              :
-
-              (
-                <>
-                  <Button
-                    display='flex'
-                    onClick={() => handleSetEditMode()}
-                    sx={{
-                      backgroundColor: theme.palette.primary.light,
-                    }}
-                  >
-                    <EditIcon
-                      sx={{
-                        padding: 0,
-                        margin: 0,
-                        fontSize: '1.3rem',
-                        color: 'white',
-                      }} />
-                  </Button>
-                </>
-              )
-            }
-          </Box>
-
-        </Box>
+              <Button
+                display='flex'
+                onClick={() => handleSetEditMode()}
+                variant='outlined'
+                sx={{
+                  backgroundColor: theme.palette.primary.light,
+                  color: 'white'
+                }}
+              >
+                <EditIcon />
+              </Button>
+            </Grid>
+            :
+            <></>
+        }
 
         {
           addMode ?
-            (
-              <AddWorkBlockForm {...{ ...workData, handleEnteredData: handleAddWorkBlock, handleDiscard }}>
-              </AddWorkBlockForm>
-            )
+            <>
+              <Button
+                onClick={() => handleDiscard()}
+                variant='outlined'
+                sx={{
+                  backgroundColor: theme.palette.info.dark,
+                  color: 'white',
+                }}
+              >
+                <CompressIcon />
+              </Button>
+            </>
             :
-            (<></>)
+            <></>
         }
 
-        <DayWorkBlocks {...{ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
-        </DayWorkBlocks>
-        <HoursTotal {...{ workData }}></HoursTotal>
+        {
+          editMode ?
+            <Button
+              onClick={() => handleCancelEdit()}
+              sx={{
+                color: 'white',
+                backgroundColor: theme.palette.info.dark
+              }}
+              variant='outlined'
+            >
+              <Typography variant='h7' sx={{
+                padding: 0,
+                margin: 0,
+              }}>
+                Done
+              </Typography>
+            </Button>
+            :
+            <></>
+        }
+      </Grid>
+      {
+        addMode ?
+          (
+            <AddWorkBlockForm {...{ ...workData, handleEnteredData: handleAddWorkBlock, handleDiscard }}>
+            </AddWorkBlockForm>
+          )
+          :
+          <></>
+      }
 
-      </Box >
-    </>
+      <DayWorkBlocks {...{ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
+      </DayWorkBlocks>
+      <HoursTotal {...{ workData }}></HoursTotal>
+
+    </Box >
   );
 }
 
