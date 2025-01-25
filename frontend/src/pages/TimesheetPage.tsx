@@ -130,7 +130,7 @@ const TimesheetPage = ({ selectedUser }) => {
       const responseData = await response.json();
       const mappedResponseData =
         responseData ?
-          responseData.map(jobsite => JSON.stringify(jobsite))
+          responseData.map(jobsite => jobsite)
           :
           null;
       setJobsiteSearchResults(mappedResponseData || []);
@@ -270,7 +270,15 @@ const TimesheetPage = ({ selectedUser }) => {
 
                 <Autocomplete
                   options={jobsiteSearchResults}
-                  getOptionLabel={(option) => option}
+                  getOptionLabel={
+                    (option) => {
+                      return Object.entries(option).map(([key, value]) => {
+                        if (value != null) {
+                          return (`${key}: ${value}`);
+                        }
+                      }
+                      ).filter((x) => (x != null)).join(', ');
+                    }}
                   onInputChange={handleSearchJobsites}
                   onChange={handleSelectJobsite}
                   renderInput={(params) =>
