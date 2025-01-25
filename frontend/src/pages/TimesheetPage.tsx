@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import { startOfDay, format } from 'date-fns';
@@ -9,14 +10,12 @@ import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import CompressIcon from '@mui/icons-material/Compress';
-import SearchIcon from '@mui/icons-material/Search';
 
 import Calendar from '../components/Calendar.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
-import { json } from 'stream/consumers';
 
 const TimesheetPage = ({ selectedUser }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date()));
@@ -24,7 +23,7 @@ const TimesheetPage = ({ selectedUser }) => {
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
-  const [selectedJobsite, setSelectedJobsite] = useState(null);
+  const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
   const theme = useTheme();
 
   const fetchData = async () => {
@@ -139,8 +138,23 @@ const TimesheetPage = ({ selectedUser }) => {
       setJobsiteSearchResults([]);
     }
   };
-  const handleSelectJobsite = async (event, value) => {
-    setSelectedJobsite(value);
+  const handleFetchJobsiteData = async (event, value) => {
+    const query = value;
+    if (!query) {
+      setSelectedJobsiteData(null);
+      return;
+    }
+
+    const jobsiteId = value.id;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+    try {
+      const response = await fetch(`${baseUrl}/jobsites/${jobsiteId}`);
+      const responseData = await response.json();
+      setSelectedJobsiteData(responseData);
+    } catch (error) {
+      console.error('Error fetching job site data:', error);
+      setSelectedJobsiteData(null);
+    }
   }
 
   const handleSetEditMode = () => {
@@ -154,8 +168,12 @@ const TimesheetPage = ({ selectedUser }) => {
     setAddMode(true);
     setEditMode(false);
   }
+  const handleEraseJobsiteSelection = () => {
+    setSelectedJobsiteData(null);
+  }
   const handleDiscard = () => {
     setAddMode(false);
+    handleEraseJobsiteSelection();
   }
 
 
@@ -280,7 +298,7 @@ const TimesheetPage = ({ selectedUser }) => {
                       ).filter((x) => (x != null)).join(', ');
                     }}
                   onInputChange={handleSearchJobsites}
-                  onChange={handleSelectJobsite}
+                  onChange={handleFetchJobsiteData}
                   renderInput={(params) =>
                     <TextField
                       {...params}
@@ -328,7 +346,17 @@ const TimesheetPage = ({ selectedUser }) => {
         {
           addMode &&
           (
-            <AddWorkBlockForm {...{ ...workData, handleEnteredData: handleAddWorkBlock, handleDiscard }}>
+            <AddWorkBlockForm {...{
+              ...{
+                workBlockStart: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkStartTime) : null,
+                workBlockEnd: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkEndTime) : null,
+                jobsiteId: selectedJobsiteData ? selectedJobsiteData.jobsiteId : null,
+                jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
+                jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
+                supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
+              },
+              handleEnteredData: handleAddWorkBlock, handleDiscard
+            }}>
             </AddWorkBlockForm >
           )
         }

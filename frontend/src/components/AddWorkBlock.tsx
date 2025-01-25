@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import React, { useState } from 'react';
 import { Grid, TextField, Box, Button } from '@mui/material';
 import { Temporal } from '@js-temporal/polyfill';
@@ -7,15 +8,28 @@ const AddWorkBlockForm = ({
   jobsiteName = null, additionalNotes = null, handleEnteredData, handleDiscard
 }) => {
 
+
   const [formData, setFormData] = useState({
-    workBlockStart: workBlockStart ? workBlockStart.toPlainTime() : '',
-    workBlockEnd: workBlockEnd ? workBlockEnd.toPlainTime() : '',
+    workBlockStart: workBlockStart ? workBlockStart : '',
+    workBlockEnd: workBlockEnd ? workBlockEnd : '',
     jobsiteId: jobsiteId ?? null,
     supervisorName: supervisorName ?? null,
     jobsiteAddress: jobsiteAddress ?? null,
     jobsiteName: jobsiteName ?? null,
     additionalNotes: additionalNotes ?? null
   });
+
+  useEffect(() => {
+    setFormData({
+      workBlockStart: workBlockStart ? workBlockStart : '',
+      workBlockEnd: workBlockEnd ? workBlockEnd : '',
+      jobsiteId: jobsiteId ?? null,
+      supervisorName: supervisorName ?? null,
+      jobsiteAddress: jobsiteAddress ?? null,
+      jobsiteName: jobsiteName ?? null,
+      additionalNotes: additionalNotes ?? null
+    });
+  }, [workBlockStart, workBlockEnd, jobsiteId, supervisorName, jobsiteAddress, jobsiteName, additionalNotes]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
