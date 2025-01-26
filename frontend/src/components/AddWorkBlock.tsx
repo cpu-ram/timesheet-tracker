@@ -7,9 +7,7 @@ const AddWorkBlockForm = ({
   workBlockStart = null, workBlockEnd = null, jobsiteId = null, supervisorName = null, jobsiteAddress = null,
   jobsiteName = null, additionalNotes = null, handleEnteredData, handleDiscard
 }) => {
-
-
-  const [formData, setFormData] = useState({
+  const initializeFormData = () => ({
     workBlockStart: workBlockStart ? workBlockStart : '',
     workBlockEnd: workBlockEnd ? workBlockEnd : '',
     jobsiteId: jobsiteId ?? null,
@@ -19,17 +17,14 @@ const AddWorkBlockForm = ({
     additionalNotes: additionalNotes ?? null
   });
 
+  const [formData, setFormData] = useState(initializeFormData());
+
   useEffect(() => {
-    setFormData({
-      workBlockStart: workBlockStart ? workBlockStart : '',
-      workBlockEnd: workBlockEnd ? workBlockEnd : '',
-      jobsiteId: jobsiteId ?? null,
-      supervisorName: supervisorName ?? null,
-      jobsiteAddress: jobsiteAddress ?? null,
-      jobsiteName: jobsiteName ?? null,
-      additionalNotes: additionalNotes ?? null
-    });
+    setFormData(
+      initializeFormData()
+    );
   }, [workBlockStart, workBlockEnd, jobsiteId, supervisorName, jobsiteAddress, jobsiteName, additionalNotes]);
+
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
