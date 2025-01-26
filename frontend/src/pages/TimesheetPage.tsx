@@ -179,6 +179,8 @@ const TimesheetPage = ({ selectedUser }) => {
 
   useEffect(() => {
     fetchData();
+    setEditMode(false);
+    setAddMode(false);
   }, [selectedDate, selectedUser])
 
   return (

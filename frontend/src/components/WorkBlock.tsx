@@ -60,12 +60,12 @@ const WorkBlock = (
                   }
                 ).toLowerCase()
                 :
-                <i>[work start absent]</i>}
+                <>[—]</>}
           </Typography>
         </Grid>
         <Grid item xs={editMode ? 6.5 : 7.5}>
           <Typography>
-            {jobsiteName || <i>[jobsiteName absent]</i>}
+            {jobsiteName || <>[  jobsite Name <i>absent</i>  ]</>}
           </Typography>
         </Grid>
 
@@ -93,8 +93,19 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={3} sx={{ borderLeft: 1, borderColor: 'info.main' }}>
-          <Typography component='div' sx={{ paddingLeft: 2 }}>
+        <Grid item xs={3}>
+          <Typography component='div'
+            sx={{
+              height: '100%',
+              marginLeft: '0.7em',
+              paddingLeft: 1,
+              borderLeft: 1,
+              borderColor: 'black',
+              fontWeight: 'bold',
+
+              alignItems: 'center',
+              display: 'flex'
+            }}>
             {
               (workBlockStart && workBlockEnd) ?
                 <>
@@ -109,13 +120,13 @@ const WorkBlock = (
                   }
                 </>
                 :
-                <i>—</i>
+                <i>0</i>
             }
           </Typography>
         </Grid>
         <Grid item xs={editMode ? 6.5 : 7.5}>
           <Typography>
-            {jobsiteAddress || <i>[jobsite address absent]</i>}
+            {jobsiteAddress || <>[  jobsite Address <i>absent</i>  ]</>}
           </Typography>
         </Grid>
 
@@ -136,13 +147,13 @@ const WorkBlock = (
                 }
               ).toLowerCase()
               :
-              <i>[work end absent]</i>
+              <>[—]</>
             }
           </Typography>
         </Grid>
         <Grid item xs={editMode ? 6.5 : 7.5}>
           <Typography>
-            {jobsiteId ? jobsiteId.toUpperCase() : <i>[jobsiteId absent]</i>}
+            {jobsiteId ? jobsiteId.toUpperCase() : <>[  jobsite Id <i>absent</i>  ]</>}
           </Typography>
         </Grid>
       </Grid>
