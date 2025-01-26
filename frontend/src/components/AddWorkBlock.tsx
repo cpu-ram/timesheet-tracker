@@ -5,7 +5,7 @@ import { Temporal } from '@js-temporal/polyfill';
 
 const AddWorkBlockForm = ({
   workBlockStart = null, workBlockEnd = null, jobsiteId = null, supervisorName = null, jobsiteAddress = null,
-  jobsiteName = null, additionalNotes = null, handleEnteredData, handleDiscard
+  jobsiteName = null, additionalNotes = null, handleEnteredData, handleDiscard, mode = null
 }) => {
   const initializeFormData = () => ({
     workBlockStart: workBlockStart ? workBlockStart : '',
@@ -18,6 +18,15 @@ const AddWorkBlockForm = ({
   });
 
   const [formData, setFormData] = useState(initializeFormData());
+
+  const [saveLabel, discardLabel] = (() => {
+    if (mode === 'add') {
+      return ['Add', 'Discard'];
+    }
+    if (mode === 'edit') return ['Save', 'Cancel'];
+
+    throw new Exception();
+  })();
 
   useEffect(() => {
     setFormData(
@@ -164,7 +173,7 @@ const AddWorkBlockForm = ({
             onClick={handleSubmit}
             value="Save"
           >
-            Save
+            {saveLabel}
           </Button>
         </Grid>
 
@@ -181,7 +190,7 @@ const AddWorkBlockForm = ({
               }
             }}
           >
-            Discard
+            {discardLabel}
           </Button>
         </Grid>
       </Grid>

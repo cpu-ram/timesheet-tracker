@@ -358,6 +358,8 @@ const TimesheetPage = ({ selectedUser }) => {
                 jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
                 jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
                 supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
+                mode: 'add'
+
               },
               handleEnteredData: handleAddWorkBlock, handleDiscard
             }}>
