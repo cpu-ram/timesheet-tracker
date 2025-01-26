@@ -69,7 +69,7 @@ const AddWorkBlockForm = ({
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         <Grid item xs={6} md={2}>
           <TextField
             label="Start Time"
@@ -106,35 +106,11 @@ const AddWorkBlockForm = ({
         <Grid item xs={12} style={{ padding: 0 }}>
         </Grid>
 
-        <Grid item xs={12} md={2}>
+        <Grid item xs={6} md={2}>
           <TextField
             label="Jobsite ID"
             name="jobsiteId"
             value={formData.jobsiteId ?? ''}
-            onChange={handleInputChange}
-            fullWidth
-            inputProps={{
-              autoComplete: 'off'
-            }}
-          />
-        </Grid>
-        <Grid item xs={6} md={2}>
-          <TextField
-            label="Supervisor"
-            name="supervisorName"
-            value={formData.supervisorName ?? ''}
-            onChange={handleInputChange}
-            fullWidth
-            inputProps={{
-              autoComplete: 'off'
-            }}
-          />
-        </Grid>
-        <Grid item xs={6} md={2}>
-          <TextField
-            label="Address"
-            name="jobsiteAddress"
-            value={formData.jobsiteAddress ?? ''}
             onChange={handleInputChange}
             fullWidth
             inputProps={{
@@ -154,6 +130,31 @@ const AddWorkBlockForm = ({
             }}
           />
         </Grid>
+        <Grid item xs={7.5} md={2}>
+          <TextField
+            label="Address"
+            name="jobsiteAddress"
+            value={formData.jobsiteAddress ?? ''}
+            onChange={handleInputChange}
+            fullWidth
+            inputProps={{
+              autoComplete: 'off'
+            }}
+          />
+        </Grid>
+        <Grid item xs={4.5} md={2}>
+          <TextField
+            label="Supervisor"
+            name="supervisorName"
+            value={formData.supervisorName ?? ''}
+            onChange={handleInputChange}
+            fullWidth
+            inputProps={{
+              autoComplete: 'off'
+            }}
+          />
+        </Grid>
+
         <Grid item xs={12}>
           <TextField
             label="Additional notes"
