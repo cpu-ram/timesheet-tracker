@@ -51,7 +51,6 @@ export async function fetchTimesheetDataRecords(employeeId, from, to) {
     if (result.rowCount === 0) {
       return null;
     }
-
     return result.rows;
   }
   catch (error) {
