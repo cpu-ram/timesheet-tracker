@@ -36,8 +36,8 @@ const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWo
                   editMode && (workBlock.workBlockId === selectedForEditId) ?
                     <AddWorkBlockForm {...{
                       ...workBlock,
-                      workBlockStart: workBlock.workBlockStart.toPlainTime(),
-                      workBlockEnd: workBlock.workBlockEnd.toPlainTime(),
+                      workBlockStart: workBlock.workBlockStart ? workBlock.workBlockStart.toPlainTime() : null,
+                      workBlockEnd: workBlock.workBlockEnd ? workBlock.workBlockStart.toPlainTime() : null,
                       handleEnteredData: handleEnteredEditData,
                       handleDiscard: handleDiscardEdit
                     }} key={workBlock.workBlockId} />

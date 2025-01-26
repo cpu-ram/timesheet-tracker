@@ -29,7 +29,7 @@ const TimesheetPage = ({ selectedUser }) => {
   const fetchData = async () => {
     if (selectedDate) {
       const timesheetData = await fetchTimesheetData({ date: selectedDate, userId: selectedUser.id });
-      setWorkData(timesheetData);
+      setWorkData(timesheetData || []);
     }
   };
 
@@ -233,17 +233,21 @@ const TimesheetPage = ({ selectedUser }) => {
                 <AddIcon />
               </Button>
 
-              <Button
-                display='flex'
-                onClick={() => handleSetEditMode()}
-                variant='outlined'
-                sx={{
-                  backgroundColor: theme.palette.primary.light,
-                  color: 'white'
-                }}
-              >
-                <EditIcon />
-              </Button>
+              {
+                (workData != null && workData.length > 0) &&
+                <Button
+                  display='flex'
+                  onClick={() => handleSetEditMode()}
+                  variant='outlined'
+                  sx={{
+                    backgroundColor: theme.palette.primary.light,
+                    color: 'white'
+                  }}
+                >
+                  <EditIcon />
+                </Button>
+              }
+
             </Grid>
             :
             <></>
