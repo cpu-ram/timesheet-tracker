@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import React, { useState } from 'react';
-import { Grid, TextField, Box, Button } from '@mui/material';
+import { Grid, TextField, Box, Button, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Temporal } from '@js-temporal/polyfill';
 
 const AddWorkBlockForm = ({
   workBlockStart = null, workBlockEnd = null, jobsiteId = null, supervisorName = null, jobsiteAddress = null,
-  jobsiteName = null, additionalNotes = null, handleEnteredData, handleDiscard, mode = null
+  jobsiteName = null, additionalNotes = null, handleEnteredData, handleDiscard, mode = null,
+  multiDaySelectionMode = false, dateSelectionHandler,
 }) => {
   const initializeFormData = () => ({
     workBlockStart: workBlockStart ? workBlockStart : '',
@@ -18,11 +20,10 @@ const AddWorkBlockForm = ({
   });
 
   const [formData, setFormData] = useState(initializeFormData());
+  const [validationError, setValidationError] = useState(null);
 
   const [saveLabel, discardLabel] = (() => {
-    if (mode === 'add') {
-      return ['Add', 'Discard'];
-    }
+    if (mode === 'add') { return ['Add', 'Discard']; }
     if (mode === 'edit') return ['Save', 'Cancel'];
 
     throw new Exception();
@@ -34,9 +35,17 @@ const AddWorkBlockForm = ({
     );
   }, [workBlockStart, workBlockEnd, jobsiteId, supervisorName, jobsiteAddress, jobsiteName, additionalNotes]);
 
+  useEffect(() => {
+    if (validationError && validateTimes()) {
+      setValidationError(null);
+    }
+  }, [formData.workBlockStart, formData.workBlockEnd]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    if (validationError && validateTimes()) {
+      setValidationError(null);
+    }
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -46,6 +55,9 @@ const AddWorkBlockForm = ({
   const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const time = event.target.value;
     const [hour, minute] = time.split(':').map(Number);
+    if (validationError && validateTimes()) {
+      setValidationError(null);
+    }
     setFormData((prevData) => ({
       ...prevData,
       workBlockStart: Temporal.PlainTime.from({ hour, minute: minute ?? 0 }),
@@ -55,21 +67,56 @@ const AddWorkBlockForm = ({
   const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const time = event.target.value;
     const [hour, minute] = time.split(':').map(Number);
+    if (validationError && validateTimes()) {
+      setValidationError(null);
+    }
     setFormData((prevData) => ({
       ...prevData,
       workBlockEnd: Temporal.PlainTime.from({ hour, minute: minute ?? 0 }),
     }));
   };
 
+  const validateTimes = () => {
+    if (!!formData.workBlockStart && !!formData.workBlockEnd) {
+      if (Temporal.PlainTime.compare(formData.workBlockStart, formData.workBlockEnd) !== -1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleEnteredData(formData);
-    handleDiscard();
+    if (validateTimes()) {
+      if (validationError !== null) setValidationError(null);
+      handleEnteredData(formData);
+      handleDiscard();
+    }
+    else {
+      const validationErrorString = "Error: end time must be after start time";
+      setValidationError(validationErrorString);
+    }
   };
 
+  const handleSelectMultiDaySelectionMode = () => {
+    dateSelectionHandler.switch();
+  }
+
+  const theme = useTheme();
+
   return (
-    <Box sx={{ padding: 2 }}>
+    <Box sx={{ padding: '1.5 0 0 1' }}>
       <Grid container spacing={1}>
+        {validationError && (
+          <Box sx={{
+            padding: 0,
+            margin: 0,
+            paddingBottom: 1,
+            paddingLeft: 1.5,
+          }}>
+            {validationError && <Typography sx={{ color: 'red' }}>{validationError}</Typography>}
+          </Box>
+        )}
         <Grid item xs={6} md={2}>
           <TextField
             label="Start Time"
@@ -97,7 +144,7 @@ const AddWorkBlockForm = ({
               shrink: true,
             }}
             inputProps={{
-              step: 600, // 10 minutes
+              step: 600,
             }}
             fullWidth
           />
@@ -173,6 +220,18 @@ const AddWorkBlockForm = ({
             variant="contained"
             onClick={handleSubmit}
             value="Save"
+            sx={
+              validationError ? {
+                backgroundColor: theme.palette.warning.dark,
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: theme.palette.warning.dark
+                }
+              } : {
+                backgroundColor: theme.palette.primary.dark,
+                color: 'white',
+              }
+            }
           >
             {saveLabel}
           </Button>
@@ -185,17 +244,38 @@ const AddWorkBlockForm = ({
             value="Discard"
             sx={{
               backgroundColor: "#e2e3e5",
-              color: "black",
+              color: "#3c4043",
               "&:hover": {
                 backgroundColor: "#d6d8db"
-              }
+              },
             }}
           >
             {discardLabel}
           </Button>
         </Grid>
+
+        <Grid item>
+          <Button
+            variant='contained'
+            sx={
+              multiDaySelectionMode ?
+                {
+                  backgroundColor: theme.palette.warning.light,
+                  color: 'black',
+                }
+                :
+                {
+                  backgroundColor: "#e2e3e5",
+                  color: '#3c4043',
+                }
+            }
+            onClick={handleSelectMultiDaySelectionMode}
+          >
+            {multiDaySelectionMode ? 'Duplicate off' : 'Duplicate'}
+          </Button>
+        </Grid>
       </Grid>
-    </Box>
+    </Box >
   );
 };
 

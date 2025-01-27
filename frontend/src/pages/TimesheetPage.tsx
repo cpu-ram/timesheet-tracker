@@ -18,22 +18,37 @@ import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 
 const TimesheetPage = ({ selectedUser }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date()));
   const [workData, setWorkData] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
   const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
+  const [multiDaySelectionMode, setMultiDaySelectionMode] = useState(false);
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(null);
   const theme = useTheme();
 
   const fetchData = async () => {
-    if (selectedDate) {
-      const timesheetData = await fetchTimesheetData({ date: selectedDate, userId: selectedUser.id });
+    if (selectedDates[0]) {
+      const timesheetData = await fetchTimesheetData({ date: selectedDates[0], userId: selectedUser.id });
       setWorkData(timesheetData || []);
     }
   };
 
   const handleAddWorkBlock = async (workBlockData) => {
+    try {
+      if (selectedDates.length > 0) {
+        await Promise.all(selectedDates.map(date => addWorkBlock(workBlockData, date)));
+        await fetchData();
+      }
+      setAddMode(false);
+    }
+    catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  const addWorkBlock = async (workBlockData, selectedDate) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
     try {
       const response = await fetch(`${baseUrl}/workBlocks`, {
@@ -51,18 +66,18 @@ const TimesheetPage = ({ selectedUser }) => {
           tempJobsiteName: workBlockData.jobsiteName,
           tempJobsiteAddress: workBlockData.jobsiteAddress,
           tempSupervisorName: workBlockData.supervisorName,
-          additionalNotes: workBlockData.additionalNotes
+          additionalNotes: workBlockData.additionalNotes,
         }),
       });
       if (!response.ok) {
         throw new Error('Failed to submit work block');
       }
-      fetchData();
     }
     catch (error) {
       throw new Error(error);
     }
   }
+
   const handleEditWorkBlock = async ({ workBlockId, workBlockData }) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -76,8 +91,8 @@ const TimesheetPage = ({ selectedUser }) => {
           body:
             JSON.stringify({
               workBlockId: workBlockId,
-              startTime: workBlockData.workBlockStart ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
-              endTime: workBlockData.workBlockEnd ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
+              startTime: workBlockData.workBlockStart ? format(lastSelectedSingleDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
+              endTime: workBlockData.workBlockEnd ? format(lastSelectedSingleDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
               tempJobsiteId: workBlockData.jobsiteId,
               tempJobsiteName: workBlockData.jobsiteName,
               tempJobsiteAddress: workBlockData.jobsiteAddress,
@@ -86,16 +101,17 @@ const TimesheetPage = ({ selectedUser }) => {
             })
         }
       );
-
       if (!response.ok) {
         throw new Error('Failed to update work block');
       }
-      fetchData();
+      else await fetchData();
     }
+
     catch (error) {
-      throw new Error(error);
+      console.error(error);
     }
   }
+
   const handleDeleteWorkBlock = async (workBlockId) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -109,7 +125,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to delete work block');
       }
-      fetchData();
+      else await fetchData();
     }
     catch (error) {
       throw new Error(error);
@@ -157,31 +173,85 @@ const TimesheetPage = ({ selectedUser }) => {
     }
   }
 
-  const handleSetEditMode = () => {
+  const dateSelectionHandler = {
+    add: function (date) {
+      setSelectedDates(() => [...selectedDates, date]);
+    },
+    remove: function (date) {
+      setSelectedDates(() => selectedDates.filter((d) => d.getTime() !== date.getTime()));
+    },
+    selectSingleDay: function (date) {
+      setSelectedDates([date]);
+      setLastSelectedSingleDate(date);
+    },
+    lastSelectedSingleDate: lastSelectedSingleDate,
+    isSelected: function (date) {
+      return selectedDates.some((x) => (x.getTime() === date.getTime()));
+    },
+    multiSelectionOn: function () {
+      setMultiDaySelectionMode(true);
+    },
+    multiSelectionOff: function () {
+      setMultiDaySelectionMode(false);
+      this.selectSingleDay(lastSelectedSingleDate);
+    },
+    switch: function () {
+      if (multiDaySelectionMode) {
+        this.multiSelectionOff();
+      }
+      else this.multiSelectionOn();
+    },
+    handleDateClick: function (date: Date) {
+      if (!multiDaySelectionMode) {
+        dateSelectionHandler.selectSingleDay(date);
+      }
+      else {
+        switch (this.isSelected(date)) {
+          case true:
+            this.remove(date);
+            break;
+          case false:
+            this.add(date);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }
+
+  const handleSetEditMode = function () {
     setEditMode(true);
     setAddMode(false);
   }
-  const handleCancelEdit = () => {
+  const handleCancelEdit = function () {
     setEditMode(false);
   }
-  const handleSetAddMode = () => {
+  const handleSetAddMode = function () {
     setAddMode(true);
     setEditMode(false);
   }
-  const handleEraseJobsiteSelection = () => {
-    setSelectedJobsiteData(null);
+  const handleDiscard = function () {
+    if (multiDaySelectionMode) dateSelectionHandler.multiSelectionOff();
+    if (selectedJobsiteData !== null) setSelectedJobsiteData(null);
+    if (addMode === true) setAddMode(false);
   }
-  const handleDiscard = () => {
-    setAddMode(false);
-    handleEraseJobsiteSelection();
-  }
-
 
   useEffect(() => {
-    fetchData();
-    setEditMode(false);
-    setAddMode(false);
-  }, [selectedDate, selectedUser])
+    if (!multiDaySelectionMode) {
+      fetchData();
+      setEditMode(false);
+      setAddMode(false);
+    }
+  }, [selectedDates[0]])
+
+  const today = startOfDay(new Date());
+
+  useEffect(() => {
+    dateSelectionHandler.selectSingleDay(today);
+  }, []);
+
+
 
   return (
     <Box sx={{
@@ -192,7 +262,9 @@ const TimesheetPage = ({ selectedUser }) => {
       paddingRight: 0,
       margin: 0
     }}>
-      <Calendar {...{ selectedDate, setSelectedDate }}>
+      <Calendar {...{
+        multiDaySelectionMode, selectedDates, dateSelectionHandler
+      }}>
       </Calendar>
 
       <Grid name='buttons'
@@ -360,8 +432,8 @@ const TimesheetPage = ({ selectedUser }) => {
                 jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
                 jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
                 supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
-                mode: 'add'
-
+                mode: 'add',
+                multiDaySelectionMode, dateSelectionHandler,
               },
               handleEnteredData: handleAddWorkBlock, handleDiscard
             }}>

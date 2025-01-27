@@ -12,7 +12,7 @@ interface UserSelectionPageProps {
   setSelectedUser: (user: User) => void;
 }
 
-const UserSelectorPage: React.FC<UserSelectionPageProps> = ({ selectedUser, setSelectedUser }) => {
+const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageProps => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
@@ -38,25 +38,45 @@ const UserSelectorPage: React.FC<UserSelectionPageProps> = ({ selectedUser, setS
   };
 
   return (
-    <Container maxWidth="sm" sx={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
+    <Container maxWidth="sm" spacing='0' sx={{ display: 'grid', placeItems: 'left', minHeight: '100vh', paddingTop: 5 }}>
       <Box sx={{ textAlign: 'center', width: '100%' }}>
-        <Typography variant='h5' gutterBottom>Select the user:</Typography>
-        <List>
-          {users.map((user) => (
-            <ListItem key={user.id} sx={{ justifyContent: 'center' }}>
-              <Button variant="outlined" onClick={() => handleUserSelect(user)}>{user.nickname}</Button>
+        <Typography variant='h5'
+          sx={{
+            fontWeight: 'bold',
+          }}
+          gutterBottom>Select the user:</Typography>
+        <List spacing='0'>
+          {users.map((user, index) => (
+            <ListItem key={user.id} sx={{
+              justifyContent: 'left', width: '30', margin: 0, padding: 0
+            }}>
+              <Button variant="outlined"
+                sx={{
+                  width: '100%', justifyContent: 'left',
+                  '&:hover': { backgroundColor: 'lightgray' },
+                  borderTopLeftRadius: index === 0 ? 4 : 0,
+                  borderTopRightRadius: index === 0 ? 4 : 0,
+                  borderBottomLeftRadius: index === users.length - 1 ? 4 : 0,
+                  borderBottomRightRadius: index === users.length - 1 ? 4 : 0,
+                  transition: 'none',
+                }}
+                onClick={() => handleUserSelect(user)}>
+                <Typography variant='h7'>
+                  {user.nickname}
+                </Typography>
+              </Button>
             </ListItem>
           ))}
         </List>
-        <Box sx={{ marginTop: 2 }}>
+        <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'left' }}>
           <Link to="/timesheet" style={{ textDecoration: 'none' }}>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" disabled={!selectedUser}>
               Go to Timesheet
             </Button>
           </Link>
         </Box>
       </Box>
-    </Container>
+    </Container >
   );
 };
 
