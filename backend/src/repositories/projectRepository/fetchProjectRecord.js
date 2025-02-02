@@ -13,7 +13,7 @@ export const fetchProjectRecord = async (jobsiteId) => {
       project_address AS "jobsiteAddress",
       project_name AS "jobsiteName",
       supervisor_id AS "supervisorId",
-      employees.employee_name AS "supervisorName"
+      coalesce(employees.employee_nickname, employees.employee_name) AS "supervisorName"
 
     FROM 
       projects
