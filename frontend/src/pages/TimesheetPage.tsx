@@ -30,8 +30,8 @@ const TimesheetPage = ({ selectedUser }) => {
 
   const fetchData = async () => {
     if (selectedDates[0]) {
-      const timesheetData = await fetchTimesheetData({ date: selectedDates[0], userId: selectedUser.id });
-      setWorkData(timesheetData || []);
+      const timesheetData = await fetchTimesheetData({ from: selectedDates[0], to: selectedDates[0], userId: selectedUser.id });
+      setWorkData(timesheetData.find((x) => (x.date.getTime() === selectedDates[0].getTime())).workBlocks || []);
     }
   };
 
