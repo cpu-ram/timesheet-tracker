@@ -9,18 +9,35 @@ import { Box, Alert } from '@mui/material';
 
 const Calendar = ({
   multiDaySelectionMode = false,
+  dateRange,
   dateSelectionHandler,
 }) => {
-  const numberOfWeeks = 2;
   const today = startOfDay(new Date());
+  const days = [];
 
   const [isExpanded, setIsExpanded] = useState(true);
 
   const theme = useTheme();
+  const validateDateRange = (range) => {
+    if (!range.from || !range.to || range.from > range.to) {
+      throw new Error('Invalid date range');
+    }
+    if (range.from.getDay() !== 1 || range.to.getDay() !== 0) {
+      throw new Error('Invalid date range');
+    }
+  }
 
-  const firstWeekStart = addDays(startOfWeek(today, { weekStartsOn: 1 }), -(7 * (numberOfWeeks - 1)));
-  const days = Array.from({ length: numberOfWeeks * 7 }).map((_, index) => addDays(firstWeekStart, index));
-  const selectedWeekNumber = Math.floor(differenceInCalendarDays(dateSelectionHandler.lastSelectedSingleDate, firstWeekStart) / 7);
+  try {
+    validateDateRange(dateRange);
+  }
+  catch (error) {
+    throw Error(error);
+  }
+  for (let i = dateRange.from; i <= dateRange.to; i = addDays(i, 1)) {
+    days.push(i);
+  }
+
+  const selectedWeekNumber = Math.floor(differenceInCalendarDays(dateSelectionHandler.lastSelectedSingleDate, dateRange.from) / 7);
 
   return (
     <Box>
@@ -59,7 +76,7 @@ const Calendar = ({
               paddingTop: 0,
             }}
           >
-            {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day, index) => (
+            {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((dayName, index) => (
               <Grid item
                 xs={
                   isExpanded ?
@@ -80,7 +97,7 @@ const Calendar = ({
                     fontStyle: 'italic',
                   }}
                 >
-                  {day}
+                  {dayName}
                 </Typography>
               </Grid>
             ))}
@@ -88,11 +105,11 @@ const Calendar = ({
 
           {(isExpanded ?
             Array.from(
-              { length: numberOfWeeks },
+              { length: (differenceInCalendarDays(dateRange.to, dateRange.from) + 1) / 7 },
               (_, index) => (index * 7)
             )
             :
-            [selectedWeekNumber * 7])
+            [(selectedWeekNumber * 7)])
             .map((startIndex) => (
 
               <Grid container item xs={12} key={startIndex}
@@ -107,7 +124,7 @@ const Calendar = ({
                   }}
                 >
                   {days.slice(startIndex, startIndex + 7).map((day, index) => {
-                    if (isSameDay(day, firstWeekStart) || day.getDate() === 1) {
+                    if (isSameDay(day, dateRange.from) || day.getDate() === 1) {
                       return (
                         <Grid item
                           xs={

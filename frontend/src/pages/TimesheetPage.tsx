@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
-import { startOfDay, format } from 'date-fns';
+import { startOfDay, startOfWeek, format, addDays } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import { TextField, Autocomplete } from '@mui/material';
@@ -19,21 +19,49 @@ import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 
 const TimesheetPage = ({ selectedUser }) => {
   const [workData, setWorkData] = useState([]);
-  const [editMode, setEditMode] = useState(false);
-  const [addMode, setAddMode] = useState(false);
-  const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
-  const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
-  const [multiDaySelectionMode, setMultiDaySelectionMode] = useState(false);
+  const [dateRange, setDateRange] = useState(generateDateRange());
+
   const [selectedDates, setSelectedDates] = useState([]);
   const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(null);
+
+  const [editMode, setEditMode] = useState(false);
+  const [addMode, setAddMode] = useState(false);
+  const [multiDaySelectionMode, setMultiDaySelectionMode] = useState(false);
+
+  const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
+  const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
+
+  const today = startOfDay(new Date());
+
+  useEffect(() => {
+    dateSelectionHandler.selectSingleDay(today);
+  }, []);
+
+  useEffect(() => {
+    if (!multiDaySelectionMode) {
+      fetchData();
+      setEditMode(false);
+      setAddMode(false);
+    }
+  }, [selectedDates[0]])
+
   const theme = useTheme();
 
   const fetchData = async () => {
     if (selectedDates[0]) {
-      const timesheetData = await fetchTimesheetData({ from: selectedDates[0], to: selectedDates[0], userId: selectedUser.id });
+      const timesheetData = await fetchTimesheetData({ from: dateRange.from, to: today, userId: selectedUser.id });
       setWorkData(timesheetData.find((x) => (x.date.getTime() === selectedDates[0].getTime())).workBlocks || []);
     }
   };
+
+  function generateDateRange(numberOfWeeks = 2) {
+
+    const today = startOfDay(new Date());
+    const firstWeekStart = addDays(startOfWeek(today, { weekStartsOn: 1 }), -(7 * (numberOfWeeks - 1)));
+    const lastWeekEnd = addDays(firstWeekStart, 7 * numberOfWeeks - 1);
+
+    return { from: firstWeekStart, to: lastWeekEnd };
+  }
 
   const handleAddWorkBlock = async (workBlockData) => {
     try {
@@ -237,19 +265,6 @@ const TimesheetPage = ({ selectedUser }) => {
     if (addMode === true) setAddMode(false);
   }
 
-  useEffect(() => {
-    if (!multiDaySelectionMode) {
-      fetchData();
-      setEditMode(false);
-      setAddMode(false);
-    }
-  }, [selectedDates[0]])
-
-  const today = startOfDay(new Date());
-
-  useEffect(() => {
-    dateSelectionHandler.selectSingleDay(today);
-  }, []);
 
 
 
@@ -263,7 +278,7 @@ const TimesheetPage = ({ selectedUser }) => {
       margin: 0
     }}>
       <Calendar {...{
-        multiDaySelectionMode, selectedDates, dateSelectionHandler
+        multiDaySelectionMode, dateRange, dateSelectionHandler
       }}>
       </Calendar>
 
