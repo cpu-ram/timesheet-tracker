@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
-import { startOfDay, startOfWeek, format, addDays } from 'date-fns';
+import { startOfDay, startOfWeek, format, addDays, isSameDay } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import { TextField, Autocomplete } from '@mui/material';
@@ -18,6 +18,8 @@ import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 
 const TimesheetPage = ({ selectedUser }) => {
+  const [isLoading, setisLoading] = useState(false);
+
   const [workData, setWorkData] = useState([]);
   const [dateRange, setDateRange] = useState(generateDateRange());
 
@@ -34,25 +36,48 @@ const TimesheetPage = ({ selectedUser }) => {
   const today = startOfDay(new Date());
 
   useEffect(() => {
+    const fetchFullData = async () => (await fetchFullTimesheetData());
     dateSelectionHandler.selectSingleDay(today);
+    fetchFullData();
   }, []);
 
   useEffect(() => {
+    const fetchDayData = async (x) => {
+      await fetchDayTimesheetData(x);
+    }
     if (!multiDaySelectionMode) {
-      fetchData();
       setEditMode(false);
       setAddMode(false);
+      fetchDayData(lastSelectedSingleDate);
     }
-  }, [selectedDates[0]])
+  }, [lastSelectedSingleDate])
 
   const theme = useTheme();
 
-  const fetchData = async () => {
-    if (selectedDates[0]) {
-      const timesheetData = await fetchTimesheetData({ from: dateRange.from, to: today, userId: selectedUser.id });
-      setWorkData(timesheetData.find((x) => (x.date.getTime() === selectedDates[0].getTime())).workBlocks || []);
-    }
+  const fetchFullTimesheetData = async () => {
+    setisLoading(true);
+
+    const timesheetData = await fetchTimesheetData({ from: dateRange.from, to: today, userId: selectedUser.id });
+    setWorkData(timesheetData || []);
+
+    setisLoading(false);
   };
+
+  const fetchDayTimesheetData = async (date) => {
+    setisLoading(true);
+
+    const timesheetData = await fetchTimesheetData({ from: date, to: date, userId: selectedUser.id });
+    setWorkData((workData) => (
+      workData && workData.length > 0 ?
+        workData.map((day) => (
+          isSameDay(day.date, date) ? { ...day, workBlocks: timesheetData[0].workBlocks } : day
+        ))
+        :
+        [{ date: date, workBlocks: timesheetData[0].workBlocks }]
+    ));
+
+    setisLoading(false);
+  }
 
   function generateDateRange(numberOfWeeks = 2) {
 
@@ -67,7 +92,7 @@ const TimesheetPage = ({ selectedUser }) => {
     try {
       if (selectedDates.length > 0) {
         await Promise.all(selectedDates.map(date => addWorkBlock(workBlockData, date)));
-        await fetchData();
+        await fetchFullTimesheetData();
       }
       setAddMode(false);
     }
@@ -132,7 +157,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to update work block');
       }
-      else await fetchData();
+      else await fetchFullTimesheetData();
     }
 
     catch (error) {
@@ -153,7 +178,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to delete work block');
       }
-      else await fetchData();
+      else await fetchFullTimesheetData();
     }
     catch (error) {
       throw new Error(error);
@@ -206,7 +231,7 @@ const TimesheetPage = ({ selectedUser }) => {
       setSelectedDates(() => [...selectedDates, date]);
     },
     remove: function (date) {
-      setSelectedDates(() => selectedDates.filter((d) => d.getTime() !== date.getTime()));
+      setSelectedDates(() => selectedDates.filter((d) => !isSameDay(d, date)));
     },
     selectSingleDay: function (date) {
       setSelectedDates([date]);
@@ -214,7 +239,7 @@ const TimesheetPage = ({ selectedUser }) => {
     },
     lastSelectedSingleDate: lastSelectedSingleDate,
     isSelected: function (date) {
-      return selectedDates.some((x) => (x.getTime() === date.getTime()));
+      return selectedDates.some((x) => (isSameDay(x, date)));
     },
     multiSelectionOn: function () {
       setMultiDaySelectionMode(true);
@@ -265,8 +290,7 @@ const TimesheetPage = ({ selectedUser }) => {
     if (addMode === true) setAddMode(false);
   }
 
-
-
+  const currentDayWorkData = workData.find((day) => isSameDay(day.date, lastSelectedSingleDate))?.workBlocks || [];
 
   return (
     <Box sx={{
@@ -278,7 +302,7 @@ const TimesheetPage = ({ selectedUser }) => {
       margin: 0
     }}>
       <Calendar {...{
-        multiDaySelectionMode, dateRange, dateSelectionHandler
+        multiDaySelectionMode, dateRange, workData, dateSelectionHandler
       }}>
       </Calendar>
 
@@ -456,10 +480,10 @@ const TimesheetPage = ({ selectedUser }) => {
           )
         }
       </Grid>
-
-      <DayWorkBlocks {...{ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
+      <DayWorkBlocks {...{ workData: currentDayWorkData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
       </DayWorkBlocks>
-      <HoursTotal {...{ workData }}></HoursTotal>
+      <HoursTotal {...{ workData: currentDayWorkData }}></HoursTotal>
+
 
     </Box >
   );

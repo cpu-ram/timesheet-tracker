@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
-import { startOfWeek, startOfDay, addDays, isSameDay, compareAsc, differenceInCalendarDays } from 'date-fns';
+import { startOfDay, addDays, isSameDay, compareAsc, differenceInCalendarDays } from 'date-fns';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import { useTheme } from '@mui/material/styles';
 import { Box, Alert } from '@mui/material';
+import { access } from 'fs';
 
 
 const Calendar = ({
   multiDaySelectionMode = false,
   dateRange,
+  workData,
   dateSelectionHandler,
 }) => {
   const today = startOfDay(new Date());
@@ -132,7 +134,7 @@ const Calendar = ({
                           }
                           key={index}
                           style={{
-                            padding: '0px 8px',
+                            padding: '0',
                             paddingTop: 0,
                             display: 'flex',
                             justifyContent: 'center',
@@ -203,8 +205,9 @@ const Calendar = ({
                           color: compareAsc(day, today) <= 0 ? 'black' : 'gray',
                           borderRadius: '50%',
                           padding: '0',
-                          width: '3em',
-                          height: '1.5em',
+                          width: '1.6em',
+                          minWidth: '1.6em',
+                          height: '1.6em',
                           display: 'flex',
                           placeContent: 'center',
                           alignItems: 'center',
@@ -249,7 +252,7 @@ const Calendar = ({
                         fontWeight: 'bold',
                         fontStyle: 'italic',
                       }}>
-                      [total]
+                      [h]
                     </Typography>
                   </Grid>
                 </Grid>
