@@ -92,7 +92,7 @@ const TimesheetPage = ({ selectedUser }) => {
     try {
       if (selectedDates.length > 0) {
         await Promise.all(selectedDates.map(date => addWorkBlock(workBlockData, date)));
-        await fetchFullTimesheetData();
+        await fetchDayTimesheetData(lastSelectedSingleDate);
       }
       setAddMode(false);
     }
@@ -157,7 +157,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to update work block');
       }
-      else await fetchFullTimesheetData();
+      await fetchDayTimesheetData(lastSelectedSingleDate);
     }
 
     catch (error) {
@@ -178,7 +178,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to delete work block');
       }
-      else await fetchFullTimesheetData();
+      else await fetchDayTimesheetData(lastSelectedSingleDate);
     }
     catch (error) {
       throw new Error(error);
