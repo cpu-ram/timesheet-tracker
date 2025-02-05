@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
-import { startOfDay, startOfWeek, format, addDays, isSameDay } from 'date-fns';
+import { startOfDay, startOfWeek, format, addDays, isSameDay, differenceInCalendarDays, differenceInHours } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import { TextField, Autocomplete } from '@mui/material';
@@ -272,6 +272,43 @@ const TimesheetPage = ({ selectedUser }) => {
       }
     }
   }
+  const workDataAggregator = {
+
+    getWeekWorkHoursTotal: function () {
+      const selectedWeekNumber = Math.floor(differenceInCalendarDays(dateSelectionHandler.lastSelectedSingleDate, dateRange.from) / 7);
+
+      const daysOfSelectedWeek = [];
+      const selectedWeekStartPosition = selectedWeekNumber * 7;
+      for (let i = 0; i <= 6; i++) {
+        const day = addDays(dateRange.from, selectedWeekStartPosition + i);
+        daysOfSelectedWeek.push(day);
+      }
+
+      return daysOfSelectedWeek.map(
+        (day) => {
+          return this.getDayWorkHoursTotal(day);
+        }).reduce((acc, curr) => acc + curr, 0);
+    },
+
+    getDayWorkHoursTotal: function (day) {
+
+      const workDay = workData.find((workDay) => isSameDay(workDay.date, day));
+      if (!workDay) {
+        return 0;
+      }
+
+      return workDay.workBlocks
+        .map(workBlock => {
+          if (workBlock.workBlockStart && workBlock.workBlockEnd) {
+            return differenceInHours(new Date(workBlock.workBlockEnd.toString()), new Date(workBlock.workBlockStart.toString()));
+          }
+          return 0;
+        })
+        .reduce(
+          (acc, curr) => acc + curr, 0)
+    }
+  }
+
 
   const handleSetEditMode = function () {
     setEditMode(true);
@@ -302,7 +339,7 @@ const TimesheetPage = ({ selectedUser }) => {
       margin: 0
     }}>
       <Calendar {...{
-        multiDaySelectionMode, dateRange, workData, dateSelectionHandler
+        multiDaySelectionMode, dateRange, workData, dateSelectionHandler, workDataAggregator
       }}>
       </Calendar>
 

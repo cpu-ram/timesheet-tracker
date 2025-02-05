@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
 import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
-import { startOfDay, addDays, isSameDay, compareAsc, differenceInCalendarDays } from 'date-fns';
+import { startOfDay, addDays, isSameDay, compareAsc, differenceInCalendarDays, differenceInHours } from 'date-fns';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import { useTheme } from '@mui/material/styles';
 import { Box, Alert } from '@mui/material';
-import { access } from 'fs';
-
 
 const Calendar = ({
   multiDaySelectionMode = false,
   dateRange,
-  workData,
   dateSelectionHandler,
+  workDataAggregator,
 }) => {
   const today = startOfDay(new Date());
   const days = [];
@@ -40,6 +38,7 @@ const Calendar = ({
   }
 
   const selectedWeekNumber = Math.floor(differenceInCalendarDays(dateSelectionHandler.lastSelectedSingleDate, dateRange.from) / 7);
+  const daysOfSelectedWeek = days.slice(selectedWeekNumber * 7, (selectedWeekNumber + 1) * 7);
 
   return (
     <Box>
@@ -58,9 +57,19 @@ const Calendar = ({
         spacing={2}
       >
 
-        <Grid container item
+        <Grid key='calendar'
+          container item
           xs={
-            10.5
+            isExpanded ?
+              10.5
+              :
+              8.5
+          }
+          md={
+            isExpanded ?
+              10.5
+              :
+              9.5
           }
           spacing={2}
           sx={{
@@ -81,10 +90,7 @@ const Calendar = ({
             {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((dayName, index) => (
               <Grid item
                 xs={
-                  isExpanded ?
-                    1.71
-                    :
-                    1.5
+                  1.71
                 }
                 key={index}
                 sx={{
@@ -123,6 +129,7 @@ const Calendar = ({
                   sx={{
                     paddingTop: 0,
                     paddingBottom: 1.1,
+                    display: isExpanded ? 'flex' : 'none',
                   }}
                 >
                   {days.slice(startIndex, startIndex + 7).map((day, index) => {
@@ -175,10 +182,7 @@ const Calendar = ({
                   {days.slice(startIndex, startIndex + 7).map((day, index) => (
                     <Grid item
                       xs={
-                        isExpanded ?
-                          1.71
-                          :
-                          1.5
+                        1.71
                       }
                       key={index}
                       style={{
@@ -225,44 +229,94 @@ const Calendar = ({
                       </Typography>
                     </Grid>
                   ))}
-                  <Grid item
-                    sx={{
-                      display: isExpanded ? 'none' : 'flex',
-                      padding: '0 8px !important',
-                      paddingTop: 0,
-                      justifyContent: 'center',
-                      borderLeft: '1px solid #e2e3e5',
-                      placeContent: 'center',
-                      alignItems: 'center',
-                    }}
-                    xs={1.5}
-                    name="total"
-                  >
-                    <Typography
-                      variant="h12"
-                      align="center"
-                      style={{
-                        cursor: 'pointer',
-                        padding: '0',
-                        paddingLeft: '0.7em',
-                        width: '3em',
-                        height: '1.5em',
-                        placeContent: 'center',
-                        alignItems: 'center',
-                        fontWeight: 'bold',
-                        fontStyle: 'italic',
-                      }}>
-                      [h]
-                    </Typography>
-                  </Grid>
                 </Grid>
+                {
+                  !isExpanded &&
+
+                  <Grid container spacing={1} id="dayHours"
+                    sx={{
+                      paddingTop: 0,
+                    }}
+                  >
+                    {days.slice(startIndex, startIndex + 7).map((day, index) => (
+                      <Grid item
+                        xs={
+                          1.71
+                        }
+                        key={index}
+                        style={{
+                          padding: '0 8px',
+                          paddingTop: 0,
+                          margin: '0.7em 0',
+                          display: 'flex', justifyContent: 'center'
+                        }}
+                      >
+                        <Typography variant="subtitle1" align="center"
+                          style={{
+                            fontStyle: 'italic',
+                            padding: '0',
+                            width: '1.6em',
+                            minWidth: '1.6em',
+                            height: '1.6em',
+                            display: 'flex',
+                            placeContent: 'center',
+                            alignItems: 'center',
+                          }}
+                          onClick={
+                            () => {
+                              if (compareAsc(day, today) <= 0) {
+                                dateSelectionHandler.handleDateClick(day);
+                              }
+                            }
+                          }
+                        >
+
+                          {
+                            workDataAggregator.getDayWorkHoursTotal(day) > 0 ?
+                              workDataAggregator.getDayWorkHoursTotal(day) + 'h'
+                              :
+                              ''
+                          }
+                        </Typography>
+                      </Grid>
+                    ))}
+                  </Grid>
+                }
               </Grid>
             ))}
         </Grid >
 
-        <Grid container item
+        <Grid key="weekWorkHoursTotal"
+          container item
+          xs={2}
+          md={1}
+          sx={{
+            display: isExpanded ? 'none' : 'flex',
+            padding: '0 !important',
+            marginTop: '0 !important',
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              paddingLeft: '1em',
+              paddingTop: '0',
+              textAlign: 'center',
+            }}
+          >
+            {"Week total: "}
+            {workDataAggregator.getWeekWorkHoursTotal(daysOfSelectedWeek) > 0 ? (
+              <i>{workDataAggregator.getWeekWorkHoursTotal(daysOfSelectedWeek)}h</i>
+            ) : (
+              ''
+            )}
+          </Typography>
+        </Grid>
+
+        <Grid key="expand"
+          container item
           xs={1.5}
-          key="expand"
+
           sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -283,7 +337,8 @@ const Calendar = ({
           </IconButton>
         </Grid>
 
-        <Grid container item
+        <Grid key="info"
+          container item
           xs={12}
           display={multiDaySelectionMode ? 'flex' : 'none'}
           sx={{
