@@ -9,8 +9,8 @@ const HoursTotal = ({ workData }) => {
             <Grid item xs={12} sx={{ borderBottom: 1, borderColor: 'divider', mb: 1 }} />
 
             <Grid item xs={1.5}>
-              <Typography align='right'>
-                <b>Total:</b>
+              <Typography align='center'>
+                <b>Day total:</b>
               </Typography>
             </Grid>
 

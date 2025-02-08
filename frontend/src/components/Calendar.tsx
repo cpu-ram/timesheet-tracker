@@ -3,6 +3,7 @@ import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
 import { startOfDay, addDays, isSameDay, compareAsc, differenceInCalendarDays, differenceInHours } from 'date-fns';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import CompressIcon from '@mui/icons-material/Compress';
 import { useTheme } from '@mui/material/styles';
 import { Box, Alert } from '@mui/material';
 
@@ -15,7 +16,7 @@ const Calendar = ({
   const today = startOfDay(new Date());
   const days = [];
 
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const theme = useTheme();
   const validateDateRange = (range) => {
@@ -41,7 +42,7 @@ const Calendar = ({
   const daysOfSelectedWeek = days.slice(selectedWeekNumber * 7, (selectedWeekNumber + 1) * 7);
 
   return (
-    <Box>
+    <Box sx={{ maxWidth: '1050px' }}>
       <GlobalStyles
         styles={{
           body: { placeItems: 'start' },
@@ -215,11 +216,15 @@ const Calendar = ({
                           display: 'flex',
                           placeContent: 'center',
                           alignItems: 'center',
+                          fontWeight: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? '600' : '350',
+                          color: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? 'black' : 'black',
+                          textDecoration: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? 'none' : 'none',
                         }}
                         onClick={
                           () => {
                             if (compareAsc(day, today) <= 0) {
                               dateSelectionHandler.handleDateClick(day);
+                              setIsExpanded(false);
                             }
                           }
                         }
@@ -290,6 +295,7 @@ const Calendar = ({
           container item
           xs={2}
           md={1}
+          lg={1}
           sx={{
             display: isExpanded ? 'none' : 'flex',
             padding: '0 !important',
@@ -308,32 +314,39 @@ const Calendar = ({
             {workDataAggregator.getWeekWorkHoursTotal(daysOfSelectedWeek) > 0 ? (
               <i>{workDataAggregator.getWeekWorkHoursTotal(daysOfSelectedWeek)}h</i>
             ) : (
-              ''
+              '0'
             )}
           </Typography>
         </Grid>
 
         <Grid key="expand"
           container item
-          xs={1.5}
-
+          xs={1}
           sx={{
             display: 'flex',
+            height: '100%',
             flexDirection: 'column',
-            justifyContent: 'flex-end',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            alignSelf: 'flex-start',
+            paddingTop: '0',
+            marginTop: '0',
           }}
         >
           <IconButton
             onClick={() => setIsExpanded(!isExpanded)}
             sx={{
               width: 'auto',
-              alignSelf: 'center',
+              alignSelf: 'flex-start',
               border: `1px solid ${theme.palette.info.dark}`,
+              background: isExpanded ? theme.palette.info.dark : 'transparent',
+              '&:hover': {
+                background: isExpanded ? theme.palette.info.dark : 'transparent',
+              },
+              color: isExpanded ? 'white' : theme.palette.info.dark,
             }}
           >
-            {
-              isExpanded ? <UnfoldLessIcon /> : <UnfoldMoreIcon />
-            }
+            {isExpanded ? <CompressIcon /> : <UnfoldMoreIcon />}
           </IconButton>
         </Grid>
 

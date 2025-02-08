@@ -41,17 +41,6 @@ const TimesheetPage = ({ selectedUser }) => {
     fetchFullData();
   }, []);
 
-  useEffect(() => {
-    const fetchDayData = async (x) => {
-      await fetchDayTimesheetData(x);
-    }
-    if (!multiDaySelectionMode) {
-      setEditMode(false);
-      setAddMode(false);
-      fetchDayData(lastSelectedSingleDate);
-    }
-  }, [lastSelectedSingleDate])
-
   const theme = useTheme();
 
   const fetchFullTimesheetData = async () => {
@@ -233,9 +222,12 @@ const TimesheetPage = ({ selectedUser }) => {
     remove: function (date) {
       setSelectedDates(() => selectedDates.filter((d) => !isSameDay(d, date)));
     },
-    selectSingleDay: function (date) {
+    selectSingleDay: async function (date) {
       setSelectedDates([date]);
       setLastSelectedSingleDate(date);
+      setEditMode(false);
+      setAddMode(false);
+      await fetchDayTimesheetData(lastSelectedSingleDate);
     },
     lastSelectedSingleDate: lastSelectedSingleDate,
     isSelected: function (date) {
@@ -308,7 +300,6 @@ const TimesheetPage = ({ selectedUser }) => {
           (acc, curr) => acc + curr, 0)
     }
   }
-
 
   const handleSetEditMode = function () {
     setEditMode(true);
@@ -384,7 +375,7 @@ const TimesheetPage = ({ selectedUser }) => {
               </Button>
 
               {
-                (workData != null && workData.length > 0) &&
+                (currentDayWorkData != null && currentDayWorkData.length > 0) &&
                 <Button
                   display='flex'
                   onClick={() => handleSetEditMode()}
