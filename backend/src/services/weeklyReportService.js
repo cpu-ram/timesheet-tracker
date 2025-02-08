@@ -67,6 +67,8 @@ export default async function generateWeeklyReport(employeeId, payPeriodEndDate)
   for (const workBlock of workBlocks) {
     const jobsite = await getJobsite(workBlock.jobsiteId)
     workBlock.jobsiteAddress = jobsite.address;
+    workBlock.workStartTime = workBlock.workStartTime ? new Date(workBlock.workStartTime) : null;
+    workBlock.workEndTime = workBlock.workEndTime ? new Date(workBlock.workEndTime) : null;
   };
 
   reportData['workBlocks'] = formatWorkBlocksForDailyReport(workBlocks);
