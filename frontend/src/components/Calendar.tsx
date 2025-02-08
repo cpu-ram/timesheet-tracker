@@ -3,6 +3,7 @@ import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
 import { startOfDay, addDays, isSameDay, compareAsc, differenceInCalendarDays, differenceInHours } from 'date-fns';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import CompressIcon from '@mui/icons-material/Compress';
 import { useTheme } from '@mui/material/styles';
 import { Box, Alert } from '@mui/material';
@@ -216,7 +217,7 @@ const Calendar = ({
                           display: 'flex',
                           placeContent: 'center',
                           alignItems: 'center',
-                          fontWeight: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? '600' : '350',
+                          fontWeight: (workDataAggregator.getDayWorkHoursTotal(day) > 0) ? '600' : '400',
                           color: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? 'black' : 'black',
                           textDecoration: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? 'none' : 'none',
                         }}
@@ -319,18 +320,20 @@ const Calendar = ({
           </Typography>
         </Grid>
 
-        <Grid key="expand"
+        <Grid key="sideButtons"
           container item
           xs={1}
           sx={{
             display: 'flex',
-            height: '100%',
+            height: '50%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'flex-start',
             alignSelf: 'flex-start',
             paddingTop: '0',
             marginTop: '0',
+            gap: 1.5,
+            paddingRight: '1em',
           }}
         >
           <IconButton
@@ -348,6 +351,22 @@ const Calendar = ({
           >
             {isExpanded ? <CompressIcon /> : <UnfoldMoreIcon />}
           </IconButton>
+
+          <IconButton
+            sx={{
+              width: 'auto',
+              alignSelf: 'flex-start',
+              border: `1px solid ${theme.palette.info.dark}`,
+              background: isExpanded ? theme.palette.info.dark : 'transparent',
+              '&:hover': {
+                background: isExpanded ? theme.palette.info.dark : 'transparent',
+              },
+              color: isExpanded ? 'white' : theme.palette.info.dark,
+            }}
+          >
+            {isExpanded ? <FormatAlignCenterIcon /> : <FormatAlignCenterIcon />}
+          </IconButton>
+
         </Grid>
 
         <Grid key="info"

@@ -36,8 +36,8 @@ const TimesheetPage = ({ selectedUser }) => {
   const today = startOfDay(new Date());
 
   useEffect(() => {
-    const fetchFullData = async () => (await fetchFullTimesheetData());
     dateSelectionHandler.selectSingleDay(today);
+    const fetchFullData = async () => (await fetchFullTimesheetData());
     fetchFullData();
   }, []);
 
@@ -59,7 +59,13 @@ const TimesheetPage = ({ selectedUser }) => {
     setWorkData((workData) => (
       workData && workData.length > 0 ?
         workData.map((day) => (
-          isSameDay(day.date, date) ? { ...day, workBlocks: timesheetData[0].workBlocks } : day
+          isSameDay(day.date, date) ?
+            {
+              ...day,
+              workBlocks: timesheetData[0].workBlocks
+            }
+            :
+            day
         ))
         :
         [{ date: date, workBlocks: timesheetData[0].workBlocks }]

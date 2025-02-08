@@ -33,7 +33,20 @@ const fetchTimesheetData = async ({ from, to, userId }) => {
                   breakEnd:
                     workBlock.breakEnd ? Temporal.PlainDateTime.from(workBlock.breakEnd) : null
                 }
-              ))
+              )).sort(
+                (a, b) => {
+                  if (a.workBlockStart && b.workBlockStart) {
+                    return Temporal.PlainDateTime.compare(a.workBlockStart, b.workBlockStart);
+                  }
+                  if (a.workBlockStart) {
+                    return -1;
+                  }
+                  if (b.workBlockStart) {
+                    return 1;
+                  }
+                  return 0;
+                }
+              )
               : []
         }))
         : []

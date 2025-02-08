@@ -15,6 +15,11 @@ const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWo
   useEffect(() => {
     setSelectedForEditId(null);
   }, [workData]);
+  useEffect(() => {
+    if (!editMode) {
+      setSelectedForEditId(null);
+    }
+  }, [editMode])
 
   const handleSelectForEdit = (workBlockId) => {
     setSelectedForEditId(workBlockId);
