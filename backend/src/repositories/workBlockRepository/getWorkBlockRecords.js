@@ -21,6 +21,7 @@ export const getWorkBlockRecords = async (
     break_start AS "breakStartTime",
     break_end AS "breakEndTime",
     coalesce(projects.project_address, work_periods.temp_project_location) AS "tempLocation",
+    coalesce(projects.project_name, work_periods.temp_project_name) AS "tempJobsiteName",
     work_periods.supervisor_id AS "supervisorId",
     work_periods.additional_notes AS "tempJobsiteDescription"
     FROM

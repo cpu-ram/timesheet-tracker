@@ -1,5 +1,6 @@
 import { getWorkBlocks } from './workBlockService.js';
 import { getJobsite } from './jobsiteService.js';
+import { getTimesheetData } from './timesheetDataService.js';
 import path from 'path';
 import * as fs from 'fs';
 import PizZip from 'pizzip';
@@ -22,7 +23,7 @@ function getWeekBoundaries(payPeriodEndDate) {
   return [beginningOfFirstDay, endOfFinalDay];
 }
 
-function formatWorkBlocksForDailyReport(workBlockArray) {
+function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
   const calculateNumberOfHours = (startTime, endTime) => (
     Math.round(
       (
@@ -34,15 +35,23 @@ function formatWorkBlocksForDailyReport(workBlockArray) {
     ) / 10
   );
 
-  const formatToBasicTime = (dateTime) => format(dateTime, 'p');
+  function formatToBasicTime(dateTime) {
+    const entryDate = new Date(dateTime);
+    const result = format(entryDate, 'p');
+    return result;
+  }
 
   let formattedWorkBlocks = workBlockArray.map(
     function (workBlock) {
       let result = {
-        jobId: workBlock.jobsiteId.toUpperCase(),
-        date: format(workBlock.workStartTime, 'MM/dd EEE'),
-        hours: calculateNumberOfHours(new Date(workBlock.workStartTime), new Date(workBlock.workEndTime)),
-        jobsiteAddress: workBlock.jobsiteAddress || '',
+        jobId: workBlock.jobsiteId ? workBlock.jobsiteId.
+          toUpperCase() : '—',
+        date: workBlock.workStartTime ? format(new Date(workBlock.workStartTime), 'MM/dd EEE') : null,
+        hours: workBlock.workStartTime && workBlock.workEndTime ?
+          calculateNumberOfHours(new Date(workBlock.workStartTime), new Date(workBlock.workEndTime))
+          :
+          0,
+        jobsiteAddress: workBlock.jobsiteName || workBlock.jobsiteAddress || '—',
       }
 
       const timePropertyNames = ['workStartTime', 'workEndTime', 'breakStartTime', 'breakEndTime'];
@@ -59,19 +68,33 @@ function formatWorkBlocksForDailyReport(workBlockArray) {
   return formattedWorkBlocks;
 }
 
-export default async function generateWeeklyReport(employeeId, payPeriodEndDate) {
+export default async function generateWeeklyReport(employeeId, payPeriodEndDate, fullName = 'John Doe') {
   const reportData = {};
   const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
   const workBlocks = await getWorkBlocks(employeeId, employeeId, beginningOfFirstDay, endOfFinalDay);
 
-  for (const workBlock of workBlocks) {
-    const jobsite = await getJobsite(workBlock.jobsiteId)
-    workBlock.jobsiteAddress = jobsite.address;
+  const prelimTimesheetData = await getTimesheetData(
+    employeeId, format(beginningOfFirstDay, 'yyyy-MM-dd'),
+    format(endOfFinalDay, 'yyyy-MM-dd'));
+
+  const betterWorkBlocks = prelimTimesheetData
+    .map(
+      (day) => day.workBlocks.map(
+        (block) => ({ ...block, date: day.date })
+      )).reduce(
+        (acc, cur) => (acc.concat(cur)), []
+      );
+
+  for (const workBlock of workBlocks) { // enriching workBlocks with jobsiteAddress
+    const jobsite = await getJobsite(workBlock.jobsiteId);
+
+    workBlock.jobsiteAddress = jobsite ? jobsite.jobsiteAddress : (workBlock.tempLocation ?? '');
+    workBlock.jobsiteName = jobsite ? jobsite.jobsiteName : (workBlock.tempJobsiteName ?? '');
     workBlock.workStartTime = workBlock.workStartTime ? new Date(workBlock.workStartTime) : null;
     workBlock.workEndTime = workBlock.workEndTime ? new Date(workBlock.workEndTime) : null;
   };
 
-  reportData['workBlocks'] = formatWorkBlocksForDailyReport(workBlocks);
+  reportData['workBlocks'] = formatWorkBlocksForDailyReport(workBlocks, betterWorkBlocks);
   const totalHours = reportData['workBlocks']
     .map(x => x.hours)
     .reduce((x, y) => x + y, 0);
@@ -82,6 +105,7 @@ export default async function generateWeeklyReport(employeeId, payPeriodEndDate)
   reportData['weekStartDate'] = format(beginningOfFirstDay, 'MMM d, yyyy');
   reportData['weekEndDate'] = format(endOfFinalDay, 'MMM d, yyyy');
   reportData['currentDate'] = format(new Date(), 'MMM d, yyyy');
+  reportData['fullName'] = fullName;
 
   const uniqueFileName = `weekly-report-${employeeId}-${uuidv4()}.docx`;
   const singleFileName = 'weekly-report-single-item.docx';
