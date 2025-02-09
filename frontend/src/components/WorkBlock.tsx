@@ -48,7 +48,15 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={3}>
-          <Typography>
+          <Typography
+            key={`${workBlockId}-start-time`}
+            sx={{
+              color: workBlockStart ?
+                'inherit'
+                :
+                'warning.dark'
+            }}
+          >
             {
               workBlockStart ?
                 workBlockStart.toPlainTime().toLocaleString(
@@ -136,7 +144,14 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={3}>
-          <Typography>
+          <Typography
+            key={`${workBlockId}-end-time`}
+            sx={{
+              color: workBlockEnd ?
+                'inherit'
+                :
+                'warning.dark'
+            }}>
             {workBlockEnd ?
               workBlockEnd.toPlainTime().toLocaleString(
                 'en-US',
