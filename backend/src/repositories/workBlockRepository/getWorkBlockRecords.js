@@ -8,8 +8,16 @@ export const getWorkBlockRecords = async (
   startDate,
   endDate,
 ) => {
-  const formattedStartDate = format(startDate, pgDateFormat);
-  const formattedEndDate = format(endDate, pgDateFormat);
+  let formattedStartDate = null;
+  let formattedEndDate = null;
+  try {
+    formattedStartDate = format(startDate, pgDateFormat);
+    formattedEndDate = format(endDate, pgDateFormat);
+  }
+  catch (error) {
+    throw error;
+  }
+
   const query = `
     SELECT 
     work_periods.work_period_id AS "workBlockId",
@@ -37,9 +45,9 @@ export const getWorkBlockRecords = async (
     AND 
       work_periods.reported_by = $2
     AND 
-      work_start >= $3
+      date >= $3
     AND 
-      work_end <= $4
+      date <= $4
     ORDER BY 
       date, 
       work_start;

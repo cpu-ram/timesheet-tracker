@@ -1,6 +1,7 @@
 import { getWorkBlocks } from './workBlockService.js';
 import { getJobsite } from './jobsiteService.js';
 import { getTimesheetData } from './timesheetDataService.js';
+import { startOfDay } from 'date-fns';
 import path from 'path';
 import * as fs from 'fs';
 import PizZip from 'pizzip';
@@ -9,19 +10,6 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
-
-function getWeekBoundaries(payPeriodEndDate) {
-  if (payPeriodEndDate.getDay() !== 0) throw new Error('payPeriodEndDate must be a Sunday');
-
-  const millisecondsInDay = 1000 * 60 * 60 * 24;
-  const beginningOfFinalDay = new Date(payPeriodEndDate.setHours(0, 0, 0, 0));
-  const endOfFinalDay = new Date(
-    beginningOfFinalDay.getTime() + millisecondsInDay - 1000,
-  );
-  const beginningOfFirstDay = new Date(beginningOfFinalDay.getTime() - 6 * millisecondsInDay);
-
-  return [beginningOfFirstDay, endOfFinalDay];
-}
 
 function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
   const calculateNumberOfHours = (startTime, endTime) => (
@@ -68,14 +56,14 @@ function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
   return formattedWorkBlocks;
 }
 
-export default async function generateWeeklyReport(employeeId, payPeriodEndDate, fullName = 'John Doe') {
+export default async function generateWeeklyReport(employeeId, from, to, fullName = 'John Doe') {
   const reportData = {};
-  const [beginningOfFirstDay, endOfFinalDay] = getWeekBoundaries(payPeriodEndDate);
-  const workBlocks = await getWorkBlocks(employeeId, employeeId, beginningOfFirstDay, endOfFinalDay);
+  const [firstDay, lastDay] = [startOfDay(from), startOfDay(to)];
+  const workBlocks = await getWorkBlocks(employeeId, employeeId, firstDay, lastDay);
 
   const prelimTimesheetData = await getTimesheetData(
-    employeeId, format(beginningOfFirstDay, 'yyyy-MM-dd'),
-    format(endOfFinalDay, 'yyyy-MM-dd'));
+    employeeId, format(firstDay, 'yyyy-MM-dd'),
+    format(lastDay, 'yyyy-MM-dd'));
 
   const betterWorkBlocks = prelimTimesheetData
     .map(
@@ -102,8 +90,8 @@ export default async function generateWeeklyReport(employeeId, payPeriodEndDate,
 
   reportData['totalHours'] = totalHours;
   reportData['regularHours'] = regularHours;
-  reportData['weekStartDate'] = format(beginningOfFirstDay, 'MMM d, yyyy');
-  reportData['weekEndDate'] = format(endOfFinalDay, 'MMM d, yyyy');
+  reportData['weekStartDate'] = format(firstDay, 'MMM d, yyyy');
+  reportData['weekEndDate'] = format(lastDay, 'MMM d, yyyy');
   reportData['currentDate'] = format(new Date(), 'MMM d, yyyy');
   reportData['fullName'] = fullName;
 
@@ -128,7 +116,5 @@ export default async function generateWeeklyReport(employeeId, payPeriodEndDate,
     outputPath = path.resolve(__dirname, '../../temp/', uniqueFileName);
   }
 
-  fs.writeFileSync(outputPath, buf);
-
-  return outputPath;
+  return buf;
 }

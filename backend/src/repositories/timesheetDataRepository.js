@@ -41,6 +41,10 @@ export async function fetchTimesheetDataRecords(employeeId, from, to) {
       date >= $1 
     AND
       date <= $2
+    ORDER BY
+      date ASC NULLS LAST,
+      work_start ASC NULLS LAST,
+      work_end ASC NULLS LAST
     ;
   `;
   const values = [formattedFrom, formattedTo];

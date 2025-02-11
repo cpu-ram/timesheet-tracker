@@ -16,11 +16,10 @@ if (process.env.NODE_ENV === 'development') {
   })
 }
 
-// Define routes in index.js
 app.use('/workBlocks/', workBlockRouter);
 app.use('/jobsites/', jobsiteRouter);
 app.use('/reports/', reportRouter);
 app.use('/employees/', employeeRouter)
 app.get('/', (req, res) => res.json('Hello!'));
 
-export default app; // Export the app instance
+export default app;
