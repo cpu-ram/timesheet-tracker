@@ -5,12 +5,12 @@ import {
 export async function getWorkBlocks(
   employeeId,
   reportedById,
-  startDateTime,
-  endDateTime,
+  startDate,
+  endDate,
 ) {
   let result = undefined;
   try {
-    result = await getWorkBlockRecords(employeeId, reportedById, startDateTime, endDateTime);
+    result = await getWorkBlockRecords(employeeId, reportedById, startDate, endDate);
   }
   catch (error) { throw new Error(error); }
 

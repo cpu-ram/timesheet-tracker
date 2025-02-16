@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
+import { Temporal } from '@js-temporal/polyfill';
 
 function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
   const calculateNumberOfHours = (startTime, endTime) => (
@@ -32,17 +33,17 @@ function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
   let formattedWorkBlocks = workBlockArray.map(
     function (workBlock) {
       let result = {
-        jobId: workBlock.jobsiteId ? workBlock.jobsiteId.
+        jobsiteId: workBlock.jobsiteId ? workBlock.jobsiteId.
           toUpperCase() : '—',
-        date: workBlock.workStartTime ? format(new Date(workBlock.workStartTime), 'MM/dd EEE') : null,
-        hours: workBlock.workStartTime && workBlock.workEndTime ?
-          calculateNumberOfHours(new Date(workBlock.workStartTime), new Date(workBlock.workEndTime))
+        date: workBlock.workBlockStart ? format(new Date(workBlock.workBlockStart), 'MM/dd EEE') : null,
+        hours: workBlock.workBlockStart && workBlock.workBlockEnd ?
+          calculateNumberOfHours(new Date(workBlock.workBlockStart), new Date(workBlock.workBlockEnd))
           :
           0,
-        jobsiteAddress: workBlock.jobsiteName || workBlock.jobsiteAddress || '—',
+        jobsiteDetails: workBlock.jobsiteName || workBlock.jobsiteAddress || '—',
       }
 
-      const timePropertyNames = ['workStartTime', 'workEndTime', 'breakStartTime', 'breakEndTime'];
+      const timePropertyNames = ['workBlockStart', 'workBlockEnd', 'breakStart', 'breakEnd'];
       timePropertyNames.forEach((propertyName) => {
         if (workBlock.hasOwnProperty(propertyName) && workBlock[propertyName] != null) {
           result[propertyName] = formatToBasicTime(workBlock[propertyName]);
@@ -58,20 +59,21 @@ function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
 
 export default async function generateWeeklyReport(employeeId, from, to, fullName = 'John Doe') {
   const reportData = {};
-  const [firstDay, lastDay] = [startOfDay(from), startOfDay(to)];
+  const [firstDay, lastDay] = [from, to];
   const workBlocks = await getWorkBlocks(employeeId, employeeId, firstDay, lastDay);
 
-  const prelimTimesheetData = await getTimesheetData(
-    employeeId, format(firstDay, 'yyyy-MM-dd'),
-    format(lastDay, 'yyyy-MM-dd'));
-
-  const betterWorkBlocks = prelimTimesheetData
-    .map(
-      (day) => day.workBlocks.map(
-        (block) => ({ ...block, date: day.date })
-      )).reduce(
-        (acc, cur) => (acc.concat(cur)), []
-      );
+  /*  const prelimTimesheetData = await getTimesheetData(
+      employeeId, firstDay, lastDay);
+  
+    const betterWorkBlocks = prelimTimesheetData
+      .map(
+        (day) =>
+          day.workBlocks.map(
+            (block) => ({ ...block, date: day.date })
+          )).reduce(
+            (acc, cur) => (acc.concat(cur)), []
+          );
+  */
 
   for (const workBlock of workBlocks) { // enriching workBlocks with jobsiteAddress
     const jobsite = await getJobsite(workBlock.jobsiteId);
@@ -82,7 +84,8 @@ export default async function generateWeeklyReport(employeeId, from, to, fullNam
     workBlock.workEndTime = workBlock.workEndTime ? new Date(workBlock.workEndTime) : null;
   };
 
-  reportData['workBlocks'] = formatWorkBlocksForDailyReport(workBlocks, betterWorkBlocks);
+  const reportReadyWorkBlocks = formatWorkBlocksForDailyReport(workBlocks);
+  reportData['workBlocks'] = reportReadyWorkBlocks;
   const totalHours = reportData['workBlocks']
     .map(x => x.hours)
     .reduce((x, y) => x + y, 0);
@@ -90,9 +93,9 @@ export default async function generateWeeklyReport(employeeId, from, to, fullNam
 
   reportData['totalHours'] = totalHours;
   reportData['regularHours'] = regularHours;
-  reportData['weekStartDate'] = format(firstDay, 'MMM d, yyyy');
-  reportData['weekEndDate'] = format(lastDay, 'MMM d, yyyy');
-  reportData['currentDate'] = format(new Date(), 'MMM d, yyyy');
+  reportData['weekStartDate'] = firstDay.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  reportData['weekEndDate'] = lastDay.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  reportData['currentDate'] = Temporal.Now.plainDateISO().toString();
   reportData['fullName'] = fullName;
 
   const uniqueFileName = `weekly-report-${employeeId}-${uuidv4()}.docx`;

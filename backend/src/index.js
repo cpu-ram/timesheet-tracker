@@ -7,7 +7,10 @@ import { employeeRouter } from './routes/employeeRouter.js';
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  exposedHeaders: ['Content-Disposition', 'X-File-Name'],
+}));
 
 if (process.env.NODE_ENV === 'development') {
   app.use((req, res, next) => {

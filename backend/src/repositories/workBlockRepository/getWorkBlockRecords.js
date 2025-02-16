@@ -1,6 +1,4 @@
 import dbPool from '../../config/dbPool.js';
-import { format } from 'date-fns';
-import { pgDateFormat } from '../utils/pgFormats.js';
 
 export const getWorkBlockRecords = async (
   employeeId,
@@ -11,8 +9,8 @@ export const getWorkBlockRecords = async (
   let formattedStartDate = null;
   let formattedEndDate = null;
   try {
-    formattedStartDate = format(startDate, pgDateFormat);
-    formattedEndDate = format(endDate, pgDateFormat);
+    formattedStartDate = startDate.toString();
+    formattedEndDate = endDate.toString();
   }
   catch (error) {
     throw error;
@@ -24,14 +22,15 @@ export const getWorkBlockRecords = async (
     coalesce(projects.project_id, work_periods.temp_project_id) AS "jobsiteId",
     work_periods.reported_by AS "reportedBy",
     work_periods.employee_id AS "employeeId",
-    work_start AS "workStartTime",
-    work_end AS "workEndTime",
-    break_start AS "breakStartTime",
-    break_end AS "breakEndTime",
-    coalesce(projects.project_address, work_periods.temp_project_location) AS "tempLocation",
-    coalesce(projects.project_name, work_periods.temp_project_name) AS "tempJobsiteName",
+    work_start AS "workBlockStart",
+    work_end AS "workBlockEnd",
+    break_start AS "breakStart",
+    break_end AS "breakEnd",
+    coalesce(projects.project_address, work_periods.temp_project_location) AS "jobsiteAddress",
+    coalesce(projects.project_name, work_periods.temp_project_name) AS "jobsiteName",
     work_periods.supervisor_id AS "supervisorId",
-    work_periods.additional_notes AS "tempJobsiteDescription"
+    coalesce(employees.employee_name, work_periods.temp_supervisor_name) AS "supervisorName",
+    work_periods.additional_notes AS "additionalNotes"
     FROM
       work_periods
     LEFT JOIN 
