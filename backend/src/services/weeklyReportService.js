@@ -62,18 +62,17 @@ export default async function generateWeeklyReport(employeeId, from, to, fullNam
   const [firstDay, lastDay] = [from, to];
   const workBlocks = await getWorkBlocks(employeeId, employeeId, firstDay, lastDay);
 
-  /*  const prelimTimesheetData = await getTimesheetData(
-      employeeId, firstDay, lastDay);
-  
-    const betterWorkBlocks = prelimTimesheetData
-      .map(
-        (day) =>
-          day.workBlocks.map(
-            (block) => ({ ...block, date: day.date })
-          )).reduce(
-            (acc, cur) => (acc.concat(cur)), []
-          );
-  */
+  const prelimTimesheetData = await getTimesheetData(
+    employeeId, firstDay, lastDay);
+
+  const betterWorkBlocks = prelimTimesheetData
+    .map(
+      (day) =>
+        day.workBlocks.map(
+          (block) => ({ ...block, date: day.date })
+        )).reduce(
+          (acc, cur) => (acc.concat(cur)), []
+        );
 
   for (const workBlock of workBlocks) { // enriching workBlocks with jobsiteAddress
     const jobsite = await getJobsite(workBlock.jobsiteId);

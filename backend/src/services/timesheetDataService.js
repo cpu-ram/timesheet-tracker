@@ -1,17 +1,19 @@
 import { parse, isValid, differenceInCalendarDays, addDays } from 'date-fns';
 import { fetchTimesheetDataRecords } from '../repositories/timesheetDataRepository.js';
+import { Temporal } from '@js-temporal/polyfill';
 
 export async function getTimesheetData(employeeId, from, to) {
   let result = undefined;
   try {
-    let [fromDate, toDate] = [from, to].map(date => parse(date, 'yyyy-MM-dd', new Date()));
-    if (!from || !to || !isValid(fromDate) || !isValid(toDate)) {
+    if (!from || !to) {
       throw new Error('Invalid date format');
     }
+    let [fromDate, toDate] = [from, to];
+
 
     result = Array.from(
-      { length: differenceInCalendarDays(toDate, fromDate) + 1 },
-      (_, index) => addDays(fromDate, index)
+      { length: fromDate.until(toDate, { largestUnit: 'days', smallestUnit: 'days' }).days + 1 },
+      (_, index) => fromDate.add({ days: index })
     ).map(
       date => ({
         date: date,
@@ -24,13 +26,13 @@ export async function getTimesheetData(employeeId, from, to) {
     if (data === null) return result;
 
     for (let record of data) {
-      let recordDate = record.workBlockDate;
-      let dateIndex = differenceInCalendarDays(recordDate, fromDate);
+      let recordDate = Temporal.PlainDate.from(record.workBlockDate);
+      let dateIndex = fromDate.until(recordDate, { largestUnit: 'days', smallestUnit: 'days' }).days;
       result[dateIndex].workBlocks.push(record);
     }
   }
   catch (error) {
-    throw new Error(error);
+    throw error;
   }
   return result;
 }

@@ -1,6 +1,4 @@
-import { generateTimesheetReport } from "../services/timesheetReportService.js";
-import { startOfDay } from "date-fns";
-import { format } from "date-fns";
+import generateWeeklyReport from '../services/weeklyReportService.js';
 import { Temporal } from '@js-temporal/polyfill';
 
 export const generateTimesheetReportHandler = async (req, res) => {
@@ -8,10 +6,10 @@ export const generateTimesheetReportHandler = async (req, res) => {
   try {
     let from = Temporal.PlainDate.from(req.body.from);
     let to = Temporal.PlainDate.from(req.body.to);
-    resultBuffer = await generateTimesheetReport(
+    resultBuffer = await generateWeeklyReport(
       req.body.employeeId, from, to, req.body.fullName
     );
-    const fileName = `${req.body.fullName}_timesheet_${from.toString()}_${to.toString()}`;
+    const fileName = `${req.body.fullName.replace(/ /g, '_')}_timesheet_${from.toString()}_${to.toString()}`;
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}.docx"`);
     res.setHeader('X-File-Name', `${fileName}.docx`);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');

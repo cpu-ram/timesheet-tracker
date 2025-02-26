@@ -6,8 +6,8 @@ export async function fetchTimesheetDataRecords(employeeId, from, to) {
   let formattedTo = undefined;
   let formattedFrom = undefined;
   try {
-    formattedFrom = format(from, pgDateFormat);
-    formattedTo = format(to, pgDateFormat);
+    formattedFrom = from.toString();
+    formattedTo = to.toString();
   }
   catch (error) {
     if (error instanceof RangeError
