@@ -1,6 +1,8 @@
 import dbPool from '../config/dbPool.js';
+import { Temporal } from '@js-temporal/polyfill';
 import { format } from 'date-fns';
 import { pgDateFormat } from './utils/pgFormats.js';
+import { workerData } from 'worker_threads';
 
 export async function fetchTimesheetDataRecords(employeeId, from, to) {
   let formattedTo = undefined;
@@ -55,7 +57,14 @@ export async function fetchTimesheetDataRecords(employeeId, from, to) {
     if (result.rowCount === 0) {
       return null;
     }
-    return result.rows;
+    result = result.rows.map(row =>
+    ({
+      ...row,
+      workBlockStart: row.workBlockStart ? Temporal.PlainTime.from(row.workBlockStart) : null,
+      workBlockEnd: row.workBlockEnd ? Temporal.PlainTime.from(row.workBlockEnd) : null,
+    })
+    )
+    return result;
   }
   catch (error) {
     throw new Error('Unable to fetch timesheet data records');

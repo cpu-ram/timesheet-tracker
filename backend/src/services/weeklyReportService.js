@@ -1,7 +1,6 @@
 import { getWorkBlocks } from './workBlockService.js';
 import { getJobsite } from './jobsiteService.js';
 import { getTimesheetData } from './timesheetDataService.js';
-import { startOfDay } from 'date-fns';
 import path from 'path';
 import * as fs from 'fs';
 import PizZip from 'pizzip';
@@ -12,7 +11,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
 import { Temporal } from '@js-temporal/polyfill';
 
-function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
+function formatWorkBlocksForDailyReport(workBlockArray) {
+  if (!workBlockArray || workBlockArray.length === 0) {
+    throw new RangeError('No work blocks provided');
+  }
+
   const calculateNumberOfHours = (startTime, endTime) => (
     Math.round(
       (
@@ -57,13 +60,83 @@ function formatWorkBlocksForDailyReport(workBlockArray, betterWorkBlockArray) {
   return formattedWorkBlocks;
 }
 
+function formatBetterWorkBlocksForDailyReport(betterWorkBlockArray) {
+  if (!betterWorkBlockArray || betterWorkBlockArray.length === 0) {
+    throw new RangeError('No work blocks provided');
+  }
+
+  function calculateHours(startTime, endTime) {
+    if (!startTime || !endTime) {
+      throw new RangeError('Start time and end time are required');
+    }
+    if (Temporal.PlainTime.compare(startTime, endTime) > 0) {
+      throw new RangeError('Start time must be before end time');
+    }
+
+    let interval = startTime.until(endTime, { largestUnit: 'hours', smallestUnit: 'minutes' });
+    const totalMinutes = interval.hours * 60 + interval.minutes;
+    return Math.round(totalMinutes / 60 * 10) / 10;
+  }
+  function formatTime(time) {
+    if (!time) {
+      return '-';
+    }
+    return time.toLocaleString('en-US', { hour: "2-digit", minute: "2-digit", hour12: true });
+  }
+  function formatDate(date) {
+    if (!date) {
+      return '-';
+    }
+
+    let dateString = date.toLocaleString('en-US',
+      {
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'short',
+      }
+    );
+
+    let [weekday, monthDay] = dateString.split(', ');
+    let result = `${monthDay} ${weekday}`;
+    return result;
+  }
+
+  let formattedBetterWorkBlocks = betterWorkBlockArray.map(
+    function (workBlock) {
+      let result = {
+        jobsiteId: workBlock.jobsiteId ? workBlock.jobsiteId.
+          toUpperCase() : '—',
+        date: formatDate(workBlock.date),
+        hours: workBlock.workBlockStart && workBlock.workBlockEnd ?
+          calculateHours(workBlock.workBlockStart, workBlock.workBlockEnd)
+          :
+          0,
+        jobsiteDetails: workBlock.jobsiteName || workBlock.jobsiteAddress || '—',
+        workBlockStart: workBlock.workBlockStart ? formatTime(workBlock.workBlockStart) : '-',
+        workBlockEnd: workBlock.workBlockEnd ? formatTime(workBlock.workBlockEnd) : '-',
+      }
+      const timePropertyNames = ['workBlockStart', 'workBlockEnd', 'breakStart', 'breakEnd'];
+      timePropertyNames.forEach((propertyName) => {
+        if (workBlock.hasOwnProperty(propertyName) && workBlock[propertyName] != null) {
+          result[propertyName] = formatTime(workBlock[propertyName]);
+        }
+        else result[propertyName] = '—';
+      });
+      return result;
+    }
+
+  );
+
+  return formattedBetterWorkBlocks;
+}
+
 export default async function generateWeeklyReport(employeeId, from, to, fullName = 'John Doe') {
   const reportData = {};
   const [firstDay, lastDay] = [from, to];
-  const workBlocks = await getWorkBlocks(employeeId, employeeId, firstDay, lastDay);
 
   const prelimTimesheetData = await getTimesheetData(
-    employeeId, firstDay, lastDay);
+    employeeId, firstDay, lastDay
+  );
 
   const betterWorkBlocks = prelimTimesheetData
     .map(
@@ -74,24 +147,23 @@ export default async function generateWeeklyReport(employeeId, from, to, fullNam
           (acc, cur) => (acc.concat(cur)), []
         );
 
-  for (const workBlock of workBlocks) { // enriching workBlocks with jobsiteAddress
-    const jobsite = await getJobsite(workBlock.jobsiteId);
+  if (betterWorkBlocks) {
 
-    workBlock.jobsiteAddress = jobsite ? jobsite.jobsiteAddress : (workBlock.tempLocation ?? '');
-    workBlock.jobsiteName = jobsite ? jobsite.jobsiteName : (workBlock.tempJobsiteName ?? '');
-    workBlock.workStartTime = workBlock.workStartTime ? new Date(workBlock.workStartTime) : null;
-    workBlock.workEndTime = workBlock.workEndTime ? new Date(workBlock.workEndTime) : null;
-  };
+    const reportReadyBetterWorkBlocks = formatBetterWorkBlocksForDailyReport(betterWorkBlocks);
+    reportData['workBlocks'] = reportReadyBetterWorkBlocks;
+    const totalHours = reportData['workBlocks']
+      .map(x => x.hours)
+      .reduce((x, y) => x + y, 0);
+    const regularHours = totalHours > 40 ? 40 : totalHours;
 
-  const reportReadyWorkBlocks = formatWorkBlocksForDailyReport(workBlocks);
-  reportData['workBlocks'] = reportReadyWorkBlocks;
-  const totalHours = reportData['workBlocks']
-    .map(x => x.hours)
-    .reduce((x, y) => x + y, 0);
-  const regularHours = totalHours > 40 ? 40 : totalHours;
+    reportData['totalHours'] = totalHours;
+    reportData['regularHours'] = regularHours;
+  } else {
+    reportData['workBlocks'] = [];
+    reportData['totalHours'] = 0;
+    reportData['regularHours'] = 0;
+  }
 
-  reportData['totalHours'] = totalHours;
-  reportData['regularHours'] = regularHours;
   reportData['weekStartDate'] = firstDay.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" });
   reportData['weekEndDate'] = lastDay.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" });
   reportData['currentDate'] = Temporal.Now.plainDateISO().toString();
