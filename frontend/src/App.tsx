@@ -4,12 +4,22 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { User } from './types/userType.tsx';
 import UserSelectorPage from './pages/UserSelectorPage.tsx';
 import TimesheetPage from './pages/TimesheetPage.tsx';
+import { GlobalStyles } from '@mui/material';
 
 function App() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   return (
     <>
+      <GlobalStyles
+        styles={{
+          '*': { boxSizing: 'border-box' },
+          body: {
+            padding: '0.5em 0.5em !important',
+            margin: '0 !important'
+          },
+        }}
+      />
       <Router>
         <Routes>
           <Route
@@ -39,6 +49,7 @@ function App() {
                 (<Navigate to="/select-user" />)
             }
           />
+
         </Routes>
       </Router>
     </>

@@ -5,17 +5,30 @@ const HoursTotal = ({ workData }) => {
     <>
       {
         workData ?
-          (<Grid container>
-            <Grid item xs={12} sx={{ borderBottom: 1, borderColor: 'divider', mb: 1 }} />
+          (
+            <Grid item xs={1.5}
+              sx={{
+                width: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                borderTop: '1px solid black',
+                paddingTop: '0.5em',
+                marginTop: '1em',
+              }}
 
-            <Grid item xs={1.5}>
-              <Typography align='center'>
+            >
+              <Typography align='center'
+                sx={{
+                  display: 'inline-flex',
+                  whiteSpace: 'nowrap',
+                  margin: 0,
+                }}>
                 <b>Day total:</b>
               </Typography>
-            </Grid>
 
-            <Grid item xs={3}>
-              <Typography align='left'>
+              <Typography
+                align='left'
+              >
                 <b style={{ whiteSpace: 'pre' }}>
                   {'    '}
                   {workData ? workData.reduce((acc, workBlock) => (
@@ -28,7 +41,6 @@ const HoursTotal = ({ workData }) => {
                 </b>
               </Typography>
             </Grid>
-          </Grid>
           )
           :
           (null)

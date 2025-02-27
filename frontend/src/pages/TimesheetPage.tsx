@@ -1,7 +1,8 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
-import { Typography, Box } from '@mui/material';
-import { startOfDay, startOfWeek, format, addDays, isSameDay, differenceInCalendarDays, differenceInHours } from 'date-fns';
+import { Typography, Box, GlobalStyles } from '@mui/material';
+import { differenceInHours } from 'date-fns';
+import { startOfWeek } from '../utils/temporalFunctions.ts';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import { TextField, Autocomplete } from '@mui/material';
@@ -12,6 +13,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CompressIcon from '@mui/icons-material/Compress';
 
 import Calendar from '../components/Calendar.tsx';
+import WeekList from '../components/WeekList.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
@@ -20,12 +22,13 @@ import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 const TimesheetPage = ({ selectedUser }) => {
   const [isLoading, setisLoading] = useState(false);
 
-  const [workData, setWorkData] = useState([]);
   const [dateRange, setDateRange] = useState(generateDateRange());
+  const [workData, setWorkData] = useState(scaffoldWorkDataContainer());
 
   const [selectedDates, setSelectedDates] = useState([]);
-  const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(null);
+  const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(Temporal.Now.plainDateISO());
 
+  const [calendarMode, setCalendarMode] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const [multiDaySelectionMode, setMultiDaySelectionMode] = useState(false);
@@ -33,7 +36,7 @@ const TimesheetPage = ({ selectedUser }) => {
   const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
   const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
 
-  const today = startOfDay(new Date());
+  const today = Temporal.Now.plainDateISO();
 
   useEffect(() => {
     dateSelectionHandler.selectSingleDay(today);
@@ -43,51 +46,76 @@ const TimesheetPage = ({ selectedUser }) => {
 
   const theme = useTheme();
 
+  function scaffoldWorkDataContainer() {
+    const days = [];
+    let curr = dateRange.from;
+    while (Temporal.PlainDate.compare(curr, dateRange.to) <= 0) {
+      const day = curr;
+      days.push({ date: day, workBlocks: [] });
+      curr = curr.add({ days: 1 });
+    }
+    return days;
+  }
+
   const fetchFullTimesheetData = async () => {
-    setisLoading(true);
+    const fetchedData = await fetchTimesheetData({ from: dateRange.from, to: today, userId: selectedUser.id });
 
-    const timesheetData = await fetchTimesheetData({ from: dateRange.from, to: today, userId: selectedUser.id });
-    setWorkData(timesheetData || []);
-
-    setisLoading(false);
+    updateWorkData(fetchedData);
   };
 
   const fetchDayTimesheetData = async (date) => {
-    setisLoading(true);
+    const fetchedData = await fetchTimesheetData({ from: date, to: date, userId: selectedUser.id });
 
-    const timesheetData = await fetchTimesheetData({ from: date, to: date, userId: selectedUser.id });
-    setWorkData((workData) => (
-      workData && workData.length > 0 ?
-        workData.map((day) => (
-          isSameDay(day.date, date) ?
-            {
-              ...day,
-              workBlocks: timesheetData[0].workBlocks
-            }
-            :
-            day
-        ))
-        :
-        [{ date: date, workBlocks: timesheetData[0].workBlocks }]
+    updateWorkData(fetchedData);
+  }
+
+  const fetchMultipleDaysTimesheetData = async (dates) => {
+    let combinedData = [];
+    try {
+      for (const date of dates) {
+        const fetchedData = await fetchTimesheetData({ from: date, to: date, userId: selectedUser.id });
+        combinedData = combinedData.concat(fetchedData);
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+    updateWorkData(combinedData);
+  }
+
+  const updateWorkData = (newWorkData) => {
+    setWorkData((prevWorkData) => (
+      prevWorkData.map((prevWorkDay) => {
+        const matchingFetchedDay = newWorkData.find((fetchedDay) => ((fetchedDay.date).equals(prevWorkDay.date)));
+        if (matchingFetchedDay !== undefined) {
+          return matchingFetchedDay;
+        } else return prevWorkDay;
+      })
     ));
 
-    setisLoading(false);
   }
 
   function generateDateRange(numberOfWeeks = 2) {
 
-    const today = startOfDay(new Date());
-    const firstWeekStart = addDays(startOfWeek(today, { weekStartsOn: 1 }), -(7 * (numberOfWeeks - 1)));
-    const lastWeekEnd = addDays(firstWeekStart, 7 * numberOfWeeks - 1);
+    const today = Temporal.Now.plainDateISO();
+    const firstWeekStart = startOfWeek(today).subtract({ days: 7 * (numberOfWeeks - 1) });
+    const lastWeekEnd = firstWeekStart.add({ days: 7 * numberOfWeeks - 1 });
 
     return { from: firstWeekStart, to: lastWeekEnd };
   }
 
   const handleAddWorkBlock = async (workBlockData) => {
     try {
-      if (selectedDates.length > 0) {
+      if (selectedDates.length > 1) {
         await Promise.all(selectedDates.map(date => addWorkBlock(workBlockData, date)));
-        await fetchDayTimesheetData(lastSelectedSingleDate);
+        await fetchMultipleDaysTimesheetData(selectedDates);
+      }
+      if (selectedDates.length === 1) {
+        await addWorkBlock(workBlockData, selectedDates[0]);
+        await fetchDayTimesheetData(selectedDates[0]);
+      }
+      else if (selectedDates.length === 0) {
+        throw new Error();
       }
       setAddMode(false);
     }
@@ -107,8 +135,8 @@ const TimesheetPage = ({ selectedUser }) => {
         body: JSON.stringify({
           employeeId: selectedUser.id,
           reportedById: selectedUser.id,
-          startTime: workBlockData.workBlockStart ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
-          endTime: workBlockData.workBlockEnd ? format(selectedDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
+          startTime: workBlockData.workBlockStart ? selectedDate.toString() + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
+          endTime: workBlockData.workBlockEnd ? selectedDate.toString() + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
           date: selectedDate,
           tempJobsiteId: workBlockData.jobsiteId,
           tempJobsiteName: workBlockData.jobsiteName,
@@ -139,8 +167,8 @@ const TimesheetPage = ({ selectedUser }) => {
           body:
             JSON.stringify({
               workBlockId: workBlockId,
-              startTime: workBlockData.workBlockStart ? format(lastSelectedSingleDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
-              endTime: workBlockData.workBlockEnd ? format(lastSelectedSingleDate, 'yyyy-MM-dd') + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
+              startTime: workBlockData.workBlockStart ? lastSelectedSingleDate.toString() + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
+              endTime: workBlockData.workBlockEnd ? lastSelectedSingleDate.toString() + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
               tempJobsiteId: workBlockData.jobsiteId,
               tempJobsiteName: workBlockData.jobsiteName,
               tempJobsiteAddress: workBlockData.jobsiteAddress,
@@ -173,7 +201,7 @@ const TimesheetPage = ({ selectedUser }) => {
       if (!response.ok) {
         throw new Error('Failed to delete work block');
       }
-      else await fetchDayTimesheetData(lastSelectedSingleDate);
+      await fetchDayTimesheetData(lastSelectedSingleDate);
     }
     catch (error) {
       throw new Error(error);
@@ -223,21 +251,21 @@ const TimesheetPage = ({ selectedUser }) => {
 
   const dateSelectionHandler = {
     add: function (date) {
-      setSelectedDates(() => [...selectedDates, date]);
+      setSelectedDates((prevSelectedDates) => [...prevSelectedDates, date]);
     },
     remove: function (date) {
-      setSelectedDates(() => selectedDates.filter((d) => !isSameDay(d, date)));
+      setSelectedDates((prevSelectedDates) => prevSelectedDates.filter((d) => !d.equals(date)));
     },
     selectSingleDay: async function (date) {
-      setSelectedDates([date]);
       setLastSelectedSingleDate(date);
+      await fetchDayTimesheetData(lastSelectedSingleDate);
+      setSelectedDates([date]);
       setEditMode(false);
       setAddMode(false);
-      await fetchDayTimesheetData(lastSelectedSingleDate);
     },
     lastSelectedSingleDate: lastSelectedSingleDate,
     isSelected: function (date) {
-      return selectedDates.some((x) => (isSameDay(x, date)));
+      return selectedDates.some((x) => (x.equals(date)));
     },
     multiSelectionOn: function () {
       setMultiDaySelectionMode(true);
@@ -270,17 +298,42 @@ const TimesheetPage = ({ selectedUser }) => {
       }
     }
   }
+
+  function getRangeOfSelectedWeek() {
+    const selectedWeekNumber = Math.floor((dateRange.from)
+      .until(
+        dateSelectionHandler.lastSelectedSingleDate,
+        { largestUnit: 'days', smallestUnit: 'days', roundingMode: 'trunc' }
+      ).days
+      / 7);
+    const selectedWeekStartPosition = selectedWeekNumber * 7;
+    const startDay = dateRange.from.add({ days: selectedWeekStartPosition });
+    const endDay = startDay.add({ days: 6 });
+
+    return { from: startDay, to: endDay };
+  }
+  function getDaysOfSelectedWeek() {
+    const selectedWeekNumber = Math.floor((dateRange.from)
+      .until(
+        dateSelectionHandler.lastSelectedSingleDate,
+        {
+          largestUnit: 'days', smallestUnit: 'days', roundingMode: 'trunc'
+        }
+      ).days / 7);
+
+    const daysOfSelectedWeek = [];
+    const selectedWeekStartPosition = selectedWeekNumber * 7;
+    for (let i = 0; i <= 6; i++) {
+      const day = dateRange.from.add({ days: selectedWeekStartPosition + i });
+      daysOfSelectedWeek.push(day);
+    }
+
+    return daysOfSelectedWeek;
+  }
+
   const workDataAggregator = {
-
     getWeekWorkHoursTotal: function () {
-      const selectedWeekNumber = Math.floor(differenceInCalendarDays(dateSelectionHandler.lastSelectedSingleDate, dateRange.from) / 7);
-
-      const daysOfSelectedWeek = [];
-      const selectedWeekStartPosition = selectedWeekNumber * 7;
-      for (let i = 0; i <= 6; i++) {
-        const day = addDays(dateRange.from, selectedWeekStartPosition + i);
-        daysOfSelectedWeek.push(day);
-      }
+      const daysOfSelectedWeek = getDaysOfSelectedWeek();
 
       return daysOfSelectedWeek.map(
         (day) => {
@@ -290,15 +343,15 @@ const TimesheetPage = ({ selectedUser }) => {
 
     getDayWorkHoursTotal: function (day) {
 
-      const workDay = workData.find((workDay) => isSameDay(workDay.date, day));
+      const workDay = workData.find((workDay) => (workDay.date).equals(day));
       if (!workDay) {
-        return 0;
+        throw new RangeError('Day not found');
       }
 
       return workDay.workBlocks
         .map(workBlock => {
           if (workBlock.workBlockStart && workBlock.workBlockEnd) {
-            return differenceInHours(new Date(workBlock.workBlockEnd.toString()), new Date(workBlock.workBlockStart.toString()));
+            return ((workBlock.workBlockStart).until(workBlock.workBlockEnd).hours);
           }
           return 0;
         })
@@ -324,204 +377,221 @@ const TimesheetPage = ({ selectedUser }) => {
     if (addMode === true) setAddMode(false);
   }
 
-  const currentDayWorkData = workData.find((day) => isSameDay(day.date, lastSelectedSingleDate))?.workBlocks || [];
+  const currentDayWorkData = lastSelectedSingleDate ? workData.find((day) => (day.date).equals(lastSelectedSingleDate))?.workBlocks || [] : [];
 
   return (
-    <Box sx={{
-      flex: 1,
-      paddingTop: 0,
-      paddingBottom: 0,
-      paddingLeft: 0,
-      paddingRight: 0,
-      margin: 0
-    }}>
-      <Calendar {...{
-        multiDaySelectionMode, dateRange, workData, dateSelectionHandler, workDataAggregator
-      }}>
-      </Calendar>
-
-      <Grid name='buttons'
-        container
-        spacing={0}
-        item
-        xs={12}
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          gap: 1,
-          paddingTop: 1,
-          paddingLeft: 1,
+    calendarMode ?
+      (
+        <Box sx={{
+          flex: 1,
+          paddingTop: 0,
+          paddingBottom: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          margin: 0
         }}>
+          <Calendar {...{
+            multiDaySelectionMode, dateRange, workData, dateSelectionHandler, workDataAggregator, setCalendarMode,
+          }}
+          >
+          </Calendar>
 
-        {
-          (editMode && addMode) ?
-            <Typography> Error</Typography>
-            :
-            <></>
-        }
+          <Grid name='buttons'
+            container
+            spacing={0}
+            item
+            xs={12}
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              boxSizing: 'border-box',
 
-        {
-          !addMode && !editMode ?
-            <Grid item
-              sx={{
-                display: 'flex',
-                gap: 1,
-                padding: 0,
-                margin: 0,
-              }}>
-              <Button
-                display='flex'
-                onClick={() => handleSetAddMode()}
-                variant='outlined'
-                sx={{
-                  backgroundColor: theme.palette.primary.light,
-                  color: 'white',
-                }}>
-                <AddIcon />
-              </Button>
-
-              {
-                (currentDayWorkData != null && currentDayWorkData.length > 0) &&
-                <Button
-                  display='flex'
-                  onClick={() => handleSetEditMode()}
-                  variant='outlined'
-                  sx={{
-                    backgroundColor: theme.palette.primary.light,
-                    color: 'white'
-                  }}
-                >
-                  <EditIcon />
-                </Button>
-              }
-
-            </Grid>
-            :
-            <></>
-        }
-
-        {
-          addMode ?
-            <Box
-              xs={12}
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                flex: 1,
-                gap: 1,
-                padding: 0,
-                margin: 0,
-              }}>
-              <Box
-                xs={12}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: '100%',
-                  padding: 1,
-                  paddingRight: 2,
-                  gap: 1,
-                }}
-                spacing={2}
-              >
-                <Button
-                  onClick={() => handleDiscard()}
-                  variant='outlined'
-                  display='flex'
-                  sx={{
-                    backgroundColor: theme.palette.info.dark,
-                    color: 'white',
-                    margin: 0,
-                  }}
-                >
-                  <CompressIcon />
-                </Button>
-
-                <Autocomplete
-                  options={jobsiteSearchResults}
-                  getOptionLabel={
-                    (option) => {
-                      return Object.entries(option).map(([key, value]) => {
-                        if (value != null) {
-                          return (`${key}: ${value}`);
-                        }
-                      }
-                      ).filter((x) => (x != null)).join(', ');
-                    }}
-                  onInputChange={handleSearchJobsites}
-                  onChange={handleFetchJobsiteData}
-                  renderInput={(params) =>
-                    <TextField
-                      {...params}
-                      label="Search Jobsites"
-                      fullWidth
-                      sx={{ fontSize: '16px' }}
-                    />
-                  }
-                  sx={{
-                    flexGrow: 1,
-                    minWidth: 0,
-                    fontSize: '16px',
-                  }}
-                />
-
-              </Box>
-            </Box>
-            :
-            <></>
-        }
-
-        {
-          editMode ?
-            <Button
-              onClick={() => handleCancelEdit()}
-              sx={{
-                color: 'white',
-                backgroundColor: theme.palette.info.dark
-              }}
-              variant='outlined'
-            >
-              <Typography variant='h7' sx={{
-                padding: 0,
-                margin: 0,
-              }}>
-                Done
-              </Typography>
-            </Button>
-            :
-            <></>
-        }
-      </Grid >
-
-      <Grid container name='addWorkBlock'>
-        {
-          addMode &&
-          (
-            <AddWorkBlockForm {...{
-              ...{
-                workBlockStart: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkStartTime) : null,
-                workBlockEnd: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkEndTime) : null,
-                jobsiteId: selectedJobsiteData ? selectedJobsiteData.jobsiteId : null,
-                jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
-                jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
-                supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
-                mode: 'add',
-                multiDaySelectionMode, dateSelectionHandler,
-              },
-              handleEnteredData: handleAddWorkBlock, handleDiscard
+              gap: 1,
+              paddingTop: 1,
+              paddingLeft: 0,
             }}>
-            </AddWorkBlockForm >
-          )
-        }
-      </Grid>
-      <DayWorkBlocks {...{ workData: currentDayWorkData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
-      </DayWorkBlocks>
-      <HoursTotal {...{ workData: currentDayWorkData }}></HoursTotal>
 
+            {
+              (editMode && addMode) ?
+                <Typography> Error</Typography>
+                :
+                <></>
+            }
 
-    </Box >
+            {
+              !addMode && !editMode ?
+                <Grid item
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    padding: 0,
+                    margin: 0,
+                  }}>
+                  <Button
+                    display='flex'
+                    onClick={() => handleSetAddMode()}
+                    variant='outlined'
+                    sx={{
+                      backgroundColor: theme.palette.primary.light,
+                      color: 'white',
+                    }}>
+                    <AddIcon />
+                  </Button>
+
+                  {
+                    (currentDayWorkData != null && currentDayWorkData.length > 0) &&
+                    <Button
+                      display='flex'
+                      onClick={() => handleSetEditMode()}
+                      variant='outlined'
+                      sx={{
+                        backgroundColor: theme.palette.primary.light,
+                        color: 'white'
+                      }}
+                    >
+                      <EditIcon />
+                    </Button>
+                  }
+
+                </Grid>
+                :
+                <></>
+            }
+
+            {
+              addMode ?
+                <Box
+                  xs={12}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flex: 1,
+                    gap: 1,
+                    padding: 0,
+                    margin: 0,
+                  }}>
+                  <Box
+                    xs={12}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      width: '100%',
+                      padding: 1,
+                      paddingRight: 2,
+                      gap: 1,
+                    }}
+                    spacing={2}
+                  >
+                    <Button
+                      onClick={() => handleDiscard()}
+                      variant='outlined'
+                      display='flex'
+                      sx={{
+                        backgroundColor: theme.palette.info.dark,
+                        color: 'white',
+                        margin: 0,
+                        '&:hover': {
+                          backgroundColor: theme.palette.primary.dark,
+                        }
+                      }}
+                    >
+                      <CompressIcon />
+                    </Button>
+
+                    <Autocomplete
+                      options={jobsiteSearchResults}
+                      getOptionLabel={
+                        (option) => {
+                          return Object.entries(option).map(([key, value]) => {
+                            if (value != null) {
+                              return (`${key}: ${value}`);
+                            }
+                          }
+                          ).filter((x) => (x != null)).join(', ');
+                        }}
+                      onInputChange={handleSearchJobsites}
+                      onChange={handleFetchJobsiteData}
+                      renderInput={(params) =>
+                        <TextField
+                          {...params}
+                          label="Search Jobsites"
+                          fullWidth
+                          sx={{ fontSize: '16px' }}
+                        />
+                      }
+                      sx={{
+                        flexGrow: 1,
+                        minWidth: 0,
+                        fontSize: '16px',
+                      }}
+                    />
+
+                  </Box>
+                </Box>
+                :
+                <></>
+            }
+
+            {
+              editMode ?
+                <Button
+                  onClick={() => handleCancelEdit()}
+                  sx={{
+                    color: 'white',
+                    backgroundColor: theme.palette.info.dark
+                  }}
+                  variant='outlined'
+                >
+                  <Typography variant='h7' sx={{
+                    padding: 0,
+                    margin: 0,
+                  }}>
+                    Done
+                  </Typography>
+                </Button>
+                :
+                <></>
+            }
+          </Grid >
+
+          <Grid container name='addWorkBlock'>
+            {
+              addMode &&
+              (
+                <AddWorkBlockForm {...{
+                  ...{
+                    workBlockStart: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkStartTime) : null,
+                    workBlockEnd: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkEndTime) : null,
+                    jobsiteId: selectedJobsiteData ? selectedJobsiteData.jobsiteId : null,
+                    jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
+                    jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
+                    supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
+                    mode: 'add',
+                    multiDaySelectionMode, dateSelectionHandler,
+                  },
+                  handleEnteredData: handleAddWorkBlock, handleDiscard
+                }}>
+                </AddWorkBlockForm >
+              )
+            }
+          </Grid>
+
+          <DayWorkBlocks {...{ workData: currentDayWorkData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
+          </DayWorkBlocks>
+
+          <HoursTotal {...{ workData: currentDayWorkData }}></HoursTotal>
+        </Box >
+      )
+      :
+      (
+        !calendarMode &&
+        <WeekList {...
+          {
+            workData, selectedWeekDateRange: getRangeOfSelectedWeek(),
+            selectedWeekDays: getDaysOfSelectedWeek(), workDataAggregator,
+            selectedUser, setCalendarMode
+          }} />
+      )
   );
 }
-
-
 export default TimesheetPage;

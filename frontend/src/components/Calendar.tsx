@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Temporal } from '@js-temporal/polyfill';
+import { addDays } from '../utils/temporalFunctions.ts';
+
 import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
-import { startOfDay, addDays, isSameDay, compareAsc, differenceInCalendarDays, differenceInHours } from 'date-fns';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import CompressIcon from '@mui/icons-material/Compress';
 import { useTheme } from '@mui/material/styles';
@@ -13,18 +14,19 @@ const Calendar = ({
   dateRange,
   dateSelectionHandler,
   workDataAggregator,
+  setCalendarMode,
 }) => {
-  const today = startOfDay(new Date());
-  const days = [];
+  const today = Temporal.Now.plainDateISO();
+  const days: Temporal.PlainDate[] = [];
 
   const [isExpanded, setIsExpanded] = useState(false);
 
   const theme = useTheme();
   const validateDateRange = (range) => {
-    if (!range.from || !range.to || range.from > range.to) {
+    if (!range.from || !range.to || Temporal.PlainDate.compare(range.from, range.to) > 0) {
       throw new Error('Invalid date range');
     }
-    if (range.from.getDay() !== 1 || range.to.getDay() !== 0) {
+    if (range.from.dayOfWeek !== 1 || range.to.dayOfWeek !== 7) {
       throw new Error('Invalid date range');
     }
   }
@@ -35,11 +37,18 @@ const Calendar = ({
   catch (error) {
     throw Error(error);
   }
-  for (let i = dateRange.from; i <= dateRange.to; i = addDays(i, 1)) {
-    days.push(i);
+  for (
+    let day = dateRange.from; Temporal.PlainDate.compare(day, dateRange.to) <= 0; day = addDays(day, 1)
+  ) {
+    days.push(day);
   }
 
-  const selectedWeekNumber = Math.floor(differenceInCalendarDays(dateSelectionHandler.lastSelectedSingleDate, dateRange.from) / 7);
+  const selectedWeekNumber = Math.floor(
+    dateRange.from.until(
+      dateSelectionHandler.lastSelectedSingleDate,
+      { largestUnit: 'days', smallestUnit: 'days', roundingMode: 'trunc' }
+    ).days / 7
+  );
   const daysOfSelectedWeek = days.slice(selectedWeekNumber * 7, (selectedWeekNumber + 1) * 7);
 
   return (
@@ -115,7 +124,7 @@ const Calendar = ({
 
           {(isExpanded ?
             Array.from(
-              { length: (differenceInCalendarDays(dateRange.to, dateRange.from) + 1) / 7 },
+              { length: (dateRange.from.until(dateRange.to).days + 1) / 7 },
               (_, index) => (index * 7)
             )
             :
@@ -135,7 +144,7 @@ const Calendar = ({
                   }}
                 >
                   {days.slice(startIndex, startIndex + 7).map((day, index) => {
-                    if (isSameDay(day, dateRange.from) || day.getDate() === 1) {
+                    if (day.equals(dateRange.from) || day.day === 1) {
                       return (
                         <Grid item
                           xs={
@@ -181,60 +190,77 @@ const Calendar = ({
                     paddingTop: 0,
                   }}
                 >
-                  {days.slice(startIndex, startIndex + 7).map((day, index) => (
-                    <Grid item
-                      xs={
-                        1.71
-                      }
-                      key={index}
-                      style={{
-                        padding: '0 8px',
-                        paddingTop: 0,
-                        display: 'flex', justifyContent: 'center'
-                      }}
-                    >
-                      <Typography variant="h6" align="center"
-                        style={{
-                          cursor: 'pointer',
-                          backgroundColor:
-                            !multiDaySelectionMode && dateSelectionHandler.isSelected(day) ?
-                              'lightcoral'
-                              :
-                              multiDaySelectionMode && compareAsc(day, today) <= 0 ?
-                                (dateSelectionHandler.isSelected(day)) ?
-                                  theme.palette.warning.main : '#e2e3e5'
-                                :
-                                'transparent',
-                          border: isSameDay(day, today) ? '1px dotted blue'
-                            : multiDaySelectionMode && compareAsc(day, today) <= 0 ?
-                              '1.3px dashed lightcoral' : 'none',
-                          color: compareAsc(day, today) <= 0 ? 'black' : 'gray',
-                          borderRadius: '50%',
-                          padding: '0',
-                          width: '1.6em',
-                          minWidth: '1.6em',
-                          height: '1.6em',
-                          display: 'flex',
-                          placeContent: 'center',
-                          alignItems: 'center',
-                          fontWeight: (workDataAggregator.getDayWorkHoursTotal(day) > 0) ? '600' : '400',
-                          color: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? 'black' : 'black',
-                          textDecoration: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? 'none' : 'none',
-                        }}
-                        onClick={
-                          () => {
-                            if (compareAsc(day, today) <= 0) {
-                              dateSelectionHandler.handleDateClick(day);
-                              setIsExpanded(false);
-                            }
-                          }
-                        }
-                      >
+                  {
+                    days.slice(startIndex, startIndex + 7).map((day, index) => {
 
-                        {day.toLocaleString('default', { day: 'numeric' })}
-                      </Typography>
-                    </Grid>
-                  ))}
+                      function getDayStyle(day) {
+                        let dayColor = 'black';
+                        let cursor = 'pointer';
+                        if (Temporal.PlainDate.compare(day, today) > 0) {
+                          dayColor = 'darkgray';
+                          cursor = 'default';
+                        }
+                        return {
+                          color: dayColor,
+                          cursor: cursor
+                        }
+                      }
+
+                      return (
+                        <Grid item
+                          xs={
+                            1.71
+                          }
+                          key={index}
+                          style={{
+                            padding: '0 8px',
+                            paddingTop: 0,
+                            display: 'flex', justifyContent: 'center'
+                          }}
+                        >
+                          <Typography variant="h6" align="center"
+                            style={{
+                              cursor: `${getDayStyle(day).cursor}`,
+                              backgroundColor:
+                                !multiDaySelectionMode && dateSelectionHandler.isSelected(day) ?
+                                  'lightcoral'
+                                  :
+                                  multiDaySelectionMode && Temporal.PlainDate.compare(day, today) <= 0 ?
+                                    (dateSelectionHandler.isSelected(day)) ?
+                                      theme.palette.warning.main : '#e2e3e5'
+                                    :
+                                    'transparent',
+                              border: day.equals(today) ? '1px dotted blue'
+                                : multiDaySelectionMode && Temporal.PlainDate.compare(day, today) <= 0 ?
+                                  '1.3px dashed lightcoral' : 'none',
+                              borderRadius: '50%',
+                              padding: '0',
+                              width: '1.6em',
+                              minWidth: '1.6em',
+                              height: '1.6em',
+                              display: 'flex',
+                              placeContent: 'center',
+                              alignItems: 'center',
+                              fontWeight: (workDataAggregator.getDayWorkHoursTotal(day) > 0) ? '600' : '400',
+                              color: `${getDayStyle(day).color}`,
+                              textDecoration: (workDataAggregator.getDayWorkHoursTotal(day) > 0 && isExpanded) ? 'none' : 'none',
+                            }}
+                            onClick={
+                              () => {
+                                if (Temporal.PlainDate.compare(day, today) <= 0) {
+                                  dateSelectionHandler.handleDateClick(day);
+                                  setIsExpanded(false);
+                                }
+                              }
+                            }
+                          >
+
+                            {day.toLocaleString('default', { day: 'numeric' })}
+                          </Typography>
+                        </Grid>
+                      )
+                    })
+                  }
                 </Grid>
                 {
                   !isExpanded &&
@@ -270,7 +296,7 @@ const Calendar = ({
                           }}
                           onClick={
                             () => {
-                              if (compareAsc(day, today) <= 0) {
+                              if (Temporal.PlainDate.compare(day, today) <= 0) {
                                 dateSelectionHandler.handleDateClick(day);
                               }
                             }
@@ -326,6 +352,7 @@ const Calendar = ({
           sx={{
             display: 'flex',
             height: '50%',
+            width: 'auto',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'flex-start',
@@ -333,7 +360,9 @@ const Calendar = ({
             paddingTop: '0',
             marginTop: '0',
             gap: 1.5,
-            paddingRight: '1em',
+            paddingRight: '0.5em !important',
+            paddingLeft: '0.6em !important',
+            boxSizing: 'border-box',
           }}
         >
           <IconButton
@@ -344,7 +373,7 @@ const Calendar = ({
               border: `1px solid ${theme.palette.info.dark}`,
               background: isExpanded ? theme.palette.info.dark : 'transparent',
               '&:hover': {
-                background: isExpanded ? theme.palette.info.dark : 'transparent',
+                background: isExpanded ? theme.palette.primary.dark : 'auto',
               },
               color: isExpanded ? 'white' : theme.palette.info.dark,
             }}
@@ -352,17 +381,18 @@ const Calendar = ({
             {isExpanded ? <CompressIcon /> : <UnfoldMoreIcon />}
           </IconButton>
 
+
           <IconButton
             sx={{
               width: 'auto',
               alignSelf: 'flex-start',
               border: `1px solid ${theme.palette.info.dark}`,
-              background: isExpanded ? theme.palette.info.dark : 'transparent',
+              background: 'transparent',
               '&:hover': {
-                background: isExpanded ? theme.palette.info.dark : 'transparent',
               },
-              color: isExpanded ? 'white' : theme.palette.info.dark,
+              color: theme.palette.info.dark,
             }}
+            onClick={() => setCalendarMode(false)}
           >
             {isExpanded ? <FormatAlignCenterIcon /> : <FormatAlignCenterIcon />}
           </IconButton>

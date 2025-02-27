@@ -2,8 +2,8 @@ import { format } from 'date-fns';
 import { Temporal } from '@js-temporal/polyfill';
 
 const fetchTimesheetData = async ({ from, to, userId }) => {
-  const fromDateString = format(from, 'yyyy-MM-dd');
-  const toDateString = format(to, 'yyyy-MM-dd');
+  const fromDateString = from.toString();
+  const toDateString = to.toString();
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   const timesheetDataSubPath = '/reports/weekly/data';
 
@@ -18,7 +18,7 @@ const fetchTimesheetData = async ({ from, to, userId }) => {
     const modifiedData =
       data ?
         data.map((day) => ({
-          date: new Date(day.date),
+          date: Temporal.PlainDate.from(day.date),
           workBlocks:
             day.workBlocks.length > 0 ?
               day.workBlocks.map((workBlock) => (
@@ -33,20 +33,7 @@ const fetchTimesheetData = async ({ from, to, userId }) => {
                   breakEnd:
                     workBlock.breakEnd ? Temporal.PlainDateTime.from(workBlock.breakEnd) : null
                 }
-              )).sort(
-                (a, b) => {
-                  if (a.workBlockStart && b.workBlockStart) {
-                    return Temporal.PlainDateTime.compare(a.workBlockStart, b.workBlockStart);
-                  }
-                  if (a.workBlockStart) {
-                    return -1;
-                  }
-                  if (b.workBlockStart) {
-                    return 1;
-                  }
-                  return 0;
-                }
-              )
+              ))
               : []
         }))
         : []
