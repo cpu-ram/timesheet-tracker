@@ -11,13 +11,6 @@ export default function generateHtmlTemplate(reportData) {
   `;
 
   const style = `
-
-  @media print {
-    @page {
-      size: landscape;
-    }
-  }
-    
   body {
     margin: 0.5em 2%;
   }
@@ -74,6 +67,10 @@ export default function generateHtmlTemplate(reportData) {
       text-align: right;
   }
 
+  p, table p, tr p, td p, td, tr, table{
+    font-family: 'Roboto', sans-serif !important;
+  }
+
   p > span {
     display: block;
   }
@@ -91,9 +88,10 @@ export default function generateHtmlTemplate(reportData) {
     padding: 0 1em;
   }`;
 
-  return `
+  return `<!DOCTYPE html>
       <html>
         <head>
+          <meta charset="UTF-8">
           <style>
             ${style}
           </style>
@@ -185,7 +183,7 @@ export default function generateHtmlTemplate(reportData) {
 
           <footer>
             <p>
-              <span class='field'>
+              <span class='field signature'>
                 Employee Signature:
                 <span class='fieldData'>
                   ${reportData.fullName}
