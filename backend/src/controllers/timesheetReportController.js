@@ -1,4 +1,4 @@
-import generateWeeklyReport from '../services/weeklyReportService.js';
+import generateWeeklyReport from '../services/weeklyReport/weeklyReportService.js';
 import { Temporal } from '@js-temporal/polyfill';
 
 export const generateTimesheetReportHandler = async (req, res) => {
