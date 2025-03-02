@@ -25,13 +25,13 @@ const fetchTimesheetData = async ({ from, to, userId }) => {
                 {
                   ...workBlock,
                   workBlockStart:
-                    workBlock.workBlockStart ? Temporal.PlainDateTime.from(workBlock.workBlockStart) : null,
+                    workBlock.workBlockStart ? Temporal.PlainTime.from(workBlock.workBlockStart) : null,
                   workBlockEnd:
-                    workBlock.workBlockEnd ? Temporal.PlainDateTime.from(workBlock.workBlockEnd) : null,
+                    workBlock.workBlockEnd ? Temporal.PlainTime.from(workBlock.workBlockEnd) : null,
                   breakStart:
-                    workBlock.breakStart ? Temporal.PlainDateTime.from(workBlock.breakStart) : null,
+                    workBlock.breakStart ? Temporal.PlainTime.from(workBlock.breakStart) : null,
                   breakEnd:
-                    workBlock.breakEnd ? Temporal.PlainDateTime.from(workBlock.breakEnd) : null
+                    workBlock.breakEnd ? Temporal.PlainTime.from(workBlock.breakEnd) : null
                 }
               ))
               : []

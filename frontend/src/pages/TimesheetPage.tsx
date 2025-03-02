@@ -351,7 +351,7 @@ const TimesheetPage = ({ selectedUser }) => {
       return workDay.workBlocks
         .map(workBlock => {
           if (workBlock.workBlockStart && workBlock.workBlockEnd) {
-            return ((workBlock.workBlockStart).until(workBlock.workBlockEnd).hours);
+            return Math.round(((workBlock.workBlockStart).until(workBlock.workBlockEnd).total({ unit: 'hour' })) * 10) / 10;
           }
           return 0;
         })

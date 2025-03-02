@@ -33,7 +33,7 @@ const HoursTotal = ({ workData }) => {
                   {'    '}
                   {workData ? workData.reduce((acc, workBlock) => (
                     workBlock.workBlockStart && workBlock.workBlockEnd ?
-                      acc + workBlock.workBlockStart.until(workBlock.workBlockEnd).total({ unit: 'hours' })
+                      acc + Math.round(workBlock.workBlockStart.until(workBlock.workBlockEnd).total({ unit: 'hours' }) * 10) / 10
                       :
                       acc
                   ), 0) : 0}

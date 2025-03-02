@@ -17,6 +17,7 @@ export const startOfWeek = (date: Temporal.PlainDate, { weekStartsOn }: { weekSt
 }
 
 export const addDays = (date: Temporal.PlainDate, days: number) => {
+
   if (!date && !days) {
     throw new TypeError("Date or days are missing");
   }
@@ -24,4 +25,7 @@ export const addDays = (date: Temporal.PlainDate, days: number) => {
   return date.add({
     days: days
   });
+
+
 }
+

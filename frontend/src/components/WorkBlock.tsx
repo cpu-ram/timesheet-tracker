@@ -5,10 +5,10 @@ import { format } from 'date-fns';
 import { Temporal } from '@js-temporal/polyfill';
 
 interface WorkBlockProps {
-  workBlockStart: Date | null;
-  workBlockEnd: Date | null;
-  breakStart: Date | null;
-  breakEnd: Date | null;
+  workBlockStart: Temporal.PlainTime | null;
+  workBlockEnd: Temporal.PlainTime | null;
+  breakStart: Temporal.PlainTime | null;
+  breakEnd: Temporal.PlainTime | null;
   jobsiteId: number;
   jobsiteAddress: string;
   jobsiteName: string;
@@ -59,7 +59,7 @@ const WorkBlock = (
           >
             {
               workBlockStart ?
-                workBlockStart.toPlainTime().toLocaleString(
+                workBlockStart.toLocaleString(
                   'en-US',
                   {
                     hour: 'numeric',
@@ -119,7 +119,7 @@ const WorkBlock = (
                 <>
                   {
                     (() => {
-                      const scale = 100;
+                      const scale = 10;
                       const workBlockHours = workBlockStart.until(workBlockEnd).total({ unit: 'hours' });
                       const roundedWorkBlockHours = Math.round(workBlockHours * scale) / scale;
                       return roundedWorkBlockHours + 'h';
@@ -153,7 +153,7 @@ const WorkBlock = (
                 'warning.dark'
             }}>
             {workBlockEnd ?
-              workBlockEnd.toPlainTime().toLocaleString(
+              workBlockEnd.toLocaleString(
                 'en-US',
                 {
                   hour: 'numeric',
