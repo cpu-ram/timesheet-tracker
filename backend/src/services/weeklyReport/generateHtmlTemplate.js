@@ -11,81 +11,100 @@ export default function generateHtmlTemplate(reportData) {
   `;
 
   const style = `
-  body {
-    margin: 0.5em 2%;
-  }
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
-  header,
-    footer {
-    display: block;
-    width: 50%;
-    margin: 0 0 0 8%;
-  }
+    body {
+      margin: 0.5em 2%;
+    }
 
-  header > p,
-    footer > p {
-    display: inline-block;
-    min-width: 24em;
-    max-width: 24em;
-    box-sizing: border-box;
-    text-align: right;
-  }
+    header,
+      footer {
+      display: block;
+      width: 50%;
+      margin: 0 0 0 8%;
+    }
 
-    h1 {
-    text-transform: uppercase;
-    font-family: 'Roboto', sans-serif;
-    font-style: italic;
-    margin-left: 5%;
-    font-size: 1.3em;
-  }
-
-    table {
-    border-spacing: 0;
-    border-collapse: collapse;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  tr.table-header {
-    font-weight: bold;
-    font-size: 0.8em;
-  }
-
-  td {
-    border: 1px solid black;
-    margin: 0;
-    padding: 0.2em 0.5em;
-  }
-
-  td.table-embedded {
-    padding: 0;
-    border: 0;
-  }
-
-  td.table-embedded p {
+    header > p,
+      footer > p {
+      display: inline-block;
+      min-width: 24em;
+      max-width: 24em;
+      box-sizing: border-box;
       text-align: right;
-  }
+    }
 
-  p, table p, tr p, td p, td, tr, table{
-    font-family: 'Roboto', sans-serif !important;
-  }
+      h1 {
+      text-transform: uppercase;
+      font-family: 'Roboto', sans-serif;
+      font-style: italic;
+      margin-left: 5%;
+      font-size: 1.3em;
+    }
 
-  p > span {
-    display: block;
-  }
+      table {
+      border-spacing: 0;
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
-  p.statement-to-sign {
-    font-style: italic;
-  }
+    tr.table-header {
+      font-weight: bold;
+      font-size: 0.8em;
+    }
 
-  span.fieldData {
-    display: inline-block;
-    min-width: 10em;
-    box-sizing: border-box;
-    border-bottom: 1px solid black;
-    margin: 0;
-    padding: 0 1em;
+    td {
+      border: 1px solid black;
+      margin: 0;
+      padding: 0.2em 0.5em;
+    }
+
+    td.table-embedded {
+      padding: 0;
+      border: 0;
+    }
+
+    td.table-embedded p {
+        text-align: right;
+    }
+
+    p, table p, tr p, td p, td, tr, table{
+      font-family: 'Roboto', sans-serif !important;
+      font-size: 1em;
+    }
+
+    p > span {
+      display: block;
+    }
+
+    span.signature{
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.5em;
+    }
+
+    p.statement-to-sign {
+      font-style: italic;
+    }
+
+    span.field{
+      display: flex;
+    }
+
+    span.field-label{
+      display: block;
+      text-align: right;
+      min-width: 10em;
+    }
+
+    span.field-data {
+      display: flex;
+      width: 12em;
+      box-sizing: border-box;
+      border-bottom: 1px solid black;
+      margin: 0;
+      padding: 0 1em;
+    }
   }`;
 
   return `<!DOCTYPE html>
@@ -103,20 +122,32 @@ export default function generateHtmlTemplate(reportData) {
           <header>
             <p>
               <span class='field'>
+
+                <span class='field-label'>
                 Employee Name:
-                <span class='fieldData'>
+                </span>
+
+                <span class='field-data'>
                   ${reportData.fullName}
                 </span>
+
               </span>
               <span class='field'>
+
+                <span class='field-label'>
                 Week Start Date:
-                <span class='fieldData'>
+                </span>
+
+                <span class='field-data'>
                   ${reportData.weekStartDate}
                 </span>
+
               </span>
               <span class='field'>
-                Week End Date:
-                <span class='fieldData'>
+                <span class='field-label'>
+                  Week End Date:
+                </span>
+                <span class='field-data'>
                   ${reportData.weekEndDate}
                 </span>
               </span>
@@ -183,17 +214,26 @@ export default function generateHtmlTemplate(reportData) {
 
           <footer>
             <p>
-              <span class='field signature'>
-                Employee Signature:
-                <span class='fieldData'>
+              <span class='field'>
+
+                <span class='field-label'>
+                  Employee Signature:
+                </span>
+
+                <span class='field-data signature'>
                   ${reportData.fullName}
                 </span>
               </span>
+
               <span class='field'>
-                Date:
-                <span class='fieldData'>
+
+                <span class='field-label'>
+                  Date:
+                </span>
+                <span class='field-data'>
                   ${reportData.currentDate}
                 </span>
+                
               </span>
             </p>
           </footer>
