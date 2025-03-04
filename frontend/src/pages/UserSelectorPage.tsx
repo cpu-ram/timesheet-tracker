@@ -3,7 +3,8 @@ import { Typography, List, ListItem, Button, Container, Box } from '@mui/materia
 import { Link } from 'react-router-dom';
 
 interface User {
-  id: string;
+  id: number;
+  name: string,
   nickname: string;
 }
 
@@ -24,7 +25,7 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageP
           throw new Error('Failed to fetch users');
         }
         const data: User[] = await response.json();
-        setUsers(data);
+        setUsers(data.sort((x, y) => (x.nickname + x.name) > (y.nickname + y.name) ? -1 : 1));
       } catch (error) {
         console.error(error);
       }

@@ -4,7 +4,10 @@ import { addDays } from '../utils/temporalFunctions.ts';
 
 import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+
+//import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import PrintIcon from '@mui/icons-material/Print';
+
 import CompressIcon from '@mui/icons-material/Compress';
 import { useTheme } from '@mui/material/styles';
 import { Box, Alert } from '@mui/material';
@@ -394,7 +397,7 @@ const Calendar = ({
             }}
             onClick={() => setCalendarMode(false)}
           >
-            {isExpanded ? <FormatAlignCenterIcon /> : <FormatAlignCenterIcon />}
+            {isExpanded ? <PrintIcon /> : <PrintIcon />}
           </IconButton>
 
         </Grid>

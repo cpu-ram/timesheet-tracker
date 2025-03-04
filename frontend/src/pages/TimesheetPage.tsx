@@ -1,7 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
 import { Typography, Box, GlobalStyles } from '@mui/material';
-import { differenceInHours } from 'date-fns';
 import { startOfWeek } from '../utils/temporalFunctions.ts';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
