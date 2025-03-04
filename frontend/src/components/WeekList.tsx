@@ -5,11 +5,9 @@ import AppBar from "@mui/material/AppBar";
 import { Grid, Box, Typography, Button, Toolbar, TextField, GlobalStyles } from "@mui/material";
 import { WorkBlock } from './WorkBlock';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { format } from 'date-fns';
 
 const WeekList = ({ workData, selectedWeekDateRange, selectedWeekDays, workDataAggregator, selectedUser, setCalendarMode, }) => {
 
-  const [reportAddress, setReportAddress] = useState(null);
   const [signedName, setSignedName] = useState('');
   const [fileName, setFileName] = useState('');
   const handleSignatureChange = (event) => {
@@ -38,8 +36,8 @@ const WeekList = ({ workData, selectedWeekDateRange, selectedWeekDays, workDataA
       }
 
       const blob = await response.blob();
-      const reportFileFormat = 'docx';
-      const fileName = response.headers.get('X-File-Name') || 'timesheet.' + reportFileFormat;
+      const reportFileFormat = '.pdf';
+      const fileName = response.headers.get('X-File-Name') || 'timesheet' + reportFileFormat;
       setFileName(fileName);
       const blobUrl = URL.createObjectURL(blob);
 
