@@ -18,7 +18,7 @@ export async function generateWeeklyReportData(employeeId, from, to, fullName) {
         (acc, cur) => (acc.concat(cur)), []
       );
 
-  if (workBlocks) {
+  if (workBlocks.length > 0) {
     const reportReadyWorkBlocks = formatWorkDataForDailyReport(workBlocks);
     reportData['workBlocks'] = reportReadyWorkBlocks;
     const totalHours = reportData['workBlocks']

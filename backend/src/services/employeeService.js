@@ -1,4 +1,4 @@
-import { addEmployeeRecord, fetchEmployeeRecords } from '../repositories/employeeRepository.js';
+import { addEmployeeRecord, fetchEmployeeRecords, fetchEmployeeRecord } from '../repositories/employeeRepository.js';
 
 export async function addEmployee(
   employee_name = null,
@@ -16,6 +16,17 @@ export async function getEmployees() {
     return result;
   }
   catch (error) {
-    throw error;
+    console.error(error);
+  }
+}
+
+export async function getEmployee(employeeId) {
+  let result = undefined;
+  try {
+    result = await fetchEmployeeRecord(employeeId);
+    return result;
+  }
+  catch (error) {
+    console.error(error);
   }
 }
