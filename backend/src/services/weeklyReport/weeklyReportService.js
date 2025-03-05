@@ -12,7 +12,7 @@ export default async function generateWeeklyReport(employeeId, from, to, signedN
 
   const reportData = await generateWeeklyReportData(employeeId, from, to, signedName);
 
-  const htmlTemplate = generateHtmlTemplate(reportData);
+  const htmlTemplate = await generateHtmlTemplate(reportData);
   const pdfBuffer = await convertHtmlToPdf(htmlTemplate);
 
   return pdfBuffer;
