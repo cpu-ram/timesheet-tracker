@@ -16,7 +16,10 @@ function App() {
           '*': { boxSizing: 'border-box' },
           body: {
             padding: '0.5em 0.5em !important',
-            margin: '0 !important'
+            margin: '0 !important',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
       />

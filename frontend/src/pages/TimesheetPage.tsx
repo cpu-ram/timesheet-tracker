@@ -1,26 +1,20 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
-import { Typography, Box, GlobalStyles } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { startOfWeek } from '../utils/temporalFunctions.ts';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import { TextField, Autocomplete } from '@mui/material';
 
-import Button from '@mui/material/Button';
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-import CompressIcon from '@mui/icons-material/Compress';
+import Buttons from '../components/TimesheetPage/Buttons.jsx';
 
 import Calendar from '../components/Calendar.tsx';
-import WeekList from '../components/WeekList.tsx';
+import ReportPage from './ReportPage.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
 
 const TimesheetPage = ({ selectedUser }) => {
-  const [isLoading, setisLoading] = useState(false);
-
   const [dateRange, setDateRange] = useState(generateDateRange());
   const [workData, setWorkData] = useState(scaffoldWorkDataContainer());
 
@@ -381,210 +375,76 @@ const TimesheetPage = ({ selectedUser }) => {
   return (
     calendarMode ?
       (
-        <Box sx={{
-          flex: 1,
-          paddingTop: 0,
-          paddingBottom: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          margin: 0
-        }}>
-          <Calendar {...{
-            multiDaySelectionMode, dateRange, workData, dateSelectionHandler, workDataAggregator, setCalendarMode,
-          }}
-          >
-          </Calendar>
+        <Box key="calendar-mode-container"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100vw',
+            alignSelf: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignContent: 'center',
 
-          <Grid name='buttons'
-            container
-            spacing={0}
-            item
-            xs={12}
+            paddingTop: 0,
+            paddingBottom: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
+            margin: 0
+          }}>
+
+          <Container
             sx={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              boxSizing: 'border-box',
-
-              gap: 1,
-              paddingTop: 1,
-              paddingLeft: 0,
+              width: 'auto',
+              alignSelf: 'center',
+              maxWidth: '35em',
             }}>
+            <Calendar {...{
+              multiDaySelectionMode, dateRange, workData, dateSelectionHandler, workDataAggregator, setCalendarMode,
+            }}
+            >
+            </Calendar>
 
-            {
-              (editMode && addMode) ?
-                <Typography> Error</Typography>
-                :
-                <></>
-            }
+            <Buttons {...{
+              theme,
+              editMode, addMode,
+              handleSetAddMode, handleSetEditMode, handleDiscard,
+              handleSearchJobsites, handleFetchJobsiteData, handleCancelEdit, jobsiteSearchResults,
+              currentDayWorkData
+            }}>
+            </Buttons>
 
-            {
-              !addMode && !editMode ?
-                <Grid item
-                  sx={{
-                    display: 'flex',
-                    gap: 1,
-                    padding: 0,
-                    margin: 0,
+            <Grid container name='addWorkBlock'>
+              {
+                addMode &&
+                (
+                  <AddWorkBlockForm {...{
+                    ...{
+                      workBlockStart: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkStartTime) : null,
+                      workBlockEnd: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkEndTime) : null,
+                      jobsiteId: selectedJobsiteData ? selectedJobsiteData.jobsiteId : null,
+                      jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
+                      jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
+                      supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
+                      mode: 'add',
+                      multiDaySelectionMode, dateSelectionHandler,
+                    },
+                    handleEnteredData: handleAddWorkBlock, handleDiscard
                   }}>
-                  <Button
-                    display='flex'
-                    onClick={() => handleSetAddMode()}
-                    variant='outlined'
-                    sx={{
-                      backgroundColor: theme.palette.primary.light,
-                      color: 'white',
-                    }}>
-                    <AddIcon />
-                  </Button>
+                  </AddWorkBlockForm >
+                )
+              }
+            </Grid>
 
-                  {
-                    (currentDayWorkData != null && currentDayWorkData.length > 0) &&
-                    <Button
-                      display='flex'
-                      onClick={() => handleSetEditMode()}
-                      variant='outlined'
-                      sx={{
-                        backgroundColor: theme.palette.primary.light,
-                        color: 'white'
-                      }}
-                    >
-                      <EditIcon />
-                    </Button>
-                  }
+            <DayWorkBlocks {...{ workData: currentDayWorkData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
+            </DayWorkBlocks>
 
-                </Grid>
-                :
-                <></>
-            }
-
-            {
-              addMode ?
-                <Box
-                  xs={12}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flex: 1,
-                    gap: 1,
-                    padding: 0,
-                    margin: 0,
-                  }}>
-                  <Box
-                    xs={12}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      width: '100%',
-                      padding: 1,
-                      paddingRight: 2,
-                      gap: 1,
-                    }}
-                    spacing={2}
-                  >
-                    <Button
-                      onClick={() => handleDiscard()}
-                      variant='outlined'
-                      display='flex'
-                      sx={{
-                        backgroundColor: theme.palette.info.dark,
-                        color: 'white',
-                        margin: 0,
-                        '&:hover': {
-                          backgroundColor: theme.palette.primary.dark,
-                        }
-                      }}
-                    >
-                      <CompressIcon />
-                    </Button>
-
-                    <Autocomplete
-                      options={jobsiteSearchResults}
-                      getOptionLabel={
-                        (option) => {
-                          return Object.entries(option).map(([key, value]) => {
-                            if (value != null) {
-                              return (`${key}: ${value}`);
-                            }
-                          }
-                          ).filter((x) => (x != null)).join(', ');
-                        }}
-                      onInputChange={handleSearchJobsites}
-                      onChange={handleFetchJobsiteData}
-                      renderInput={(params) =>
-                        <TextField
-                          {...params}
-                          label="Search Jobsites"
-                          fullWidth
-                          sx={{ fontSize: '16px' }}
-                        />
-                      }
-                      sx={{
-                        flexGrow: 1,
-                        minWidth: 0,
-                        fontSize: '16px',
-                      }}
-                    />
-
-                  </Box>
-                </Box>
-                :
-                <></>
-            }
-
-            {
-              editMode ?
-                <Button
-                  onClick={() => handleCancelEdit()}
-                  sx={{
-                    color: 'white',
-                    backgroundColor: theme.palette.info.dark
-                  }}
-                  variant='outlined'
-                >
-                  <Typography variant='h7' sx={{
-                    padding: 0,
-                    margin: 0,
-                  }}>
-                    Done
-                  </Typography>
-                </Button>
-                :
-                <></>
-            }
-          </Grid >
-
-          <Grid container name='addWorkBlock'>
-            {
-              addMode &&
-              (
-                <AddWorkBlockForm {...{
-                  ...{
-                    workBlockStart: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkStartTime) : null,
-                    workBlockEnd: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkEndTime) : null,
-                    jobsiteId: selectedJobsiteData ? selectedJobsiteData.jobsiteId : null,
-                    jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
-                    jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
-                    supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
-                    mode: 'add',
-                    multiDaySelectionMode, dateSelectionHandler,
-                  },
-                  handleEnteredData: handleAddWorkBlock, handleDiscard
-                }}>
-                </AddWorkBlockForm >
-              )
-            }
-          </Grid>
-
-          <DayWorkBlocks {...{ workData: currentDayWorkData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
-          </DayWorkBlocks>
-
-          <HoursTotal {...{ workData: currentDayWorkData }}></HoursTotal>
+            <HoursTotal {...{ workData: currentDayWorkData }}></HoursTotal>
+          </Container>
         </Box >
       )
       :
       (
-        !calendarMode &&
-        <WeekList {...
+        <ReportPage {...
           {
             workData, selectedWeekDateRange: getRangeOfSelectedWeek(),
             selectedWeekDays: getDaysOfSelectedWeek(), workDataAggregator,

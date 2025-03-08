@@ -5,7 +5,6 @@ import { addDays } from '../utils/temporalFunctions.ts';
 import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
-//import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import PrintIcon from '@mui/icons-material/Print';
 
 import CompressIcon from '@mui/icons-material/Compress';
@@ -55,7 +54,12 @@ const Calendar = ({
   const daysOfSelectedWeek = days.slice(selectedWeekNumber * 7, (selectedWeekNumber + 1) * 7);
 
   return (
-    <Box sx={{ maxWidth: '1050px' }}>
+    <Box sx={{
+      display: 'flex',
+      selfAlign: 'center',
+      maxWidth: '45em',
+      borderBottom: '1px solid grey',
+    }}>
       <GlobalStyles
         styles={{
           body: { placeItems: 'start' },
@@ -87,7 +91,7 @@ const Calendar = ({
           }
           spacing={2}
           sx={{
-            borderBottom: 1,
+            // borderBottom: 1,
             borderColor: 'divider',
             paddingTop: 1,
             paddingBottom: 1,
@@ -354,14 +358,16 @@ const Calendar = ({
           xs={1}
           sx={{
             display: 'flex',
-            height: '50%',
+            height: 'auto',
             width: 'auto',
+            maxWidth: '2em',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'flex-start',
             alignSelf: 'flex-start',
             paddingTop: '0',
             marginTop: '0',
+            marginLeft: '0.5em',
             gap: 1.5,
             paddingRight: '0.5em !important',
             paddingLeft: '0.6em !important',
