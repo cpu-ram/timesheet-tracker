@@ -385,10 +385,7 @@ const TimesheetPage = ({ selectedUser }) => {
             justifyContent: 'center',
             alignContent: 'center',
 
-            paddingTop: 0,
-            paddingBottom: 0,
-            paddingLeft: 0,
-            paddingRight: 0,
+            padding: '0.5em 0.5em',
             margin: 0
           }}>
 

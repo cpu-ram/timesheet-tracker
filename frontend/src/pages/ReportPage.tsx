@@ -90,10 +90,10 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        minHeight: '100vh',
-        width: '100%',
         padding: 0,
         boxSizing: 'border-box',
+        width: 'calc(100vw)',
+        left: '0',
       }}
     >
       <GlobalStyles
@@ -101,7 +101,7 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
           '@import': "url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap')",
           '*': { boxSizing: 'border-box' },
           body: {
-            padding: '0 !important',
+            padding: '0 1.5em !important',
             margin: '0 !important'
           },
         }}
@@ -109,10 +109,9 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
       <AppBar key="header"
         position="sticky"
         sx={{
-          width: 'calc(100vw)',
-          left: 'calc(50% - 50vw)',
-          mt: 0,
-          padding: '0.25em 0.5em',
+          display: 'flex',
+          padding: '0 1em',
+          alignItems: 'center',
           background: '#f5f5f5',
           color: theme.palette.primary.main,
         }}
@@ -120,10 +119,12 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
         <Toolbar
           sx={{
             display: 'flex',
-            maxWidth: '60em',
-            alignSelf: 'center',
             justifyContent: 'space-between',
-            padding: '0',
+            alignItems: 'center',
+            padding: '0 !important',
+            width: '100%',
+            maxWidth: '45em',
+
           }}>
 
           <Box key='title'
@@ -162,7 +163,7 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
             </Typography>
           </Box>
 
-          <Button
+          <Button key='calendar-switch'
             color="inherit"
             onClick={() => setCalendarMode(true)}
             sx={{
@@ -185,6 +186,7 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
           </Button>
         </Toolbar>
       </AppBar>
+
       <Box key="dataWrapper"
         sx={{
           maxWidth: '45em',

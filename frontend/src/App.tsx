@@ -15,7 +15,7 @@ function App() {
         styles={{
           '*': { boxSizing: 'border-box' },
           body: {
-            padding: '0.5em 0.5em !important',
+            padding: '0',
             margin: '0 !important',
             width: '100%',
             display: 'flex',
