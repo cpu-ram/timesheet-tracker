@@ -42,7 +42,7 @@ const WorkBlock = (
           paddingTop: 0.75,
           paddingBottom: 0.75
         }} spacing='0'>
-        <Grid item xs={editMode ? 2.5 : 1.5}>
+        <Grid item xs={2.5}>
           <Typography>
             From:
           </Typography>
@@ -71,27 +71,42 @@ const WorkBlock = (
                 <>[—]</>}
           </Typography>
         </Grid>
-        <Grid item xs={editMode ? 6.5 : 7.5}>
+        <Grid item xs={6.5}>
           <Typography>
             {jobsiteName || <>[  jobsite Name <i>absent</i>  ]</>}
           </Typography>
         </Grid>
 
-        <Grid item xs={editMode ? 2.5 : 1.5}>
-          <Typography sx={{
-            justifyContent: 'space-between',
-            display: 'flex'
-          }}>
+        <Grid item xs={2.5}>
+          <Typography
+            sx={{
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
             {
               editMode ?
                 (
                   <>
                     <DeleteIcon
-                      sx={{ color: 'error.main' }}
+                      sx={{
+                        color: 'error.main', fontSize: '1.6em',
+                        '&:active, &:hover': {
+                          cursor: 'pointer',
+                          boxShadow: '0 0 0 0.2rem rgba(220, 53, 69, 0.5)',
+                        }
+                      }}
                       onClick={() => handleDeleteWorkBlock(workBlockId)}
                     />
                     <EditIcon
-                      sx={{ color: 'info.main', paddingRight: 1 }}
+                      sx={{
+                        color: 'info.main', paddingRight: 0, fontSize: '1.6em',
+                        marginRight: '10%',
+                        '&:active, &:hover': {
+                          cursor: 'pointer',
+                          boxShadow: '0 0 0 0.2rem rgba(23, 162, 184, 0.5)',
+                        }
+                      }}
                       onClick={() => handleSelectForEdit(workBlockId)}
                     />
                   </>
@@ -132,13 +147,13 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={editMode ? 6.5 : 7.5}>
+        <Grid item xs={6.5}>
           <Typography>
             {jobsiteAddress || <>[  jobsite Address <i>absent</i>  ]</>}
           </Typography>
         </Grid>
 
-        <Grid item xs={editMode ? 2.5 : 1.5}>
+        <Grid item xs={2.5}>
           <Typography>
             To:
           </Typography>
@@ -166,7 +181,7 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={editMode ? 6.5 : 7.5}>
+        <Grid item xs={6.5}>
           <Typography>
             {jobsiteId ? jobsiteId.toUpperCase() : <>[  jobsite Id <i>absent</i>  ]</>}
           </Typography>

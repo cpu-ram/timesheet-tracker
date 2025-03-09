@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react-swc'
 
 export default defineConfig({
   plugins: [react()],
+  dev: {
+    sourcemap: true,
+  },
   build: {
     sourcemap: true,
   },

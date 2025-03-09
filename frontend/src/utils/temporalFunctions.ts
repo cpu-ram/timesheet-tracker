@@ -29,3 +29,19 @@ export const addDays = (date: Temporal.PlainDate, days: number) => {
 
 }
 
+export const convertDateToPlainTime = (date: Date) => {
+  if (!date) {
+    throw new TypeError("Date is missing");
+  }
+  return Temporal.PlainTime.from({
+    hour: date.getHours(),
+    minute: date.getMinutes(),
+  });
+}
+
+export const convertPlainTimeToDate = (time: Temporal.PlainTime) => {
+  if (!time) {
+    throw new TypeError("Time is missing");
+  }
+  return new Date(0, 0, 0, time.hour, time.minute);
+}

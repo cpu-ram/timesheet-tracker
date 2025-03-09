@@ -300,6 +300,7 @@ const Calendar = ({
                             display: 'flex',
                             placeContent: 'center',
                             alignItems: 'center',
+                            letterSpacing: '-1px',
                           }}
                           onClick={
                             () => {

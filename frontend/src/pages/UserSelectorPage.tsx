@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, List, ListItem, Button, Container, Box } from '@mui/material';
+import { Typography, List, ListItem, Button, Container, Box, GlobalStyles, useTheme } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 interface User {
@@ -15,6 +15,8 @@ interface UserSelectionPageProps {
 
 const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageProps => {
   const [users, setUsers] = useState<User[]>([]);
+
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -40,6 +42,30 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageP
 
   return (
     <Container maxWidth="sm" spacing='0' sx={{ display: 'grid', placeItems: 'left', minHeight: '100vh', paddingTop: 5 }}>
+      <GlobalStyles
+        styles={{
+          'li > Button': {
+            borderRadius: '0',
+            boxSizing: 'border-box',
+          },
+          'li:first-of-type > Button': {
+
+            borderTopLeftRadius: 4,
+            borderTopRightRadius: 4,
+          },
+          'li:last-of-type > Button': {
+            borderBottomLeftRadius: 4,
+            borderBottomRightRadius: 4,
+          },
+          'button:focus': {
+            borderRadius: 0,
+            outline: 'none',
+            borderWidth: '2px',
+            borderColor: theme.palette.primary.main,
+            backgroundColor: 'lightgray',
+          }
+        }}
+      />
       <Box sx={{ textAlign: 'center', width: '100%' }}>
         <Typography variant='h5'
           sx={{
@@ -55,11 +81,8 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageP
                 sx={{
                   width: '100%', justifyContent: 'left',
                   '&:hover': { backgroundColor: 'lightgray' },
-                  borderTopLeftRadius: index === 0 ? 4 : 0,
-                  borderTopRightRadius: index === 0 ? 4 : 0,
-                  borderBottomLeftRadius: index === users.length - 1 ? 4 : 0,
-                  borderBottomRightRadius: index === users.length - 1 ? 4 : 0,
                   transition: 'none',
+                  borderRadius: 0,
                 }}
                 onClick={() => handleUserSelect(user)}>
                 <Typography variant='h7'>

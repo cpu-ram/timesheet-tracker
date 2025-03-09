@@ -144,6 +144,8 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
             </Typography>
             <Typography variant="h7"
               sx={{
+                display: 'flex',
+                alignItems: 'center',
                 fontFamily: 'Arial',
                 letterSpacing: '0',
                 paddingLeft: '0.5em',
