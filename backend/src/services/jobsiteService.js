@@ -1,4 +1,4 @@
-import { findProjectRecords, addProjectRecord, getDefaultProjectPropertiesRecord } from '../repositories/projectRepository.js';
+import { findProjectRecords, addProjectRecord, fetchDefaultProjectPropertiesRecord } from '../repositories/projectRepository.js';
 
 export async function addJobsite(
   id,
@@ -25,28 +25,35 @@ export async function addJobsite(
 }
 
 export async function getDefaultJobsiteProperties(jobId) {
-  const defaultProperties = await getDefaultProjectPropertiesRecord(jobId);
-  const renameMap = {
-    default_work_start_time: 'workStartTime',
-    default_work_end_time: 'workEndTime',
-    default_break_start_time: 'breakStartTime',
-    default_break_end_time: 'breakEndTime',
-  };
+  let queryResult = undefined;
+  try {
+    queryResult = await fetchDefaultProjectPropertiesRecord(jobId);
+  }
+  catch (error) {
+    throw new Error(error);
+  }
 
   const result = Object.fromEntries(
-    Object.entries(defaultProperties).map(([key, value]) => {
-      const newKey = renameMap[key];
+    Object.entries(queryResult).map(([key, value]) => {
       if (value) {
         const [hours, minutes] = value.split(':').map(Number);
-        return [newKey, { hours, minutes }];
+        return [key, { hours, minutes }];
       }
-      return [newKey, null];
+      else return [key, value];
     }),
   );
+
   return result;
 }
 
 export async function findJobsites(queryString) {
-  return await findProjectRecords(queryString);
+  let result = undefined;
+  try {
+    result = await findProjectRecords(queryString);
+  }
+  catch (error) { throw new Error(error) };
+
+  return result;
 }
 
+export { getJobsite } from './jobsiteServices/getJobsite.js';

@@ -1,4 +1,7 @@
+import dotenv from "dotenv";
 import { execSync, spawnSync } from "child_process";
+
+dotenv.config();
 
 async function startPostgresInstance() {
   const COLIMA_STATUS_CMD = "colima status";
