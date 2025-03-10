@@ -203,7 +203,7 @@ export default function generateHtmlTemplate(reportData) {
                   <tr>
                     <td>
                       <p>
-                        ${reportData.totalHours}
+                        ${reportData.overTimeHours}
                       </p>
                     </td>
                   </tr>

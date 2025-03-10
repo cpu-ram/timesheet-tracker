@@ -28,7 +28,7 @@ export const addWorkBlockController = (req, res) => {
       tempJobsiteAddress,
       tempSupervisorName,
       additionalNotes
-    } = req.body;
+    } = { ...req.body, employeeId: req.user.id, reportedById: req.user.id };
 
     const result = addWorkBlock(
       employeeId,

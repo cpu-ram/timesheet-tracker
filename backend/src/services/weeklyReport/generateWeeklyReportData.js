@@ -25,9 +25,11 @@ export async function generateWeeklyReportData(employeeId, from, to, fullName) {
       .map(x => x.hours)
       .reduce((x, y) => x + y, 0);
     const regularHours = totalHours > 40 ? 40 : totalHours;
+    const overTimeHours = totalHours > 40 ? totalHours - 40 : 0;
 
     reportData['totalHours'] = totalHours;
     reportData['regularHours'] = regularHours;
+    reportData['overTimeHours'] = overTimeHours;
   } else {
     reportData['workBlocks'] = [];
     reportData['totalHours'] = 0;

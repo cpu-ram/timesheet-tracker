@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
+
 import { Temporal } from '@js-temporal/polyfill';
 import { addDays } from '../utils/temporalFunctions.ts';
 
-import { GlobalStyles, Grid, Typography, IconButton } from '@mui/material';
+import { GlobalStyles, Grid, Typography, IconButton, Box, Alert } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-
 import PrintIcon from '@mui/icons-material/Print';
-
 import CompressIcon from '@mui/icons-material/Compress';
 import { useTheme } from '@mui/material/styles';
-import { Box, Alert } from '@mui/material';
 
-const Calendar = ({
-  multiDaySelectionMode = false,
-  dateRange,
-  dateSelectionHandler,
-  workDataAggregator,
-  setCalendarMode,
-}) => {
+
+const Calendar = () => {
+  const {
+    dateRange, multiDaySelectionMode,
+    workData, dateSelectionHandler,
+    workDataAggregator,
+  } = useTimesheetContext();
+
   const today = Temporal.Now.plainDateISO();
   const days: Temporal.PlainDate[] = [];
 
@@ -91,7 +91,6 @@ const Calendar = ({
           }
           spacing={2}
           sx={{
-            // borderBottom: 1,
             borderColor: 'divider',
             paddingTop: 1,
             paddingBottom: 1,
@@ -337,6 +336,7 @@ const Calendar = ({
             marginTop: '0 !important',
           }}
         >
+
           <Typography
             variant="body1"
             sx={{
@@ -367,8 +367,7 @@ const Calendar = ({
             alignItems: 'flex-start',
             alignSelf: 'flex-start',
             paddingTop: '0',
-            marginTop: '0',
-            marginLeft: '0.5em',
+            margin: '1.5em 0 0 0.5em',
             gap: 1.5,
             paddingRight: '0.5em !important',
             paddingLeft: '0.6em !important',
@@ -389,22 +388,6 @@ const Calendar = ({
             }}
           >
             {isExpanded ? <CompressIcon /> : <UnfoldMoreIcon />}
-          </IconButton>
-
-
-          <IconButton
-            sx={{
-              width: 'auto',
-              alignSelf: 'flex-start',
-              border: `1px solid ${theme.palette.info.dark}`,
-              background: 'transparent',
-              '&:hover': {
-              },
-              color: theme.palette.info.dark,
-            }}
-            onClick={() => setCalendarMode(false)}
-          >
-            {isExpanded ? <PrintIcon /> : <PrintIcon />}
           </IconButton>
 
         </Grid>

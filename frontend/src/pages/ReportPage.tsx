@@ -1,17 +1,34 @@
-import React from 'react';
-import { useEffect, useState, setState, useRef } from 'react';
-import { useTheme } from '@mui/material/styles';
+import React, { useEffect, useState, useRef } from 'react';
 
-import AppBar from "@mui/material/AppBar";
-import { Grid, Box, Typography, Button, Toolbar, GlobalStyles } from "@mui/material";
-import { WorkBlock } from '../components/WorkBlock';
+import { useTheme } from '@mui/material/styles';
+import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
+import { useAuthContext } from '../contexts/AuthContext.tsx';
+
+import { Grid, Box, Typography, Button, AppBar, Toolbar, GlobalStyles } from "@mui/material";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CircularProgress from '@mui/material/CircularProgress';
 import EditIcon from '@mui/icons-material/Edit';
 
-const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDataAggregator, selectedUser, setCalendarMode, }) => {
+import Navigation from '../components/Navigation/Navigation.tsx';
+import { WorkBlock } from '../components/WorkBlock';
+
+const ReportPage = () => {
+
+  const {
+    workData, setCalendarMode,
+    workDataAggregator,
+    getDaysOfSelectedWeek,
+    getRangeOfSelectedWeek,
+  } = useTimesheetContext();
+
+  const { username } = useAuthContext();
+
+  const selectedWeekDays = getDaysOfSelectedWeek();
+  const selectedWeekDateRange = getRangeOfSelectedWeek();
 
   const reportFormats = ['.docx', '.pdf'];
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
   const [isSigned, setIsSigned] = useState(false);
   const [reports, setReports] = useState(
     reportFormats.map(format => ({
@@ -43,8 +60,8 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/reports/weekly/generate`, {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify({
-        employeeId: selectedUser.id,
         from: selectedWeekDateRange.from.toString(),
         to: selectedWeekDateRange.to.toString(),
         format: format,
@@ -70,7 +87,6 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
     try {
       setIsSigned(true);
       setTimeout(() => scrollToDownloads(), 400);
-      //fetchReports();
     }
 
     catch (error) {
@@ -84,47 +100,40 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
 
 
   return (
-    <Grid
-      container
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        padding: 0,
-        boxSizing: 'border-box',
-        width: 'calc(100vw)',
-        left: '0',
-      }}
-    >
-      <GlobalStyles
-        styles={{
-          '@import': "url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap')",
-          '*': { boxSizing: 'border-box' },
-          body: {
-            padding: '0 1.5em !important',
-            margin: '0 !important'
-          },
-        }}
+    <>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+          * {
+            boxSizing: border-box; 
+          }
+          body {
+            padding: '0 1.5em !important';
+            margin: '0 !important;
+            }
+        `}
+      </style>
+      <Navigation
+        resourceNameList={['timesheet']}
       />
-      <AppBar key="header"
-        position="sticky"
+
+      <Grid
+        container
         sx={{
           display: 'flex',
-          padding: '0 1em',
-          alignItems: 'center',
-          background: '#f5f5f5',
-          color: theme.palette.primary.main,
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          padding: '4.5em 0 0 0',
+          boxSizing: 'border-box',
+          width: 'calc(100vw)',
+          left: '0',
         }}
       >
-        <Toolbar
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0 !important',
-            width: '100%',
-            maxWidth: '45em',
 
+        <Box key="dataWrapper"
+          sx={{
+            maxWidth: '45em',
+            alignSelf: 'center',
           }}>
 
           <Box key='title'
@@ -133,310 +142,281 @@ const ReportPage = ({ workData, selectedWeekDateRange, selectedWeekDays, workDat
               alignSelf: 'left',
               flexGrow: 1,
               paddingLeft: 0,
+              marginBottom: '1em',
+              borderBottom: '1px solid #ccc',
             }}>
-            <Typography variant="h6" sx={{
-              fontFamily: 'Arial',
-              textTransform: 'uppercase',
-              fontWeight: 'bold',
-              display: 'inline',
-            }}>
-              Timesheet
-            </Typography>
-            <Typography variant="h7"
+
+            <Typography variant="h5"
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                fontFamily: 'Arial',
+                fontFamily: 'Roboto',
                 letterSpacing: '0',
                 paddingLeft: '0.5em',
               }}>
               {
                 selectedWeekDateRange.from.toLocaleString('en-US', {
-                  weekDay: 'short',
+                  weekday: 'short',
                   month: 'short',
                   day: '2-digit',
                 })
               }—{
                 selectedWeekDateRange.to.toLocaleString('en-US', {
-                  weekDay: 'short',
+                  weekday: 'short',
                   month: 'short',
                   day: '2-digit',
                 })}
             </Typography>
           </Box>
 
-          <Button key='calendar-switch'
-            color="inherit"
-            onClick={() => setCalendarMode(true)}
+
+          <Box key="data"
             sx={{
               display: 'flex',
-              alignSelf: 'right',
-              height: '3.4em',
-              width: '3.4em',
-              minWidth: 'unset',
-              padding: '0 !important',
-
-              margin: '0',
-
-              borderRadius: '50%',
-              borderWidth: '2px',
-              backgroundColor: '#fafafa',
+              flexDirection: 'column',
+              width: '100%',
+              maxWidth: '1200px',
+              margin: '0 auto',
+              padding: '0.5em',
+              borderBottom: '1px solid #ccc',
             }}
-            variant="outlined"
           >
-            <CalendarMonthIcon sx={{ fontSize: '1.5em' }} />
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      <Box key="dataWrapper"
-        sx={{
-          maxWidth: '45em',
-          alignSelf: 'center',
-        }}>
-        <Box key="data"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '0.5em',
-            borderBottom: '1px solid #ccc',
-          }}
-        >
-          {
-            workData
-              .filter(
-                workData => (
-                  selectedWeekDays.some((x) => x.equals(workData.date))
+            {
+              workData
+                .filter(
+                  workData => (
+                    selectedWeekDays.some((x) => x.equals(workData.date))
+                  )
                 )
-              )
-              .map((day) => (
-                <Box
-                  key={day.date.toString()}
-                  sx={{
-                    marginBottom: '1em',
-                  }}
-                >
+                .map((day) => (
                   <Box
+                    key={day.date.toString()}
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
+                      marginBottom: '1em',
                     }}
                   >
-                    <Typography variant='h6' sx={{ textAlign: 'left' }}>
-                      <b>
-                        {
-                          day.date.toLocaleString('en-US', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: '2-digit',
-                            year: 'numeric'
-                          })
-                        }
-                      </b>
-                    </Typography>
-                    <Typography
-                      variant='h6'
+                    <Box
                       sx={{
-                        fontStyle: 'italic',
-                      }}>
-                      Total: <b>{workDataAggregator.getDayWorkHoursTotal(day.date)}h</b>
-                    </Typography>
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Typography variant='h7' sx={{ textAlign: 'left' }}>
+                        <b>
+                          {
+                            day.date.toLocaleString('en-US', {
+                              weekday: 'short',
+                              month: 'short',
+                              day: '2-digit',
+                              year: 'numeric'
+                            })
+                          }
+                        </b>
+                      </Typography>
+                      <Typography
+                        variant='h7'
+                        sx={{
+                          fontStyle: 'italic',
+                          paddingLeft: '1em',
+                        }}>
+                        Total: <b>{workDataAggregator.getDayWorkHoursTotal(day.date)}h</b>
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      {
+                        day.workBlocks.length > 0 ?
+                          day.workBlocks
+                            .map(
+                              (workBlock) => (
+                                <WorkBlock {...workBlock} editMode={false} key={workBlock.workBlockId} />
+                              ))
+                          :
+                          ''
+                      }
+                    </Box>
+
                   </Box>
+                ))
+            }
+          </Box>
 
-                  <Box>
-                    {
-                      day.workBlocks.length > 0 ?
-                        day.workBlocks
-                          .map(
-                            (workBlock) => (
-                              <WorkBlock {...workBlock} editMode={false} key={workBlock.workBlockId} />
-                            ))
-                        :
-                        ''
-                    }
-                  </Box>
-
-                </Box>
-              ))
-          }
-        </Box>
-
-        <Box key='weekTotal'
-          sx={{
-            display: 'flex',
-            justifyContent: 'right',
-            width: '100%',
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '0.5em',
-          }}>
-          <Typography variant='h6' sx={{
-            boxSizing: 'border-box',
-            paddingBottom: '1em',
-            textDecoration: 'underline',
-            textUnderlineOffset: '0.2em',
-          }}>
-            Week total: <b>{workDataAggregator.getWeekWorkHoursTotal()}h</b>
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box key='sign'
-        sx={{
-          display: 'flex',
-          width: '100%',
-
-          padding: '1em 1.2em',
-          background: '#f5f5f5',
-          borderTop: '1px solid #bbb',
-          borderBottom: '1px solid #bbb',
-
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-
-        <Box
-          sx={{
-            borderLeft: `1px solid ${theme.palette.primary.dark}`,
-            padding: '0.8em 0.3em',
-            maxWidth: '45em',
-            alignSelf: 'center',
-          }}>
-          <Typography
-            sx={{
-              fontStyle: 'oblique',
-              fontWeight: 'normal',
-              marginBottom: '0em',
-              fontFamily: 'Georgia',
-              fontSize: '1.1em',
-              padding: '0.6em 0 0.7em 2em',
-              color: 'black',
-              width: '100%',
-            }}>
-            By signing this timesheet I, <br /><b>{selectedUser.name || 'NAME MISSING'}</b>,<br /> certify that above is an accurate reflection of all hours worked and not worked during the indicated time period.
-          </Typography>
-
-          <Box component="form"
+          <Box key='weekTotal'
             sx={{
               display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'left',
-              marginLeft: '2em',
+              justifyContent: 'right',
+              width: '100%',
+              maxWidth: '1200px',
+              margin: '0 auto',
+              padding: '0.5em',
             }}>
-
-            {!isSigned ?
-              <Button
-                variant='contained'
-                sx={{
-                  fontStyle: 'normal',
-                  fontFamily: 'Helvetica, Arial',
-                  fontWeight: 'normal',
-                  fontSize: '0.9em',
-                  border: '1px solid {theme.palette.primary.main}',
-                  color: 'white',
-                  backgroundColor: theme.palette.primary.main,
-                }}
-                onClick={() => handleReportSigning()}
-                startIcon={<EditIcon />}
-              >
-                Sign
-              </Button>
-              :
-              <Typography sx={{
-                fontFamily: 'Great Vibes, Brush Script MT, cursive',
-                fontSize: '2.5em',
-                fontStyle: 'italic',
-                borderBottom: '1px solid black',
-                padding: '0 0.5em',
-              }}>
-                {selectedUser.name || 'NAME MISSING'}
-              </Typography>
-            }
-
-
+            <Typography variant='h7' sx={{
+              boxSizing: 'border-box',
+              paddingBottom: '1em',
+              textDecoration: 'underline',
+              textUnderlineOffset: '0.4npem',
+            }}>
+              Week Total: <b>{workDataAggregator.getWeekWorkHoursTotal()}h</b>
+            </Typography>
           </Box>
         </Box>
 
-
-      </Box>
-
-      {isSigned &&
-        <Box
+        <Box key='sign'
           sx={{
             display: 'flex',
+            width: '100%',
+
+            padding: '1em 1.2em',
+            background: '#f5f5f5',
+            borderTop: '1px solid #bbb',
+            borderBottom: '1px solid #bbb',
+
             justifyContent: 'center',
-            padding: '1em 1em',
+            alignItems: 'center',
           }}>
 
-
-          <Typography
-            ref={downloadsBoxRef}
+          <Box
             sx={{
-              margin: 0,
-              padding: '0.5em 0 1em 0',
-              display: 'flex',
-              fontSize: '1.2em',
-              textAlign: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              'a': {
-                color: 'white',
+              borderLeft: `1px solid ${theme.palette.primary.dark}`,
+              padding: '0.8em 0.3em',
+              maxWidth: '45em',
+              alignSelf: 'center',
+            }}>
+            <Typography
+              sx={{
+                fontStyle: 'oblique',
+                fontWeight: 'normal',
+                marginBottom: '0em',
+                fontFamily: 'Georgia',
+                fontSize: '1.1em',
+                padding: '0.6em 0 0.7em 2em',
+                color: 'black',
+                width: '100%',
+              }}>
+              By signing this timesheet I,
+              <br /><b>{username}</b>,<br />
+              certify that above is an accurate reflection of all hours worked and not worked during the indicated time period.
+            </Typography>
+
+            <Box component="form"
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'left',
+                marginLeft: '2em',
+              }}>
+
+              {!isSigned ?
+                <Button
+                  variant='contained'
+                  sx={{
+                    fontStyle: 'normal',
+                    fontFamily: 'Helvetica, Arial',
+                    fontWeight: 'normal',
+                    fontSize: '0.9em',
+                    border: '1px solid {theme.palette.primary.main}',
+                    color: 'white',
+                    backgroundColor: theme.palette.primary.main,
+                  }}
+                  onClick={() => handleReportSigning()}
+                  startIcon={<EditIcon />}
+                >
+                  Sign
+                </Button>
+                :
+                <Typography sx={{
+                  fontFamily: 'Great Vibes, Brush Script MT, cursive',
+                  fontSize: '2.5em',
+                  fontStyle: 'italic',
+                  borderBottom: '1px solid black',
+                  padding: '0 0.5em',
+                }}>
+                  {username}
+                </Typography>
               }
-            }}
-          >
-            Download:
-            <Button variant='contained' sx={{
-              margin: '0 0.5em',
-            }}
-              disabled={!reports.find(x => x.format === '.pdf').reportDocument}
-            >
-              <a href={reports
-                .find(x => x.format === '.pdf').reportDocument?.blobUrl ?? null}
-                download={reports
-                  .find(x => x.format === '.pdf').reportDocument?.fileName ?? null}>
-                .pdf
-              </a>
-              {!reports.find(x => x.format === '.docx').reportDocument &&
-                <CircularProgress size={20} thickness={6}
-                  sx={{
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    position: 'absolute',
-                    left: '50%',
-                    marginLeft: '-0.8em',
-                  }}
-                />}
-            </Button>
-            <Button variant='contained'
-              disabled={!reports.find(x => x.format === '.docx').reportDocument}
-            >
-              <a href={reports
-                .find(x => x.format === '.docx').reportDocument?.blobUrl ?? null}
-                download={reports
-                  .find(x => x.format === '.docx').reportDocument?.fileName ?? null}>
-                .docx
-              </a>
-              {!reports.find(x => x.format === '.docx').reportDocument &&
-                <CircularProgress size={20} thickness={6}
-                  sx={{
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    position: 'absolute',
-                    left: '50%',
-                    marginLeft: '-0.8em',
-                  }}
-                />}
-            </Button>
 
-          </Typography>
+
+            </Box>
+          </Box>
+
+
         </Box>
-      }
 
-    </Grid >
+        {isSigned &&
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '1em 1em',
+            }}>
+
+
+            <Typography
+              ref={downloadsBoxRef}
+              sx={{
+                margin: 0,
+                padding: '0.5em 0 1em 0',
+                display: 'flex',
+                fontSize: '1.2em',
+                textAlign: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+                'a': {
+                  color: 'white',
+                }
+              }}
+            >
+              Download:
+              <Button variant='contained' sx={{
+                margin: '0 0.5em',
+              }}
+                disabled={!reports.find(x => x.format === '.pdf').reportDocument}
+              >
+                <a href={reports
+                  .find(x => x.format === '.pdf').reportDocument?.blobUrl ?? null}
+                  download={reports
+                    .find(x => x.format === '.pdf').reportDocument?.fileName ?? null}>
+                  .pdf
+                </a>
+                {!reports.find(x => x.format === '.docx').reportDocument &&
+                  <CircularProgress size={20} thickness={6}
+                    sx={{
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                      position: 'absolute',
+                      left: '50%',
+                      marginLeft: '-0.8em',
+                    }}
+                  />}
+              </Button>
+              <Button variant='contained'
+                disabled={!reports.find(x => x.format === '.docx').reportDocument}
+              >
+                <a href={reports
+                  .find(x => x.format === '.docx').reportDocument?.blobUrl ?? null}
+                  download={reports
+                    .find(x => x.format === '.docx').reportDocument?.fileName ?? null}>
+                  .docx
+                </a>
+                {!reports.find(x => x.format === '.docx').reportDocument &&
+                  <CircularProgress size={20} thickness={6}
+                    sx={{
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                      position: 'absolute',
+                      left: '50%',
+                      marginLeft: '-0.8em',
+                    }}
+                  />}
+              </Button>
+
+            </Typography>
+          </Box>
+        }
+
+      </Grid >
+    </>
   );
 }
 

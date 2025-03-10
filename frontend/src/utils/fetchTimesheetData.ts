@@ -1,16 +1,21 @@
 import { format } from 'date-fns';
 import { Temporal } from '@js-temporal/polyfill';
 
-const fetchTimesheetData = async ({ from, to, userId }) => {
+const fetchTimesheetData = async ({ from, to }) => {
   const fromDateString = from.toString();
   const toDateString = to.toString();
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   const timesheetDataSubPath = '/reports/weekly/data';
 
   try {
-
-    const response = await fetch(`${baseUrl}${timesheetDataSubPath}?employeeId=${userId}&from=${fromDateString}&to=${toDateString}`);
+    const response = await fetch(
+      `${baseUrl}${timesheetDataSubPath}?from=${fromDateString}&to=${toDateString}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      });
     if (!response.ok) {
+      console.error('Failed to fetch timesheet data:') + response.statusText;
       throw new Error('Failed to fetch timesheet data');
     }
     const data = await response.json();
@@ -42,6 +47,7 @@ const fetchTimesheetData = async ({ from, to, userId }) => {
     return modifiedData;
   }
   catch (error) {
+    console.error('Error fetching timesheet data:', error);
     throw new Error(error);
   }
 }

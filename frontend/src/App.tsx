@@ -1,16 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
-import { User } from './types/userType.tsx';
-import UserSelectorPage from './pages/UserSelectorPage.tsx';
-import TimesheetPage from './pages/TimesheetPage.tsx';
 import { GlobalStyles } from '@mui/material';
 
+import { usePersistentAuthState } from './hooks/usePersistentAuthState.ts';
+import { TimesheetProvider } from './contexts/TimesheetContext.tsx';
+import { AuthProvider, useAuthContext } from './contexts/AuthContext.tsx';
+
+import AuthenticatedRoutes from './routes/AuthenticatedRoutes.tsx';
+import UnauthenticatedRoutes from './routes/UnauthenticatedRoutes.tsx';
+
+import TimesheetPage from './pages/TimesheetPage.tsx';
+import ReportPage from './pages/ReportPage.tsx';
+import SignupPage from './pages/SignupPage.tsx';
+import LoginPage from './pages/LoginPage.tsx';
+
 function App() {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const { isAuthenticated, isSignedUp } = useAuthContext();
 
   return (
     <>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+          * {
+              boxSizing: border-box; 
+          },
+          h1, h2, h3, h4, h5, h6{
+            font-family: 'Helvetica !important',
+          },
+        `}
+      </style>
       <GlobalStyles
         styles={{
           '*': { boxSizing: 'border-box' },
@@ -24,36 +43,13 @@ function App() {
         }}
       />
       <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              selectedUser ?
-                (<Navigate to="/timesheet" />)
-                :
-                (<Navigate to="/select-user" />)
-            }
-          />
-
-          <Route
-            path="/select-user"
-            element={
-              <UserSelectorPage
-                {...{ selectedUser, setSelectedUser }}
-              />
-            }
-          />
-
-          <Route
-            path="/timesheet"
-            element={
-              selectedUser ?
-                (<TimesheetPage selectedUser={selectedUser} />) :
-                (<Navigate to="/select-user" />)
-            }
-          />
-
-        </Routes>
+        {
+          (isAuthenticated && isSignedUp) ?
+            <TimesheetProvider>
+              <AuthenticatedRoutes />
+            </TimesheetProvider>
+            : <UnauthenticatedRoutes />
+        }
       </Router>
     </>
   )

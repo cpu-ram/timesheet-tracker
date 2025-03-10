@@ -1,91 +1,75 @@
-import { Temporal } from '@js-temporal/polyfill';
 import { useState, useEffect } from 'react';
-import { Box, Container } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useTheme, alpha } from '@mui/material/styles';
+import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
+
+import { Temporal } from '@js-temporal/polyfill';
 import { startOfWeek } from '../utils/temporalFunctions.ts';
-import { useTheme } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
+
+import { Box, Container, AppBar, Toolbar, IconButton, Grid } from '@mui/material';
+import PrintIcon from '@mui/icons-material/Print';
+import MenuIcon from '@mui/icons-material/Menu';
+
+import Navigation from '../components/Navigation/Navigation.tsx';
+import HeaderNav from '../components/HeaderNav/HeaderNav.tsx';
+import SideMenu from '../components/SideMenu/SideMenu.tsx';
 
 import Buttons from '../components/TimesheetPage/Buttons.jsx';
-
 import Calendar from '../components/Calendar.tsx';
 import ReportPage from './ReportPage.tsx';
 import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
+
 import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
+import updateWorkData from '../utils/updateWorkData.ts';
 
-const TimesheetPage = ({ selectedUser }) => {
-  const [dateRange, setDateRange] = useState(generateDateRange());
-  const [workData, setWorkData] = useState(scaffoldWorkDataContainer());
+const TimesheetPage = () => {
+  const navigate = useNavigate();
 
-  const [selectedDates, setSelectedDates] = useState([]);
-  const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(Temporal.Now.plainDateISO());
+  const {
+    dateRange, setDateRange,
+    workData, setWorkData,
+    multiDaySelectionMode, setMultiDaySelectionMode,
+    selectedDates, setSelectedDates,
+    editMode, setEditMode,
+    addMode, setAddMode,
+    lastSelectedSingleDate, setLastSelectedSingleDate,
+    dateSelectionHandler,
+    calendarMode, setCalendarMode,
+    getDaysOfSelectedWeek,
+    workDataAggregator,
+    getRangeOfSelectedWeek,
+    fetchFullTimesheetData,
+  } = useTimesheetContext();
 
-  const [calendarMode, setCalendarMode] = useState(true);
-  const [editMode, setEditMode] = useState(false);
-  const [addMode, setAddMode] = useState(false);
-  const [multiDaySelectionMode, setMultiDaySelectionMode] = useState(false);
 
   const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
   const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
 
   const today = Temporal.Now.plainDateISO();
 
-  useEffect(() => {
-    dateSelectionHandler.selectSingleDay(today);
-    const fetchFullData = async () => (await fetchFullTimesheetData());
-    fetchFullData();
-  }, []);
 
   const theme = useTheme();
 
-  function scaffoldWorkDataContainer() {
-    const days = [];
-    let curr = dateRange.from;
-    while (Temporal.PlainDate.compare(curr, dateRange.to) <= 0) {
-      const day = curr;
-      days.push({ date: day, workBlocks: [] });
-      curr = curr.add({ days: 1 });
-    }
-    return days;
-  }
-
-  const fetchFullTimesheetData = async () => {
-    const fetchedData = await fetchTimesheetData({ from: dateRange.from, to: today, userId: selectedUser.id });
-
-    updateWorkData(fetchedData);
-  };
 
   const fetchDayTimesheetData = async (date) => {
-    const fetchedData = await fetchTimesheetData({ from: date, to: date, userId: selectedUser.id });
-
-    updateWorkData(fetchedData);
+    const fetchedData = await fetchTimesheetData({ from: date, to: date });
+    updateWorkData(fetchedData, setWorkData);
   }
 
   const fetchMultipleDaysTimesheetData = async (dates) => {
     let combinedData = [];
     try {
       for (const date of dates) {
-        const fetchedData = await fetchTimesheetData({ from: date, to: date, userId: selectedUser.id });
+        const fetchedData = await fetchTimesheetData({ from: date, to: date });
         combinedData = combinedData.concat(fetchedData);
       }
     }
     catch (error) {
       console.log(error);
     }
-    updateWorkData(combinedData);
-  }
-
-  const updateWorkData = (newWorkData) => {
-    setWorkData((prevWorkData) => (
-      prevWorkData.map((prevWorkDay) => {
-        const matchingFetchedDay = newWorkData.find((fetchedDay) => ((fetchedDay.date).equals(prevWorkDay.date)));
-        if (matchingFetchedDay !== undefined) {
-          return matchingFetchedDay;
-        } else return prevWorkDay;
-      })
-    ));
-
+    updateWorkData(combinedData, setWorkData);
   }
 
   function generateDateRange(numberOfWeeks = 2) {
@@ -122,12 +106,11 @@ const TimesheetPage = ({ selectedUser }) => {
     try {
       const response = await fetch(`${baseUrl}/workBlocks`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          employeeId: selectedUser.id,
-          reportedById: selectedUser.id,
           startTime: workBlockData.workBlockStart ? selectedDate.toString() + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null,
           endTime: workBlockData.workBlockEnd ? selectedDate.toString() + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null,
           date: selectedDate,
@@ -154,6 +137,7 @@ const TimesheetPage = ({ selectedUser }) => {
       const response = await fetch(`${baseUrl}/workBlocks/${workBlockId}`,
         {
           method: 'PUT',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -187,6 +171,7 @@ const TimesheetPage = ({ selectedUser }) => {
     try {
       const response = await fetch(`${baseUrl}/workBlocks/${workBlockId}`, {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -210,7 +195,12 @@ const TimesheetPage = ({ selectedUser }) => {
     }
 
     try {
-      const response = await fetch(`${baseUrl}/jobsites?query=${query}`);
+      const response = await fetch(`${baseUrl}/jobsites?query=${query}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
       const responseData = await response.json();
       const mappedResponseData =
         responseData ?
@@ -233,123 +223,17 @@ const TimesheetPage = ({ selectedUser }) => {
     const jobsiteId = value.id;
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
     try {
-      const response = await fetch(`${baseUrl}/jobsites/${jobsiteId}`);
+      const response = await fetch(`${baseUrl}/jobsites/${jobsiteId}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
       const responseData = await response.json();
       setSelectedJobsiteData(responseData);
     } catch (error) {
       console.error('Error fetching job site data:', error);
       setSelectedJobsiteData(null);
-    }
-  }
-
-  const dateSelectionHandler = {
-    add: function (date) {
-      setSelectedDates((prevSelectedDates) => [...prevSelectedDates, date]);
-    },
-    remove: function (date) {
-      setSelectedDates((prevSelectedDates) => prevSelectedDates.filter((d) => !d.equals(date)));
-    },
-    selectSingleDay: async function (date) {
-      setLastSelectedSingleDate(date);
-      await fetchDayTimesheetData(lastSelectedSingleDate);
-      setSelectedDates([date]);
-      setEditMode(false);
-      setAddMode(false);
-    },
-    lastSelectedSingleDate: lastSelectedSingleDate,
-    isSelected: function (date) {
-      return selectedDates.some((x) => (x.equals(date)));
-    },
-    multiSelectionOn: function () {
-      setMultiDaySelectionMode(true);
-    },
-    multiSelectionOff: function () {
-      setMultiDaySelectionMode(false);
-      this.selectSingleDay(lastSelectedSingleDate);
-    },
-    switch: function () {
-      if (multiDaySelectionMode) {
-        this.multiSelectionOff();
-      }
-      else this.multiSelectionOn();
-    },
-    handleDateClick: function (date: Date) {
-      if (!multiDaySelectionMode) {
-        dateSelectionHandler.selectSingleDay(date);
-      }
-      else {
-        switch (this.isSelected(date)) {
-          case true:
-            this.remove(date);
-            break;
-          case false:
-            this.add(date);
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
-
-  function getRangeOfSelectedWeek() {
-    const selectedWeekNumber = Math.floor((dateRange.from)
-      .until(
-        dateSelectionHandler.lastSelectedSingleDate,
-        { largestUnit: 'days', smallestUnit: 'days', roundingMode: 'trunc' }
-      ).days
-      / 7);
-    const selectedWeekStartPosition = selectedWeekNumber * 7;
-    const startDay = dateRange.from.add({ days: selectedWeekStartPosition });
-    const endDay = startDay.add({ days: 6 });
-
-    return { from: startDay, to: endDay };
-  }
-  function getDaysOfSelectedWeek() {
-    const selectedWeekNumber = Math.floor((dateRange.from)
-      .until(
-        dateSelectionHandler.lastSelectedSingleDate,
-        {
-          largestUnit: 'days', smallestUnit: 'days', roundingMode: 'trunc'
-        }
-      ).days / 7);
-
-    const daysOfSelectedWeek = [];
-    const selectedWeekStartPosition = selectedWeekNumber * 7;
-    for (let i = 0; i <= 6; i++) {
-      const day = dateRange.from.add({ days: selectedWeekStartPosition + i });
-      daysOfSelectedWeek.push(day);
-    }
-
-    return daysOfSelectedWeek;
-  }
-
-  const workDataAggregator = {
-    getWeekWorkHoursTotal: function () {
-      const daysOfSelectedWeek = getDaysOfSelectedWeek();
-
-      return daysOfSelectedWeek.map(
-        (day) => {
-          return this.getDayWorkHoursTotal(day);
-        }).reduce((acc, curr) => acc + curr, 0);
-    },
-
-    getDayWorkHoursTotal: function (day) {
-
-      const workDay = workData.find((workDay) => (workDay.date).equals(day));
-      if (!workDay) {
-        throw new RangeError('Day not found');
-      }
-
-      return workDay.workBlocks
-        .map(workBlock => {
-          if (workBlock.workBlockStart && workBlock.workBlockEnd) {
-            return Math.round(((workBlock.workBlockStart).until(workBlock.workBlockEnd).total({ unit: 'hour' })) * 10) / 10;
-          }
-          return 0;
-        })
-        .reduce(
-          (acc, curr) => acc + curr, 0)
     }
   }
 
@@ -373,81 +257,73 @@ const TimesheetPage = ({ selectedUser }) => {
   const currentDayWorkData = lastSelectedSingleDate ? workData.find((day) => (day.date).equals(lastSelectedSingleDate))?.workBlocks || [] : [];
 
   return (
-    calendarMode ?
-      (
-        <Box key="calendar-mode-container"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100vw',
-            alignSelf: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignContent: 'center',
+    <>
 
-            padding: '0.5em 0.5em',
-            margin: 0
+      <Navigation
+        resourceNameList={['weekly_report']}
+      />
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100vw',
+          alignSelf: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignContent: 'center',
+
+          padding: '3.5em 0.5em',
+          margin: 0,
+        }}>
+
+        <Container
+          sx={{
+            width: 'auto',
+            alignSelf: 'center',
+            maxWidth: '35em',
           }}>
 
-          <Container
-            sx={{
-              width: 'auto',
-              alignSelf: 'center',
-              maxWidth: '35em',
-            }}>
-            <Calendar {...{
-              multiDaySelectionMode, dateRange, workData, dateSelectionHandler, workDataAggregator, setCalendarMode,
-            }}
-            >
-            </Calendar>
+          <Calendar></Calendar>
 
-            <Buttons {...{
-              theme,
-              editMode, addMode,
-              handleSetAddMode, handleSetEditMode, handleDiscard,
-              handleSearchJobsites, handleFetchJobsiteData, handleCancelEdit, jobsiteSearchResults,
-              currentDayWorkData
-            }}>
-            </Buttons>
+          <Buttons {...{
+            theme,
+            editMode, addMode,
+            handleSetAddMode, handleSetEditMode, handleDiscard,
+            handleSearchJobsites, handleFetchJobsiteData, handleCancelEdit, jobsiteSearchResults,
+            currentDayWorkData
+          }}>
+          </Buttons>
 
-            <Grid container name='addWorkBlock'>
-              {
-                addMode &&
-                (
-                  <AddWorkBlockForm {...{
-                    ...{
-                      workBlockStart: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkStartTime) : null,
-                      workBlockEnd: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkEndTime) : null,
-                      jobsiteId: selectedJobsiteData ? selectedJobsiteData.jobsiteId : null,
-                      jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
-                      jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
-                      supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
-                      mode: 'add',
-                      multiDaySelectionMode, dateSelectionHandler,
-                    },
-                    handleEnteredData: handleAddWorkBlock, handleDiscard
-                  }}>
-                  </AddWorkBlockForm >
-                )
-              }
-            </Grid>
+          <Grid container name='addWorkBlock'>
+            {
+              addMode &&
+              (
+                <AddWorkBlockForm {...{
+                  ...{
+                    workBlockStart: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkStartTime) : null,
+                    workBlockEnd: selectedJobsiteData ? Temporal.PlainTime.from(selectedJobsiteData.defaultWorkEndTime) : null,
+                    jobsiteId: selectedJobsiteData ? selectedJobsiteData.jobsiteId : null,
+                    jobsiteAddress: selectedJobsiteData ? selectedJobsiteData.jobsiteAddress : null,
+                    jobsiteName: selectedJobsiteData ? selectedJobsiteData.jobsiteName : null,
+                    supervisorName: selectedJobsiteData ? selectedJobsiteData.supervisorName : null,
+                    mode: 'add',
+                    multiDaySelectionMode, dateSelectionHandler,
+                  },
+                  handleEnteredData: handleAddWorkBlock, handleDiscard
+                }}>
+                </AddWorkBlockForm >
+              )
+            }
+          </Grid>
 
-            <DayWorkBlocks {...{ workData: currentDayWorkData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
-            </DayWorkBlocks>
+          <DayWorkBlocks {...{ workData: currentDayWorkData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }}>
+          </DayWorkBlocks>
 
-            <HoursTotal {...{ workData: currentDayWorkData }}></HoursTotal>
-          </Container>
-        </Box >
-      )
-      :
-      (
-        <ReportPage {...
-          {
-            workData, selectedWeekDateRange: getRangeOfSelectedWeek(),
-            selectedWeekDays: getDaysOfSelectedWeek(), workDataAggregator,
-            selectedUser, setCalendarMode
-          }} />
-      )
+          <HoursTotal {...{ workData: currentDayWorkData }}></HoursTotal>
+        </Container>
+      </Box >
+    </>
   );
 }
 export default TimesheetPage;

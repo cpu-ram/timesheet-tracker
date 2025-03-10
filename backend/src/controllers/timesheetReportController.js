@@ -1,18 +1,14 @@
 import { Temporal } from '@js-temporal/polyfill';
 
-import { getEmployee } from '../services/employeeService.js';
+import { getEmployeeById } from '../services/employeeService.js';
 import generateWeeklyReport from '../services/weeklyReport/weeklyReportService.js';
-
-function generateReportDocument(reportData) {
-
-}
 
 export const generateTimesheetReportHandler = async (req, res) => {
   let resultBuffer = undefined;
 
-  const employeeId = req.body.employeeId;
-  const employee = await getEmployee(employeeId)
-  const employeeName = employee.name;
+  const employeeId = req.user.id;
+  const employee = await getEmployeeById(employeeId)
+  const employeeName = req.user.name;
   let from = Temporal.PlainDate.from(req.body.from);
   let to = Temporal.PlainDate.from(req.body.to);
   const reportFileFormat = req.body.format;

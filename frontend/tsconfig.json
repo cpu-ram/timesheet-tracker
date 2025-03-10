@@ -8,5 +8,9 @@
       "path": "./tsconfig.node.json"
     }
   ],
-  "sourceMap": true
+  "sourceMap": true,
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "dist"
+  }
 }

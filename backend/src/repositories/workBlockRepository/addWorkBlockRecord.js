@@ -1,5 +1,4 @@
 import dbPool from '../../config/dbPool.js';
-import { format } from 'date-fns';
 
 export const addWorkBlockRecord = async (
   employeeId,

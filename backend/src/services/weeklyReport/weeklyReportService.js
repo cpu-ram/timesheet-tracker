@@ -7,7 +7,7 @@ import { dirname } from 'path';
 import { generateWeeklyReportData } from './generateWeeklyReportData.js';
 import generateHtmlTemplate from './pdf/generateHtmlTemplate.js';
 import convertHtmlToPdf from './pdf/convertHtmlToPdf.js';
-import { getEmployee } from '../employeeService.js';
+import { getEmployeeById } from '../employeeService.js';
 
 
 export default async function generateWeeklyReport(employeeId, from, to, employeeName = 'John Doe', reportFileFormat) {

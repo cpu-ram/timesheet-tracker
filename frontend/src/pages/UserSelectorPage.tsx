@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, List, ListItem, Button, Container, Box, GlobalStyles, useTheme } from '@mui/material';
 import { Link } from 'react-router-dom';
+import '@fontsource/montserrat/700.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/open-sans/600.css';
+import '@fontsource/roboto/400.css';
 
 interface User {
   id: number;
@@ -22,7 +26,10 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageP
     const fetchUsers = async () => {
       const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       try {
-        const response = await fetch(`${baseUrl}/employees`);
+        const response = await fetch(`${baseUrl}/employees`, {
+          method: 'GET',
+          credentials: 'include',
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
@@ -44,9 +51,13 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageP
     <Container maxWidth="sm" spacing='0' sx={{ display: 'grid', placeItems: 'left', minHeight: '100vh', paddingTop: 5 }}>
       <GlobalStyles
         styles={{
+          'body, button': {
+            'fontFamily': 'Roboto !important',
+          },
           'li > Button': {
             borderRadius: '0',
             boxSizing: 'border-box',
+            'fontFamily': 'Montserrat, sans-serif',
           },
           'li:first-of-type > Button': {
 
@@ -70,8 +81,10 @@ const UserSelectorPage = ({ selectedUser, setSelectedUser }): UserSelectionPageP
         <Typography variant='h5'
           sx={{
             fontWeight: 'bold',
+            fontFamily: 'Inter',
+            textTransform: 'capitalize'
           }}
-          gutterBottom>Select the user:</Typography>
+          gutterBottom>Log in as</Typography>
         <List spacing='0'>
           {users.map((user, index) => (
             <ListItem key={user.id} sx={{

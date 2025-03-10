@@ -31,6 +31,7 @@ const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWo
   return (
     <Box sx={{
       paddingTop: 1.2,
+      maxWidth: '45em',
     }}>
       {
         workData ?
