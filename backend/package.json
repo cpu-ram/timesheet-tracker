@@ -9,10 +9,8 @@
   },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "start-db": "node backend/local/run-postgres.js",
-    "dev": "nodemon backend/server.js",
-    "generate-default-records": "node backend/local/orchestrateWorkRecordGeneration.js",
-    "generate-docx-report": "node backend/local/generateDocxReport.js"
+    "start-db": "node local/run-postgres.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "Your Name",
