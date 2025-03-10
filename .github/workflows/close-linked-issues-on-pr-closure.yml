@@ -1,0 +1,27 @@
+name: Close Linked Issues on PR Closure
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  close_linked_issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Close linked issues
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          body=$(gh pr view $pr_number --json body -q '.body')
+          issues=$(echo "$body" | grep -ioE '(Fixes|Resolves|Closes) #[0-9]+' | awk '{print $2}')
+          for issue in $issues; do
+            gh issue close $issue --repo ${{ github.repository }} --comment "Closed automatically on PR merge."
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
