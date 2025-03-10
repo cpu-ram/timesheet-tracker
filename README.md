@@ -2,14 +2,9 @@
 
 ## Overview
 
-The Timesheet Tracker is a full-stack application designed for small businesses to efficiently manage and track employee work hours. This application helps business owners and managers to record, review, and analyze timesheets, providing an easy-to-use interface for accurate time tracking and reporting.
+This Timesheet Tracker is a basic application for tracking work at various projects, and to generate weekly report documents.
 
-## Features
-
-- **User Authentication**: Secure login and registration for employees and managers.
-- **Timesheet Management**: Employees can log their hours worked, breaks, and submit timesheets for approval.
-- **Manager Dashboard**: Managers can review, approve, and export timesheets, and generate reports.
-- **Responsive Design**: Accessible on both desktop and mobile devices for ease of use.
+I intend for this to be eventually expanded — to include reviews and approvals by managers, and integration with payroll systems. 
 
 ## Technologies Used
 
@@ -20,12 +15,14 @@ The Timesheet Tracker is a full-stack application designed for small businesses 
 - **Version Control**: Git
 
 ## Setup and Installation
+- run **npm run start-db** at the /backend directory to start the database (this is for a local, dev use)
+- run **npm run dev** at the /backend directory to start the backend
+- run **npm run dev** at the /frontend directory to start the frontend
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/)
-- [Docker](https://www.docker.com/)
-- [Git](https://git-scm.com/)
+- Node.js
+- Docker/Colima
 
 ## License
 
