@@ -32,8 +32,19 @@ const WorkBlock = (
     handleSelectForEdit,
   }: WorkBlockProps
 ) => {
+  const columnWidths = [1.7, 2.7, 2.4, 5.2];
   return (
-    <div>
+    <>
+      <style>
+        {`
+        span.fieldTitle{
+          font-style: oblique 20deg;  
+          margin-right: 0.5em;
+          min-width: 20em;
+          color: #555555; /* Equivalent to gray.600 in Material-UI */
+        }
+      `}
+      </style>
       <Grid
         container key={workBlockId}
         sx={{
@@ -42,12 +53,20 @@ const WorkBlock = (
           paddingTop: 0.75,
           paddingBottom: 0.75
         }} spacing='0'>
-        <Grid item xs={2.5}>
+        <Grid item xs={5.5}></Grid>
+        <Grid item xs={6.5}>
           <Typography>
-            From:
+            <span className=''></span>
           </Typography>
         </Grid>
-        <Grid item xs={3}>
+
+
+        <Grid item xs={columnWidths[0]}>
+          <Typography>
+            <span className='fieldTitle'>From:</span>
+          </Typography>
+        </Grid>
+        <Grid item xs={columnWidths[1]}>
           <Typography
             key={`${workBlockId}-start-time`}
             sx={{
@@ -71,23 +90,45 @@ const WorkBlock = (
                 <>[—]</>}
           </Typography>
         </Grid>
-        <Grid item xs={6.5}>
+        <Grid item xs={columnWidths[2]}
+          sx={{
+            display: 'flex',
+            height: '100%',
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+          }}
+        >
           <Typography>
-            {jobsiteName || <>[  jobsite Name <i>absent</i>  ]</>}
+            <span className='fieldTitle'>Name:</span>
+          </Typography>
+        </Grid>
+        <Grid item xs={columnWidths[3]}>
+          <Typography>
+            {jobsiteName || <>[—]</>}
           </Typography>
         </Grid>
 
-        <Grid item xs={2.5}>
+        <Grid item xs={columnWidths[0]}>
           <Typography
             sx={{
               justifyContent: 'space-between',
-              display: 'flex'
+              display: 'flex',
             }}
           >
             {
               editMode ?
                 (
                   <>
+                    <EditIcon
+                      sx={{
+                        color: 'info.main', paddingRight: 0, fontSize: '1.6em',
+                        '&:active, &:hover': {
+                          cursor: 'pointer',
+                          boxShadow: '0 0 0 0.2rem rgba(23, 162, 184, 0.5)',
+                        }
+                      }}
+                      onClick={() => handleSelectForEdit(workBlockId)}
+                    />
                     <DeleteIcon
                       sx={{
                         color: 'error.main', fontSize: '1.6em',
@@ -98,17 +139,7 @@ const WorkBlock = (
                       }}
                       onClick={() => handleDeleteWorkBlock(workBlockId)}
                     />
-                    <EditIcon
-                      sx={{
-                        color: 'info.main', paddingRight: 0, fontSize: '1.6em',
-                        marginRight: '10%',
-                        '&:active, &:hover': {
-                          cursor: 'pointer',
-                          boxShadow: '0 0 0 0.2rem rgba(23, 162, 184, 0.5)',
-                        }
-                      }}
-                      onClick={() => handleSelectForEdit(workBlockId)}
-                    />
+
                   </>
                 )
                 :
@@ -116,7 +147,7 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={columnWidths[1]}>
           <Typography component='div'
             sx={{
               height: '100%',
@@ -147,18 +178,23 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={6.5}>
+        <Grid item xs={columnWidths[2]}>
           <Typography>
-            {jobsiteAddress || <>[  jobsite Address <i>absent</i>  ]</>}
+            <span className='fieldTitle'>Address:</span>
+          </Typography>
+        </Grid>
+        <Grid item xs={columnWidths[3]}>
+          <Typography>
+            {jobsiteAddress || <>[—]</>}
           </Typography>
         </Grid>
 
-        <Grid item xs={2.5}>
+        <Grid item xs={columnWidths[0]}>
           <Typography>
-            To:
+            <span className='fieldTitle'>To:</span>
           </Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={columnWidths[1]}>
           <Typography
             key={`${workBlockId}-end-time`}
             sx={{
@@ -181,13 +217,34 @@ const WorkBlock = (
             }
           </Typography>
         </Grid>
-        <Grid item xs={6.5}>
+        <Grid item xs={columnWidths[2]}>
           <Typography>
-            {jobsiteId ? jobsiteId.toUpperCase() : <>[  jobsite Id <i>absent</i>  ]</>}
+            <span className='fieldTitle'>ID:</span>
           </Typography>
         </Grid>
-      </Grid>
-    </div >
+        <Grid item xs={columnWidths[3]}>
+          <Typography>
+            {jobsiteId ? jobsiteId.toUpperCase() : <>[—]</>}
+          </Typography>
+        </Grid>
+
+        <Grid item xs={12}
+          sx={{
+            height: 'auto',
+            marginTop: '1em',
+            textWrap: 'wrap',
+          }}
+        >
+          <Typography
+            sx={{
+            }}>
+            <span className="fieldTitle">Description:</span>
+            {additionalNotes || <>[—]</>}
+          </Typography>
+        </Grid>
+
+      </Grid >
+    </>
   );
 }
 

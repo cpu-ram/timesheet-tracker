@@ -13,6 +13,7 @@ const Navigation = ({ resourceNameList }) => {
       sx={{
         position: 'fixed',
         width: '100%',
+        zIndex: 999,
       }}
     >
       <HeaderNav {...{ resourceNameList }} onMenuToggle={toggleMenu} />

@@ -10,7 +10,6 @@ export async function getTimesheetData(employeeId, from, to) {
     }
     let [fromDate, toDate] = [from, to];
 
-
     result = Array.from(
       { length: fromDate.until(toDate, { largestUnit: 'days', smallestUnit: 'days' }).days + 1 },
       (_, index) => fromDate.add({ days: index })

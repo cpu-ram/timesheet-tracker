@@ -387,7 +387,9 @@ const Calendar = () => {
               color: isExpanded ? 'white' : theme.palette.info.dark,
             }}
           >
-            {isExpanded ? <CompressIcon /> : <UnfoldMoreIcon />}
+            {isExpanded ?
+              <CompressIcon />
+              : <UnfoldMoreIcon />}
           </IconButton>
 
         </Grid>

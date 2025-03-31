@@ -113,8 +113,9 @@ const AddWorkBlockForm = ({
 
       <Box
         sx={{
-          padding: '1.5 0 0 1',
+          padding: '1.5 0 1.5 1',
           maxWidth: '45em',
+          marginBottom: '1em',
         }}
       >
         <Grid container spacing={1}>
@@ -223,6 +224,9 @@ const AddWorkBlockForm = ({
               inputProps={{
                 autoComplete: 'off'
               }}
+              multiline
+              minRows={1}
+              maxRows={6}
             />
           </Grid>
 
