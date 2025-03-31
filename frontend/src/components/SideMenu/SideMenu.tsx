@@ -1,6 +1,6 @@
 import { Drawer, Box, IconButton, Typography, Button, Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext.tsx';
 import { logout } from '../../utils/auth.ts';
 
@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const SideMenu = ({ isOpen, onMenuToggle }) => {
   const theme = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const { username, setIsAuthenticated } = useAuthContext();
 
   const handleLogout = async () => {
@@ -22,6 +23,8 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
     { name: 'Calendar', link: '/timesheet' },
     { name: 'Weekly Report', link: '/reports/weekly' },
   ];
+
+  const profileLinks = []
 
   return (
     <Drawer
@@ -42,9 +45,15 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
           minWidth: 0,
           margin: 0,
         },
+        '& .profile-dashboard': {
+          display: 'inline',
+          width: '100%',
+        },
         '& .profile-dashboard .drawer-menu-item': {
           paddingTop: '0 !important',
           paddingBottom: '0 !important',
+          width: '100%',
+          borderRadius: 0,
         },
 
         '& .drawer-menu-item.current': {
@@ -152,6 +161,24 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
             }}>
             {username}
           </Typography>
+
+          <Button
+            onClick={() => navigate("/profile/change-name")}
+            className={
+              `
+              drawer-menu-item 
+              ${location.pathname === "/profile/change-name" ? 'current' : 'non-current'}
+              gui-link
+              `
+            }
+          >
+            <Typography variant="h6">
+              —Change name
+            </Typography>
+          </Button>
+
+          <br />
+
           <Button
             variant="text"
             disableRipple
@@ -165,6 +192,7 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
               —Log out
             </Typography>
           </Button>
+
         </Box>
 
       </Box>
