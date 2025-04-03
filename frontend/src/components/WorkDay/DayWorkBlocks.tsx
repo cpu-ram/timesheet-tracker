@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
-import { WorkBlock } from '../WorkBlock.tsx';
+import { WorkBlock } from '../WorkBlock/WorkBlock.tsx';
 import AddWorkBlockForm from '../AddWorkBlock.tsx';
 
 const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }) => {

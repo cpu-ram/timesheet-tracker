@@ -1,8 +1,12 @@
-import { Grid, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import { format } from 'date-fns';
 import { Temporal } from '@js-temporal/polyfill';
+
+import { Grid, Typography } from '@mui/material';
+import DataField from './DataField.tsx';
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 interface WorkBlockProps {
   workBlockStart: Temporal.PlainTime | null;
@@ -43,6 +47,9 @@ const WorkBlock = (
           min-width: 20em;
           color: #555555; /* Equivalent to gray.600 in Material-UI */
         }
+        p.field-with-missing-data{
+          color: {theme => theme.palette.warning.dark};
+        }
       `}
       </style>
       <Grid
@@ -69,8 +76,9 @@ const WorkBlock = (
         <Grid item xs={columnWidths[1]}>
           <Typography
             key={`${workBlockId}-start-time`}
+            className={`{!workBlockStart && 'field-with-missing-data'}`}
             sx={{
-              color: workBlockStart ?
+              color: workBlockEnd ?
                 'inherit'
                 :
                 'warning.dark'
@@ -111,6 +119,7 @@ const WorkBlock = (
         <Grid item xs={columnWidths[0]}>
           <Typography
             sx={{
+              flexDirection: 'column',
               justifyContent: 'space-between',
               display: 'flex',
             }}
@@ -125,7 +134,8 @@ const WorkBlock = (
                         '&:active, &:hover': {
                           cursor: 'pointer',
                           boxShadow: '0 0 0 0.2rem rgba(23, 162, 184, 0.5)',
-                        }
+                        },
+                        marginBottom: '0.8em',
                       }}
                       onClick={() => handleSelectForEdit(workBlockId)}
                     />
@@ -197,6 +207,7 @@ const WorkBlock = (
         <Grid item xs={columnWidths[1]}>
           <Typography
             key={`${workBlockId}-end-time`}
+            className={`{!workBlockStart && 'field-with-missing-data'}`}
             sx={{
               color: workBlockEnd ?
                 'inherit'

@@ -10,7 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import EditIcon from '@mui/icons-material/Edit';
 
 import Navigation from '../components/Navigation/Navigation.tsx';
-import { WorkBlock } from '../components/WorkBlock';
+import { WorkBlock } from '../components/WorkBlock/WorkBlock.tsx';
 
 const ReportPage = () => {
 
