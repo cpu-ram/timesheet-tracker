@@ -74,15 +74,10 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[1]}>
-          <Typography
+          <DataField
             key={`${workBlockId}-start-time`}
-            className={`{!workBlockStart && 'field-with-missing-data'}`}
-            sx={{
-              color: workBlockEnd ?
-                'inherit'
-                :
-                'warning.dark'
-            }}
+            isRequired={true}
+            isComplete={!!workBlockStart}
           >
             {
               workBlockStart ?
@@ -96,7 +91,7 @@ const WorkBlock = (
                 ).toLowerCase()
                 :
                 <>[—]</>}
-          </Typography>
+          </DataField>
         </Grid>
         <Grid item xs={columnWidths[2]}
           sx={{
@@ -111,9 +106,9 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[3]}>
-          <Typography>
+          <DataField>
             {jobsiteName || <>[—]</>}
-          </Typography>
+          </DataField>
         </Grid>
 
         <Grid item xs={columnWidths[0]}>
@@ -189,9 +184,9 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[2]}>
-          <Typography>
+          <DataField>
             <span className='fieldTitle'>Address:</span>
-          </Typography>
+          </DataField>
         </Grid>
         <Grid item xs={columnWidths[3]}>
           <Typography>
@@ -205,15 +200,11 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[1]}>
-          <Typography
+          <DataField
             key={`${workBlockId}-end-time`}
-            className={`{!workBlockStart && 'field-with-missing-data'}`}
-            sx={{
-              color: workBlockEnd ?
-                'inherit'
-                :
-                'warning.dark'
-            }}>
+            isRequired={true}
+            isComplete={!!workBlockEnd}
+          >
             {workBlockEnd ?
               workBlockEnd.toLocaleString(
                 'en-US',
@@ -226,7 +217,7 @@ const WorkBlock = (
               :
               <>[—]</>
             }
-          </Typography>
+          </DataField>
         </Grid>
         <Grid item xs={columnWidths[2]}>
           <Typography>
@@ -234,9 +225,9 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[3]}>
-          <Typography>
+          <DataField isComplete={!!jobsiteId} isRequired={true}>
             {jobsiteId ? jobsiteId.toUpperCase() : <>[—]</>}
-          </Typography>
+          </DataField>
         </Grid>
 
         <Grid item xs={12}
