@@ -4,22 +4,31 @@ import { execSync, spawnSync } from "child_process";
 dotenv.config();
 
 async function startPostgresInstance() {
-  const COLIMA_STATUS_CMD = "colima status";
-  const START_COLIMA_CMD = "colima start";
   const POSTGRES_CONTAINER_NAME = process.env.POSTGRES_CONTAINER_NAME;
 
+  // Step 1: Check if Docker is responsive
   try {
-    console.log("Checking if Colima is running...");
-    execSync(COLIMA_STATUS_CMD, { stdio: "ignore" });
-    console.log("Colima is already running.");
+    execSync("docker info", { stdio: "ignore" });
+    console.log("Docker is running.");
   } catch {
-    console.log("Colima is not running. Starting it...");
-    execSync(START_COLIMA_CMD, { stdio: "inherit" });
-    console.log("Colima started successfully.");
+    console.log("Docker is not available. Trying to start Colima...");
+    try {
+      execSync("colima start", { stdio: "inherit" });
+      console.log("Colima started.");
+    } catch (err) {
+      console.error("Failed to start Colima. Exiting.");
+      process.exit(1);
+    }
   }
 
-  console.log(`Checking if container "${POSTGRES_CONTAINER_NAME}" is running...`);
-  const containerCheck = spawnSync("docker", ["ps", "--filter", `name=${POSTGRES_CONTAINER_NAME}`, "--format", "{{.Names}}"]);
+  // Step 2: Start container if not running
+  const containerCheck = spawnSync("docker", [
+    "ps",
+    "--filter",
+    `name=${POSTGRES_CONTAINER_NAME}`,
+    "--format",
+    "{{.Names}}",
+  ]);
 
   if (!containerCheck.stdout.toString()) {
     console.log(`Container "${POSTGRES_CONTAINER_NAME}" is not running. Starting it...`);

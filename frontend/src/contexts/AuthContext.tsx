@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { usePersistentAuthState } from '../hooks/usePersistentAuthState.ts';
-import { fetchAuthData, fetchUsername } from '../utils/auth.ts';
+import { fetchAuthData, fetchUsername } from '../api/auth.ts';
 
 
 const AuthContext = createContext(null);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Container, TextField, Button } from '@mui/material/';
-import { fetchAuthData } from '../utils/auth';
+import { fetchAuthData } from '../api/auth';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 const SignupPage = ({ setIsSignedUp, setIsAuthenticated }) => {

@@ -1,6 +1,8 @@
 import { findProjectRecords } from "./projectRepository/findProjectRecords.js";
 import { addProjectRecord } from "./projectRepository/addProjectRecord.js";
-import { fetchDefaultProjectPropertiesRecord } from "./projectRepository/fetchDefaultProjectPropertiesRecord.js";
 import { fetchProjectRecord } from "./projectRepository/fetchProjectRecord.js";
+import { fetchJobsitePreviewRecords } from "./projectRepository/fetchJobsitePreviewRecords.js";
+import { deleteProjectRecord } from "./projectRepository/deleteProjectRecord.ts";
+import { updateProjectRecord } from "./projectRepository/updateProjectRecord.ts";
 
-export { findProjectRecords, addProjectRecord, fetchDefaultProjectPropertiesRecord, fetchProjectRecord };
+export { findProjectRecords, addProjectRecord, fetchProjectRecord, deleteProjectRecord, updateProjectRecord, fetchJobsitePreviewRecords };

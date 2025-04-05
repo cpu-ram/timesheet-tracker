@@ -1,4 +1,4 @@
-import { addJobsite, findJobsites, getDefaultJobsiteProperties, getJobsite } from '../services/jobsiteService.js'
+import { addJobsite, findJobsites, getJobsite, deleteJobsite, updateJobsite, getJobsitePreviews } from '../services/jobsiteService.js'
 
 export const findJobsitesHandler = async (req, res) => {
   let result = undefined;
@@ -13,6 +13,10 @@ export const findJobsitesHandler = async (req, res) => {
 
 export const getJobsiteHandler = async (req, res) => {
   let result = undefined;
+  if (!req.params.id) {
+    res.status(400).json({ message: 'Jobsite ID is required' });
+    return;
+  }
   try {
     result = await getJobsite(req.params.id);
     res.json(result);
@@ -25,20 +29,82 @@ export const getJobsiteHandler = async (req, res) => {
 export const addJobsiteHandler = async (req, res) => {
   let result = undefined;
   try {
-    result = await addJobsite(
-      req.body.id,
-      req.body.type,
-      req.body.address,
-      req.body.name,
-      req.body.supervisorId,
-      req.body.defaultWorkStartTime,
-      req.body.defaultWorkEndTime,
-      req.body.defaultBreakStartTime,
-      req.body.defaultBreakEndTime,
+    result = await addJobsite({
+      id: req.body.id,
+      type: req.body.type,
+      address: req.body.address,
+      name: req.body.name,
+      supervisorId: req.body.supervisorId,
+      defaultWorkStartTime: req.body.defaultWorkStartTime,
+      defaultWorkEndTime: req.body.defaultWorkEndTime,
+      defaultBreakStartTime: req.body.defaultBreakStartTime,
+      defaultBreakEndTime: req.body.defaultBreakEndTime,
+    }
     );
     res.json(result);
   }
   catch (error) {
+    const statusCode = error.status || 500;
+    res.status(statusCode).json({ message: error.message });
+    return;
+  }
+}
+
+export const updateJobsiteHandler = async (req, res) => {
+  if (!req.body.id) {
+    res.status(400).json({ message: 'Jobsite ID is required' });
+    return;
+  }
+
+  let result = undefined;
+  try {
+    result = await updateJobsite({
+      id: req.body.id,
+      type: req.body.type,
+      address: req.body.address,
+      name: req.body.name,
+      supervisorId: req.body.supervisorId,
+      defaultWorkStartTime: req.body.defaultWorkStartTime,
+      defaultWorkEndTime: req.body.defaultWorkEndTime,
+      defaultBreakStartTime: req.body.defaultBreakStartTime,
+      defaultBreakEndTime: req.body.defaultBreakEndTime,
+    }
+    );
+    res.json(result);
+  }
+  catch (error) {
+    const statusCode = error.status || 500;
+    res.status(statusCode).json({ message: error.message });
+    return;
+  }
+}
+
+export const getJobsitePreviewsHandler = async (req, res) => {
+  let result = undefined;
+  try {
+    result = await getJobsitePreviews();
+    res.json(result);
+  }
+  catch (error) {
     res.status(500).json(error.message);
+  }
+}
+
+export const deleteJobsiteHandler = async (req, res) => {
+  if (!req.params.id) {
+    res.status(400).json({ message: 'Jobsite ID is required' });
+    return;
+  }
+
+  let result = undefined;
+
+  try {
+    result = await deleteJobsite(req.params.id);
+    res.json(result);
+  }
+  catch (error) {
+    const statusCode = error.status || 500;
+    res.status(statusCode).json({ message: error.message });
+    return;
   }
 }

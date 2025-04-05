@@ -2,7 +2,7 @@ import { Drawer, Box, IconButton, Typography, Button, Link } from '@mui/material
 import { useTheme } from '@mui/material/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext.tsx';
-import { logout } from '../../utils/auth.ts';
+import { logout } from '../../api/auth.ts';
 
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -22,6 +22,7 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
   const menuItems = [
     { name: 'Calendar', link: '/timesheet' },
     { name: 'Weekly Report', link: '/reports/weekly' },
+    { name: 'Jobsites', link: '/jobsites' },
   ];
 
   const profileLinks = []
@@ -124,7 +125,7 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
             className={
               `
               drawer-menu-item 
-              ${location.pathname === item.link ? 'current' : 'non-current'}
+              ${location.pathname.startsWith(item.link) ? 'current' : 'non-current'}
               gui-link
               `
             }

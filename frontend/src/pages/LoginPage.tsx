@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { fetchAuthData } from '../utils/auth.ts';
+import { fetchAuthData } from '../api/auth.ts';
 import GoogleIcon from '@mui/icons-material/Google';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 

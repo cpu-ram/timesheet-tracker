@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Temporal } from '@js-temporal/polyfill';
 import { startOfWeek } from '../utils/temporalFunctions.ts';
 
-import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
+import fetchTimesheetData from '../api/fetchTimesheetData.ts';
 import updateWorkData from '../utils/updateWorkData.ts';
 
 const today = Temporal.Now.plainDateISO();

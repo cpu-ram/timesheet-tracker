@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Grid, TextField, Box, Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Temporal } from '@js-temporal/polyfill';
-import { convertDateToPlainTime, convertPlainTimeToDate } from '../utils/temporalFunctions';
+import { convertDateToPlainTime, convertPlainTimeToDate } from '../../utils/temporalFunctions';
 
 import { LocalizationProvider, DesktopTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -14,8 +14,8 @@ const AddWorkBlockForm = ({
   multiDaySelectionMode = false, dateSelectionHandler,
 }) => {
   const initializeFormData = () => ({
-    workBlockStart: workBlockStart ? workBlockStart : '',
-    workBlockEnd: workBlockEnd ? workBlockEnd : '',
+    workBlockStart: workBlockStart ?? '',
+    workBlockEnd: workBlockEnd ?? '',
     jobsiteId: jobsiteId ?? null,
     supervisorName: supervisorName ?? null,
     jobsiteAddress: jobsiteAddress ?? null,
@@ -116,6 +116,9 @@ const AddWorkBlockForm = ({
           padding: '1.5 0 1.5 1',
           maxWidth: '45em',
           marginBottom: '1em',
+          '& .entry-field + .entry-field': {
+            marginTop: '0.7em',
+          },
         }}
       >
         <Grid container spacing={1}>
@@ -129,9 +132,12 @@ const AddWorkBlockForm = ({
               {validationError && <Typography sx={{ color: 'red' }}>{validationError}</Typography>}
             </Box>
           )}
-          <Grid item xs={6}>
+
+          <Grid item xs={4}
+          >
             <DesktopTimePicker
-              label="Start Time"
+              className="entry-field"
+              label="From"
               name="startTime"
               value={formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null}
               onChange={handleStartTimeChange}
@@ -140,14 +146,13 @@ const AddWorkBlockForm = ({
                 shrink: true,
               }}
               inputProps={{
-                step: 600, // 10 minutes
+                step: 600,
               }}
               fullWidth
             />
-          </Grid>
-          <Grid item xs={6}>
             <DesktopTimePicker
-              label="End Time"
+              className="entry-field"
+              label="To"
               name="endTime"
               value={formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null}
               onChange={handleEndTimeChange}
@@ -156,19 +161,16 @@ const AddWorkBlockForm = ({
                 shrink: true,
               }}
               inputProps={{
-                step: 600, // 10 minutes
+                step: 600,
               }}
               fullWidth
             />
           </Grid>
-
-          <Grid item xs={12} style={{ padding: 0 }}>
-          </Grid>
-
-          <Grid item xs={6}>
+          <Grid item xs={8}>
             <TextField
-              label="Jobsite ID"
+              label="ID"
               name="jobsiteId"
+              className="entry-field"
               value={formData.jobsiteId ?? ''}
               onChange={handleInputChange}
               fullWidth
@@ -176,22 +178,9 @@ const AddWorkBlockForm = ({
                 autoComplete: 'off'
               }}
             />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Jobsite Name"
-              name="jobsiteName"
-              value={formData.jobsiteName ?? ''}
-              onChange={handleInputChange}
-              fullWidth
-              inputProps={{
-                autoComplete: 'off'
-              }}
-            />
-          </Grid>
-          <Grid item xs={7.5}>
             <TextField
               label="Address"
+              className="entry-field"
               name="jobsiteAddress"
               value={formData.jobsiteAddress ?? ''}
               onChange={handleInputChange}
@@ -199,12 +188,24 @@ const AddWorkBlockForm = ({
               inputProps={{
                 autoComplete: 'off'
               }}
+              multiline
+              maxRows={2}
             />
-          </Grid>
-          <Grid item xs={4.5}>
+            <TextField
+              label="Name"
+              name="jobsiteName"
+              className="entry-field"
+              value={formData.jobsiteName ?? ''}
+              onChange={handleInputChange}
+              fullWidth
+              inputProps={{
+                autoComplete: 'off'
+              }}
+            />
             <TextField
               label="Supervisor"
               name="supervisorName"
+              className="entry-field"
               value={formData.supervisorName ?? ''}
               onChange={handleInputChange}
               fullWidth
@@ -213,6 +214,8 @@ const AddWorkBlockForm = ({
               }}
             />
           </Grid>
+
+
 
           <Grid item xs={12}>
             <TextField
@@ -291,7 +294,7 @@ const AddWorkBlockForm = ({
           </Grid>
         </Grid>
       </Box >
-    </LocalizationProvider>
+    </LocalizationProvider >
   );
 };
 

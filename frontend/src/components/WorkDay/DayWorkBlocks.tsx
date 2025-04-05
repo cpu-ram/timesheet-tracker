@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
 import { WorkBlock } from '../WorkBlock/WorkBlock.tsx';
-import AddWorkBlockForm from '../AddWorkBlock.tsx';
+import AddWorkBlockForm from '../WorkBlock/AddWorkBlock.tsx';
 
 const DayWorkBlocks = ({ workData, editMode, handleDeleteWorkBlock, handleEditWorkBlock }) => {
   const [selectedForEditId, setSelectedForEditId] = useState(null);

@@ -1,6 +1,6 @@
 import dbPool from '../../config/dbPool.js';
 
-export async function addProjectRecord(
+export async function addProjectRecord({
   id,
   type = null,
   address = null,
@@ -10,6 +10,7 @@ export async function addProjectRecord(
   defaultWorkEndTime = null,
   defaultBreakStartTime = null,
   defaultBreakEndTime = null,
+}
 ) {
   const query = `
     INSERT INTO projects(
@@ -28,6 +29,11 @@ export async function addProjectRecord(
     const result = await dbPool.query(query, values);
     return true;
   } catch (error) {
-    throw new Error("Unable to add employee");
+    if (error.code === '23505') {
+      const duplicateError = new Error(`Project record #${id} already exists`);
+      duplicateError.status = 409;
+      throw duplicateError;
+    }
+    throw new Error("Unable to add project record: " + error.message);
   }
 }

@@ -59,7 +59,6 @@ export default function Buttons({
             {
               (currentDayWorkData != null && currentDayWorkData.length > 0) &&
               <Button
-                display='flex'
                 onClick={() => handleSetEditMode()}
                 variant='outlined'
                 sx={{

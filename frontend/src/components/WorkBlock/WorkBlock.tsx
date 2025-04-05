@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { Temporal } from '@js-temporal/polyfill';
 
 import { Grid, Typography } from '@mui/material';
-import DataField from './DataField.tsx';
+import DataField from '../shared/DataField.tsx';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -60,13 +60,6 @@ const WorkBlock = (
           paddingTop: 0.75,
           paddingBottom: 0.75
         }} spacing='0'>
-        <Grid item xs={5.5}></Grid>
-        <Grid item xs={6.5}>
-          <Typography>
-            <span className=''></span>
-          </Typography>
-        </Grid>
-
 
         <Grid item xs={columnWidths[0]}>
           <Typography>
@@ -76,8 +69,7 @@ const WorkBlock = (
         <Grid item xs={columnWidths[1]}>
           <DataField
             key={`${workBlockId}-start-time`}
-            isRequired={true}
-            isComplete={!!workBlockStart}
+            isExpected={true}
           >
             {
               workBlockStart ?
@@ -90,24 +82,17 @@ const WorkBlock = (
                   }
                 ).toLowerCase()
                 :
-                <>[—]</>}
+                null}
           </DataField>
         </Grid>
-        <Grid item xs={columnWidths[2]}
-          sx={{
-            display: 'flex',
-            height: '100%',
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-          }}
-        >
+        <Grid item xs={columnWidths[2]}>
           <Typography>
-            <span className='fieldTitle'>Name:</span>
+            <span className='fieldTitle'>ID:</span>
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[3]}>
-          <DataField>
-            {jobsiteName || <>[—]</>}
+          <DataField isExpected={true}>
+            {jobsiteId ? jobsiteId.toUpperCase() : null}
           </DataField>
         </Grid>
 
@@ -184,9 +169,9 @@ const WorkBlock = (
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[2]}>
-          <DataField>
+          <Typography>
             <span className='fieldTitle'>Address:</span>
-          </DataField>
+          </Typography>
         </Grid>
         <Grid item xs={columnWidths[3]}>
           <Typography>
@@ -202,8 +187,7 @@ const WorkBlock = (
         <Grid item xs={columnWidths[1]}>
           <DataField
             key={`${workBlockId}-end-time`}
-            isRequired={true}
-            isComplete={!!workBlockEnd}
+            isExpected={true}
           >
             {workBlockEnd ?
               workBlockEnd.toLocaleString(
@@ -215,20 +199,29 @@ const WorkBlock = (
                 }
               ).toLowerCase()
               :
-              <>[—]</>
+              null
             }
           </DataField>
         </Grid>
-        <Grid item xs={columnWidths[2]}>
+
+        <Grid item xs={columnWidths[2]}
+          sx={{
+            display: 'flex',
+            height: '100%',
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+          }}
+        >
           <Typography>
-            <span className='fieldTitle'>ID:</span>
+            <span className='fieldTitle'>Name:</span>
           </Typography>
         </Grid>
         <Grid item xs={columnWidths[3]}>
-          <DataField isComplete={!!jobsiteId} isRequired={true}>
-            {jobsiteId ? jobsiteId.toUpperCase() : <>[—]</>}
+          <DataField>
+            {jobsiteName}
           </DataField>
         </Grid>
+
 
         <Grid item xs={12}
           sx={{
@@ -240,7 +233,7 @@ const WorkBlock = (
           <Typography
             sx={{
             }}>
-            <span className="fieldTitle">Description:</span>
+            <span className="fieldTitle">Additional notes:</span>
             {additionalNotes || <>[—]</>}
           </Typography>
         </Grid>

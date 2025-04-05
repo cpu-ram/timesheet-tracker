@@ -9,11 +9,6 @@ import { AuthProvider, useAuthContext } from './contexts/AuthContext.tsx';
 import AuthenticatedRoutes from './routes/AuthenticatedRoutes.tsx';
 import UnauthenticatedRoutes from './routes/UnauthenticatedRoutes.tsx';
 
-import TimesheetPage from './pages/TimesheetPage.tsx';
-import ReportPage from './pages/ReportPage.tsx';
-import SignupPage from './pages/SignupPage.tsx';
-import LoginPage from './pages/LoginPage.tsx';
-
 function App() {
   const { isAuthenticated, isSignedUp } = useAuthContext();
 

@@ -58,7 +58,6 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
             margin: '0',
             paddingTop: '0.2em',
             backgroundColor: theme.palette.grey[100],
-            zIndex: (theme) => theme.zIndex.appBar + 1000,
           }}>
           <IconButton
             sx={{

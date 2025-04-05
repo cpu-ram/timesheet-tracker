@@ -14,14 +14,14 @@ import Navigation from '../components/Navigation/Navigation.tsx';
 import HeaderNav from '../components/HeaderNav/HeaderNav.tsx';
 import SideMenu from '../components/SideMenu/SideMenu.tsx';
 
-import Buttons from '../components/TimesheetPage/Buttons.jsx';
+import Buttons from '../components/TimesheetPage/Buttons';
 import Calendar from '../components/Calendar.tsx';
 import ReportPage from './ReportPage.tsx';
-import AddWorkBlockForm from '../components/AddWorkBlock.tsx';
+import AddWorkBlockForm from '../components/WorkBlock/AddWorkBlock.tsx';
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 
-import fetchTimesheetData from '../utils/fetchTimesheetData.ts';
+import fetchTimesheetData from '../api/fetchTimesheetData.ts';
 import updateWorkData from '../utils/updateWorkData.ts';
 
 const TimesheetPage = () => {

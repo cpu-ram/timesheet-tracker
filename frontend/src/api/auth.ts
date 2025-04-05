@@ -1,5 +1,3 @@
-
-
 export async function fetchAuthData() {
   const result = false;
   try {
