@@ -4,7 +4,9 @@ import { useTheme } from '@mui/material/styles';
 import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
 import { useAuthContext } from '../contexts/AuthContext.tsx';
 
-import { Grid, Box, Typography, Button, AppBar, Toolbar, GlobalStyles } from "@mui/material";
+import { alpha } from '@mui/material/styles';
+
+import { Grid, Box, Typography, Button, AppBar, Toolbar, GlobalStyles, autocompleteClasses } from "@mui/material";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CircularProgress from '@mui/material/CircularProgress';
 import EditIcon from '@mui/icons-material/Edit';
@@ -100,7 +102,22 @@ const ReportPage = () => {
 
 
   return (
-    <>
+    <Box
+      sx={{
+        height: 'auto',
+        minHeight: '100%',
+        width: '100%',
+        display: 'flex',
+
+        backgroundColor: theme.palette.grey[100],
+        boxSizing: 'border-box',
+
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+
+        padding: '3.5em 0.5em',
+      }}>
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
@@ -108,8 +125,8 @@ const ReportPage = () => {
             boxSizing: border-box; 
           }
           body {
-            padding: '0 1.5em !important';
-            margin: '0 !important;
+            padding: 0;
+            margin: 0 !important;
             }
         `}
       </style>
@@ -117,23 +134,43 @@ const ReportPage = () => {
         resourceNameList={['timesheet']}
       />
 
-      <Grid
+      <Grid className="main-content"
         container
+        justifyContent="center"
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-start',
-          padding: '4.5em 0 0 0',
+          justifyContent: 'center',
+          alignContent: 'center',
+          alignItems: 'center',
           boxSizing: 'border-box',
-          width: 'calc(100vw)',
+          // width: 'calc(100vw)',
           left: '0',
+
+          padding: '0',
+          borderRadius: '4px',
+          backgroundColor: 'white !important',
+          border: `1px solid ${theme.palette.divider}`,
+          maxWidth: '45em',
+
+          '& > .content-element:first-of-type': {
+            borderRadius: '4px 4px 0 0',
+          },
+          '& > .content-element:last-of-type': {
+            borderRadius: '0 0 4px 4px',
+          },
+
         }}
       >
 
         <Box key="dataWrapper"
+          className="content-element"
           sx={{
             maxWidth: '45em',
             alignSelf: 'center',
+            boxSizing: 'border-box',
+
+            backgroundColor: 'transparent',
           }}>
 
           <Box key='title'
@@ -144,6 +181,10 @@ const ReportPage = () => {
               paddingLeft: 0,
               marginBottom: '1em',
               borderBottom: '1px solid #ccc',
+
+              padding: '0.5em 0',
+              boxSizing: 'border-box',
+              backgroundColor: 'transparent',
             }}>
 
             <Typography variant="h5"
@@ -179,6 +220,10 @@ const ReportPage = () => {
               margin: '0 auto',
               padding: '0.5em',
               borderBottom: '1px solid #ccc',
+
+              '& .work-block + .work-block': {
+                borderTop: `1.5px solid ${theme.palette.divider}`,
+              }
             }}
           >
             {
@@ -190,6 +235,7 @@ const ReportPage = () => {
                 )
                 .map((day) => (
                   <Box
+                    className="work-day"
                     key={day.date.toString()}
                     sx={{
                       marginBottom: '1em',
@@ -201,7 +247,9 @@ const ReportPage = () => {
                         justifyContent: 'space-between',
                       }}
                     >
-                      <Typography variant='h7' sx={{ textAlign: 'left' }}>
+                      <Typography
+                        variant='h6' sx={{ textAlign: 'left' }}
+                      >
                         <b>
                           {
                             day.date.toLocaleString('en-US', {
@@ -219,7 +267,7 @@ const ReportPage = () => {
                           fontStyle: 'italic',
                           paddingLeft: '1em',
                         }}>
-                        Total: <b>{workDataAggregator.getDayWorkHoursTotal(day.date)}h</b>
+                        <b>{workDataAggregator.getDayWorkHoursTotal(day.date)}h</b>
                       </Typography>
                     </Box>
 
@@ -248,13 +296,14 @@ const ReportPage = () => {
               width: '100%',
               maxWidth: '1200px',
               margin: '0 auto',
-              padding: '0.5em',
+              padding: '0',
             }}>
             <Typography variant='h7' sx={{
               boxSizing: 'border-box',
-              paddingBottom: '1em',
+              padding: '1em',
               textDecoration: 'underline',
               textUnderlineOffset: '0.4npem',
+
             }}>
               Week Total: <b>{workDataAggregator.getWeekWorkHoursTotal()}h</b>
             </Typography>
@@ -262,14 +311,14 @@ const ReportPage = () => {
         </Box>
 
         <Box key='sign'
+          className="content-element"
           sx={{
             display: 'flex',
             width: '100%',
 
             padding: '1em 1.2em',
-            background: '#f5f5f5',
+            backgroundColor: alpha(theme.palette.grey[300], 0.25),
             borderTop: '1px solid #bbb',
-            borderBottom: '1px solid #bbb',
 
             justifyContent: 'center',
             alignItems: 'center',
@@ -281,6 +330,8 @@ const ReportPage = () => {
               padding: '0.8em 0.3em',
               maxWidth: '45em',
               alignSelf: 'center',
+
+              mx: 'auto',
             }}>
             <Typography
               sx={{
@@ -345,6 +396,7 @@ const ReportPage = () => {
 
         {isSigned &&
           <Box
+            className="content-element"
             sx={{
               display: 'flex',
               justifyContent: 'center',
@@ -416,7 +468,7 @@ const ReportPage = () => {
         }
 
       </Grid >
-    </>
+    </Box>
   );
 }
 

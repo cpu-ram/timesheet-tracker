@@ -5,7 +5,7 @@ export const updateWorkBlockRecord = async (
   workBlockId,
   startTime,
   endTime,
-  tempJobsiteId,
+  jobsiteId,
   tempJobsiteName,
   tempJobsiteAddress,
   tempSupervisorName,
@@ -28,7 +28,7 @@ export const updateWorkBlockRecord = async (
   const values = [
     startTime,
     endTime,
-    tempJobsiteId,
+    jobsiteId,
     tempJobsiteName,
     tempJobsiteAddress,
     tempSupervisorName,

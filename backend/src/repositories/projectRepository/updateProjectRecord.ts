@@ -6,6 +6,8 @@ export async function updateProjectRecord({
   address = null,
   name = null,
   supervisorId = null,
+  description = null,
+
   defaultWorkStartTime = null,
   defaultWorkEndTime = null,
   defaultBreakStartTime = null,
@@ -16,6 +18,8 @@ export async function updateProjectRecord({
   address?: string | null;
   name?: string | null;
   supervisorId?: string | null;
+  description?: string | null;
+
   defaultWorkStartTime?: string | null;
   defaultWorkEndTime?: string | null;
   defaultBreakStartTime?: string | null;
@@ -27,16 +31,21 @@ export async function updateProjectRecord({
         project_address = $3,
         project_name = $4,
         supervisor_id = $5,
-        default_work_start_time = $6,
-        default_work_end_time = $7,
-        default_break_start_time = $8,
-        default_break_end_time = $9
+        project_description = $6,
+
+        default_work_start_time = $7,
+        default_work_end_time = $8,
+        default_break_start_time = $9,
+        default_break_end_time = $10
     WHERE project_id = $1
     RETURNING *;
   `;
-  const values = [id, type, address, name, supervisorId,
+  const values = [
+    id, type, address, name, supervisorId, description,
+
     defaultWorkStartTime, defaultWorkEndTime,
-    defaultBreakStartTime, defaultBreakEndTime];
+    defaultBreakStartTime, defaultBreakEndTime
+  ];
 
   try {
     const result = await dbPool.query(query, values);
@@ -47,6 +56,8 @@ export async function updateProjectRecord({
       jobsiteAddress: row.project_address,
       supervisorId: row.supervisor_id,
       jobsiteName: row.project_name,
+      jobsiteDescription: row.project_description,
+
       defaultWorkStartTime: row.default_work_start_time,
       defaultWorkEndTime: row.default_work_end_time,
       defaultBreakStartTime: row.default_break_start_time,

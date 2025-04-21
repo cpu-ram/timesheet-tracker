@@ -5,6 +5,8 @@ import {
 } from '../repositories/projectRepository.js';
 import { id } from 'date-fns/locale';
 
+import { JobsiteConstraintError } from '../errors/errors.js';
+
 export async function addJobsite(
   {
     id,
@@ -12,6 +14,8 @@ export async function addJobsite(
     address = null,
     name = null,
     supervisorId = null,
+    description = null,
+
     defaultWorkStartTime = null,
     defaultWorkEndTime = null,
     defaultBreakStartTime = null,
@@ -22,24 +26,33 @@ export async function addJobsite(
     address?: string | null;
     name?: string | null;
     supervisorId?: string | null;
+    description?: string | null;
     defaultWorkStartTime?: string | null;
     defaultWorkEndTime?: string | null;
     defaultBreakStartTime?: string | null;
     defaultBreakEndTime?: string | null;
   }
 ) {
-  return await addProjectRecord({
-    id: id.toUpperCase(),
-    type,
-    address,
-    name,
-    supervisorId,
-    defaultWorkStartTime,
-    defaultWorkEndTime,
-    defaultBreakStartTime,
-    defaultBreakEndTime,
+  let result = null;
+  try {
+    result = await addProjectRecord({
+      id: id.toUpperCase(),
+      type,
+      address,
+      name,
+      supervisorId,
+      description,
+      defaultWorkStartTime,
+      defaultWorkEndTime,
+      defaultBreakStartTime,
+      defaultBreakEndTime,
+    });
+    return result;
   }
-  );
+  catch (error) {
+    throw error;
+  }
+
 }
 
 export async function findJobsites(queryString) {
@@ -70,6 +83,8 @@ export async function updateJobsite(
     address = null,
     name = null,
     supervisorId = null,
+    description = null,
+
     defaultWorkStartTime = null,
     defaultWorkEndTime = null,
     defaultBreakStartTime = null,
@@ -80,6 +95,8 @@ export async function updateJobsite(
     address?: string | null;
     name?: string | null;
     supervisorId?: string | null;
+    description?: string | null;
+
     defaultWorkStartTime?: string | null;
     defaultWorkEndTime?: string | null;
     defaultBreakStartTime?: string | null;
@@ -92,6 +109,8 @@ export async function updateJobsite(
       address,
       name,
       supervisorId,
+      description,
+
       defaultWorkStartTime,
       defaultWorkEndTime,
       defaultBreakStartTime,
@@ -105,4 +124,7 @@ export async function deleteJobsite(id: string) {
   return await deleteProjectRecord(uppercaseId);
 }
 
+
+
 export { getJobsite } from './jobsiteServices/getJobsite.js';
+export { jobsiteExists } from './jobsiteServices/jobsiteExists.ts';

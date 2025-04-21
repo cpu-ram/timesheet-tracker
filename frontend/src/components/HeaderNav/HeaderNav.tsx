@@ -31,53 +31,87 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
   ];
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: 'block',
+        width: '100vw',
+        maxWidth: '100vw',
+
+        boxSizing: 'border-box',
+        padding: 0,
+        zIndex: 1200,
+      }}
+    >
       <AppBar
+        className="appbar"
         sx={{
+          width: '100vw',
+          maxWidth: '100vw',
+
           position: 'fixed',
-          display: 'flex',
+          top: 0,
+          left: 0,
+
           width: '100%',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: 0,
-          padding: 0,
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
+
           boxShadow: 'none',
-          height: '3em',
-          borderBottom: '1px solid black',
-          boxSizing: 'content-box',
+
+          backgroundColor: alpha(theme.palette.grey[100], 0.98),
+
+
+          alignItems: 'center',
+
         }}>
         <Toolbar
           sx={{
-            display: 'flex',
             width: '100%',
-            flexDirection: 'row',
+            maxWidth: '45em',
+
+            maxHeight: {
+              xs: '48px',
+            },
+            height: {
+              xs: '48px',
+            },
+            minHeight: {
+              xs: '48px',
+            },
+
+            maxHeight: '2.8rem',
+
+            boxSizing: 'border-box',
+            px: 1,
+            display: 'flex',
             justifyContent: 'space-between',
-            justifyItems: 'center',
             alignItems: 'center',
-            margin: '0',
-            paddingTop: '0.2em',
-            backgroundColor: theme.palette.grey[100],
+
+            backgroundColor: theme.palette.grey[200],
+            backgroundColor: 'transparent',
+            borderBottom: '1px solid #ccc',
           }}>
           <IconButton
             sx={{
             }}
             onClick={onMenuToggle}
+
           >
+
             <MenuIcon
               sx={{
                 fontSize: '1em',
                 padding: 0,
                 margin: 0,
+                color: `${theme.palette.info.dark} !important`,
+                fontWeight: 500,
               }}
             >
-
             </MenuIcon>
           </IconButton>
 
           <Box
             sx={{
-              display: 'flex',
             }}
           >
             {

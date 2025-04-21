@@ -1,4 +1,6 @@
 import dbPool from '../../config/dbPool.js';
+import format from 'pg-format';
+import { generateIsoTimestampString } from '../../utils/dateAndTimeFunctions.ts';
 
 export const addWorkBlockRecord = async (
   employeeId,
@@ -8,37 +10,47 @@ export const addWorkBlockRecord = async (
   endTime = null,
   breakStartTime = null,
   breakEndTime = null,
-  date = null,
-  tempJobsiteId = null,
+  dates = [],
   tempJobsiteName = null,
   tempJobsiteAddress = null,
   tempSupervisorName = null,
   additionalNotes = null
 ) => {
-  const query = `
+
+  if (!Array.isArray(dates) || dates.length === 0) {
+    throw new Error('No dates provided');
+  }
+
+  const rows = dates.map(
+    date => (
+      [
+        jobsiteId, reportedById, employeeId,
+        generateIsoTimestampString({ date: date, time: startTime }),
+        generateIsoTimestampString({ date, time: endTime }),
+        breakStartTime, breakEndTime, date,
+        tempJobsiteName,
+        tempJobsiteAddress, tempSupervisorName, additionalNotes
+      ]
+    )
+  );
+
+  const query = format(`
     INSERT INTO work_periods(
       project_id, reported_by, employee_id,
-      work_start, work_end, break_start, break_end, date,
-      temp_project_id, temp_project_name, 
+      work_start, 
+      work_end, 
+      break_start, break_end, date,
+      temp_project_name, 
       temp_project_location, temp_supervisor_name, additional_notes
     )
-    VALUES(
-      $1, $2, $3, 
-      $4, $5, $6, $7, $8,
-      $9, $10, 
-      $11, $12, $13
-    );
-  `;
-  const values = [
-    jobsiteId, reportedById, employeeId,
-    startTime, endTime, breakStartTime, breakEndTime, date,
-    tempJobsiteId, tempJobsiteName,
-    tempJobsiteAddress, tempSupervisorName, additionalNotes
-  ];
+    VALUES %L
+    returning work_period_id AS workBlockId;
+  `, rows);
+
   try {
-    const result = await dbPool.query(query, values);
-    return true;
+    const result = await dbPool.query(query);
+    return result.rows.map(row => row.workBlockId);
   } catch (error) {
-    throw new Error('Unable to add record');
+    throw new Error(`Unable to add record: ${error.message}`);
   }
 };

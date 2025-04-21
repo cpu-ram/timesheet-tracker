@@ -20,11 +20,15 @@ function TextEntryFieldFactory(
     {
       name,
       required = false,
-      gridWidth = null
+      gridWidth = null,
+      disabled = false,
+      maxLength = null,
     }: {
       name: string;
       required?: boolean;
       gridWidth?: number;
+      disabled?: boolean;
+      maxLength?: number;
     }
   ) {
     const label = formStructure.find((field) => field.name === name)?.label;
@@ -35,11 +39,15 @@ function TextEntryFieldFactory(
     return (
       <TextEntryField
         name={name}
+
+        className="entry-field"
         label={label}
         required={required}
         value={formData[name] ?? ''}
         handleInputChange={handleInputChange}
         gridWidth={gridWidth}
+        disabled={disabled}
+        maxLength={maxLength}
       />
     );
   }

@@ -2,12 +2,13 @@ import { ThemeContext } from '@emotion/react';
 import { useTheme } from '@mui/material/styles';
 
 export const useFieldTitleStyle = () => {
+  const theme = useTheme();
   return (
     {
       fontStyle: 'oblique 20deg',
       marginRight: '0.5em',
-      minWidth: '20em',
-      color: '#555555',
+      color: 'theme.palette.text.secondary',
+      minWidth: '7em',
     }
   );
 }
@@ -17,6 +18,19 @@ export const useFieldWithMissingDataStyle = () => {
   return (
     {
       color: theme.palette.warning.dark,
+    }
+  )
+}
+
+
+export const useEntryFieldTextStyle = () => {
+  return (
+    {
+      backgroundColor: 'white',
+      display: 'flex',
+      width: {
+        xs: '100%',
+      }
     }
   )
 }

@@ -6,6 +6,9 @@ import { startOfWeek } from '../utils/temporalFunctions.ts';
 import fetchTimesheetData from '../api/fetchTimesheetData.ts';
 import updateWorkData from '../utils/updateWorkData.ts';
 
+import { fetchJobsite } from '../api/jobsiteApi.ts';
+import { addWorkBlock, updateWorkBlock, deleteWorkBlock } from '../api/workBlockApi.ts';
+
 const today = Temporal.Now.plainDateISO();
 
 function generateDateRange(numberOfWeeks = 2) {
@@ -38,6 +41,10 @@ export function TimesheetProvider({ children }) {
   const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(Temporal.Now.plainDateISO());
   const [calendarMode, setCalendarMode] = useState(true);
 
+  const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
+  const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
+  const [suggestedJobsiteData, setSuggestedJobsiteData] = useState(null);
+
   const fetchFullTimesheetData = async () => {
     const today = Temporal.Now.plainDateISO();
     const fetchedData = await fetchTimesheetData({ from: dateRange.from, to: today });
@@ -45,9 +52,139 @@ export function TimesheetProvider({ children }) {
     updateWorkData(fetchedData, setWorkData);
   };
 
+  const fetchMultipleDaysTimesheetData = async (dates) => {
+    let combinedData = [];
+    try {
+      for (const date of dates) {
+        const fetchedData = await fetchTimesheetData({ from: date, to: date });
+        combinedData = combinedData.concat(fetchedData);
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+    updateWorkData(combinedData, setWorkData);
+  }
+
   const fetchDayTimesheetData = async (date) => {
     const fetchedData = await fetchTimesheetData({ from: date, to: date });
     updateWorkData(fetchedData, setWorkData);
+  }
+
+  const handleSearchJobsites = async (event, value) => {
+    const query = value;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
+    if (query.trim() === '') {
+      setJobsiteSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${baseUrl}/jobsites?query=${query}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
+      const responseData = await response.json();
+      setJobsiteSearchResults(responseData || []);
+    } catch (error) {
+      console.error('Error fetching job sites:', error);
+      setJobsiteSearchResults([]);
+    }
+  };
+
+  const handleFetchJobsiteData = async (event, value) => {
+    if (!value || !value.id) {
+      setSelectedJobsiteData(null);
+      return;
+    }
+    try {
+      const responseData = await fetchJobsite({ jobsiteId: value.id });
+      setSelectedJobsiteData({
+        ...responseData, defaultWorkStartTime: null, defaultWorkEndTime: null
+      });
+      setSuggestedJobsiteData({
+        workBlockStart: Temporal.PlainTime.from(responseData.defaultWorkStartTime),
+        workBlockEnd: Temporal.PlainTime.from(responseData.defaultWorkEndTime),
+      });
+    } catch (error) {
+      console.error('Error fetching job site data:', error);
+      setSelectedJobsiteData(null);
+    }
+  }
+
+  const handleAddWorkBlock = async ({
+    workBlockData,
+    onError,
+    onJobsiteCreated
+  }: {
+    workBlockData: WorkBlockProps,
+    onError?: (error: Error) => void,
+    onJobsiteCreated?: (jobsiteId: string) => void
+  }) => {
+    try {
+      if (selectedDates.length > 0) {
+        const workBlockCreationResult = await addWorkBlock(workBlockData, selectedDates);
+
+        if (workBlockCreationResult.newJobsiteCreated && workBlockCreationResult.jobsiteId) {
+          onJobsiteCreated(workBlockCreationResult.jobsiteId);
+        }
+
+        await fetchMultipleDaysTimesheetData(selectedDates);
+        await dateSelectionHandler.multiSelectionOff();
+        setAddMode(false);
+      }
+      else if (selectedDates.length === 0) {
+        throw new Error();
+      }
+    }
+    catch (error) {
+      throw error;
+    }
+  }
+
+
+  const handleEditWorkBlock = async ({
+    workBlockId, workBlockData,
+    onError,
+    onJobsiteCreated,
+  }: {
+    workBlockId: string;
+    workBlockData: WorkBlockProps;
+    onError?: (error: Error) => void;
+    onJobsiteCreated?: (jobsiteId: string) => void;
+  }
+  ) => {
+    try {
+      const editResult = await updateWorkBlock({ workBlockId, workBlockData, date: lastSelectedSingleDate });
+
+      if (!!onJobsiteCreated && editResult.newJobsiteCreated && editResult.jobsiteId) {
+        onJobsiteCreated(editResult.jobsiteId);
+      }
+      await fetchDayTimesheetData(lastSelectedSingleDate);
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleDeleteWorkBlock = async (workBlockId) => {
+    try {
+      await deleteWorkBlock(workBlockId);
+      await fetchDayTimesheetData(lastSelectedSingleDate);
+    }
+    catch (error) {
+      throw new Error(error);
+    }
+  }
+
+
+  const handleDiscard = async function () {
+    if (multiDaySelectionMode) await dateSelectionHandler.multiSelectionOff();
+    if (addMode === true) setAddMode(false);
+    if (editMode === true) setEditMode(false);
   }
 
   function getRangeOfSelectedWeek() {
@@ -103,11 +240,11 @@ export function TimesheetProvider({ children }) {
       setSelectedDates((prevSelectedDates) => prevSelectedDates.filter((d) => !d.equals(date)));
     },
     selectSingleDay: async function (date) {
+      setMultiDaySelectionMode(false);
+      discardSelectedJobsiteData();
       setLastSelectedSingleDate(date);
-      await fetchDayTimesheetData(lastSelectedSingleDate);
+      await fetchDayTimesheetData(date);
       setSelectedDates([date]);
-      setEditMode(false);
-      setAddMode(false);
     },
     lastSelectedSingleDate: lastSelectedSingleDate,
     isSelected: function (date) {
@@ -116,19 +253,20 @@ export function TimesheetProvider({ children }) {
     multiSelectionOn: function () {
       setMultiDaySelectionMode(true);
     },
-    multiSelectionOff: function () {
-      setMultiDaySelectionMode(false);
-      this.selectSingleDay(lastSelectedSingleDate);
+    multiSelectionOff: async function () {
+      await this.selectSingleDay(lastSelectedSingleDate);
     },
-    switch: function () {
+    switch: async function () {
       if (multiDaySelectionMode) {
-        this.multiSelectionOff();
+        await this.multiSelectionOff();
       }
       else this.multiSelectionOn();
     },
     handleDateClick: function (date: Date) {
       if (!multiDaySelectionMode) {
         this.selectSingleDay(date);
+        setEditMode(false);
+        setAddMode(false);
       }
       else {
         switch (this.isSelected(date)) {
@@ -143,6 +281,11 @@ export function TimesheetProvider({ children }) {
         }
       }
     }
+  }
+
+  function discardSelectedJobsiteData() {
+    setSelectedJobsiteData(null);
+    setSuggestedJobsiteData(null);
   }
 
   function getDaysOfSelectedWeek() {
@@ -191,6 +334,20 @@ export function TimesheetProvider({ children }) {
       workDataAggregator,
       getRangeOfSelectedWeek,
       fetchFullTimesheetData,
+
+      jobsiteSearchResults, setJobsiteSearchResults,
+      selectedJobsiteData, setSelectedJobsiteData,
+      suggestedJobsiteData, setSuggestedJobsiteData,
+      handleSearchJobsites,
+      handleFetchJobsiteData,
+      discardSelectedJobsiteData,
+      fetchDayTimesheetData,
+      fetchMultipleDaysTimesheetData,
+      handleAddWorkBlock,
+      handleEditWorkBlock,
+      handleAddWorkBlock,
+      handleDeleteWorkBlock,
+      handleDiscard,
     }}>
       {children}
     </TimesheetContext.Provider>

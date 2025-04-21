@@ -7,6 +7,8 @@ function TextEntryField({
   required = false,
   handleInputChange,
   gridWidth = 6,
+  disabled = false,
+  maxLength
 }): {
   name: string;
   label: string;
@@ -14,21 +16,33 @@ function TextEntryField({
   required?: boolean;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   gridWidth?: number;
+  disabled?: boolean;
+  maxLength?: number;
 } {
   return (
-    <Grid item xs={gridWidth}>
-      <TextField
-        name={name}
-        label={label}
-        value={value}
-        onChange={handleInputChange}
-        fullWidth
-        required={required}
-        inputProps={{
-          autoComplete: 'off'
-        }}
-      />
-    </Grid>
+    <TextField
+      name={name}
+      label={label}
+      value={value}
+      onChange={
+        (event) => {
+          if (maxLength && event.target.value.toString().length > maxLength) {
+            return;
+          }
+          handleInputChange(event)
+        }
+      }
+      fullWidth
+      required={required}
+      inputProps={{
+        autoComplete: 'off'
+      }}
+      disabled={disabled}
+
+      sx={{
+        backgroundColor: 'white',
+      }}
+    />
   )
 }
 

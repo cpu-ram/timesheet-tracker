@@ -3,18 +3,19 @@ import dbPool from '../../config/dbPool.js';
 export const fetchProjectRecord = async (jobsiteId) => {
   const query = `
     SELECT 
-      default_work_start_time AS "defaultWorkStartTime",
-      default_work_end_time AS "defaultWorkEndTime",
-      default_break_start_time AS "defaultBreakStartTime",
-      default_break_end_time AS "defaultBreakEndTime",
 
       project_id AS "jobsiteId",
       project_type AS "jobType",
       project_address AS "jobsiteAddress",
       project_name AS "jobsiteName",
       supervisor_id AS "supervisorId",
-      coalesce(employees.employee_nickname, employees.employee_name) AS "supervisorName"
+      project_description AS "jobsiteDescription",
+      coalesce(employees.employee_nickname, employees.employee_name) AS "supervisorName",
 
+      default_work_start_time AS "defaultWorkStartTime",
+      default_work_end_time AS "defaultWorkEndTime",
+      default_break_start_time AS "defaultBreakStartTime",
+      default_break_end_time AS "defaultBreakEndTime"
     FROM 
       projects
     LEFT OUTER JOIN 

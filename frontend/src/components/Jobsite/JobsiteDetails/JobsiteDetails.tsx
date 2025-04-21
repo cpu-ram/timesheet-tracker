@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Temporal } from '@js-temporal/polyfill';
 
-import { Grid, TextField, Box, Button, Typography } from '@mui/material';
+import { Grid, TextField, Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import JobsiteProps from '../types.ts';
 
-import { DataField } from '../../shared/DataField.tsx';
+import { FieldValue } from '../../shared/FieldValue.tsx';
+import { JobsiteFieldValue } from '../JobsiteFieldValue.tsx';
+
 import { useFieldTitleStyle, useFieldWithMissingDataStyle, useHorizontalSeparatorStyle } from '../../shared/styles/recordStyles.ts';
+import { useEntryFieldTextStyle } from './styles.ts';
 import { useSpacerBlockStyle } from '../../shared/styles/generalStyles.ts';
+
+import { JobsiteFieldDisplay } from '../JobsiteFieldDisplay.tsx';
 
 const JobsiteDetails = ({
   jobsiteId,
@@ -18,135 +23,70 @@ const JobsiteDetails = ({
   defaultWorkStartTime,
   defaultWorkEndTime,
 }: JobsiteProps) => {
-  const textVariant = 'h4';
 
-  const JobsiteDataField = ({
-    children, isExpected
-  }: { children: React.ReactNode, isExpected?: boolean }) => (
-    <DataField
-      isExpected={isExpected}
-      additionalStyles={{
-        textDecoration: 'underline',
-        textUnderlineOffset: '0.3em',
-        textDecorationThickness: '0.05em',
-      }}
-    >
-      {children}
-    </DataField>);
+  const textVariant = 'h4';
+  const jobsiteDisplayFields = [
+    { title: 'ID', value: jobsiteId },
+    { title: 'Name', value: jobsiteName },
+    { title: 'Address', value: jobsiteAddress },
+    { title: 'Description', value: jobsiteDescription },
+    // { title: 'Supervisor', value: supervisorName },
+    { title: 'Typical start', value: defaultWorkStartTime },
+    { title: 'Typical end', value: defaultWorkEndTime },
+  ];
+
+  const theme = useTheme();
 
   return (
     <Box
       sx={{
         display: 'flex',
         flexWrap: 'wrap',
-        '& p': {
-          display: 'inline',
-          width: 'auto',
-          padding: '0.25em 0em 0.25em 0',
-          marginRight: '0.2em',
-          marginTop: '0.05em',
-        },
+
         width: '100%',
         marginLeft: 0,
+
+        border: `1px solid ${theme.palette.divider}`,
+        borderRadius: '4px',
+
+        '& .field-display': {
+          padding: '0.6em 0',
+          backgroundColor: 'white',
+        },
+
+
+        '& .field-display+.field-display': {
+          borderTop: '1px solid #ccc',
+        },
+        '& .field-display:first-of-type, .field-display:first-of-type > p': {
+          borderTopLeftRadius: '4px',
+          borderTopRightRadius: '4px',
+        },
+        '& .field-display:last-of-type, .field-display:last-of-type > p': {
+          borderBottomLeftRadius: '4px',
+          borderBottomRightRadius: '4px',
+        },
       }}>
 
-      <Typography variant={textVariant} component="p">
-        <Typography component="span" sx={useFieldTitleStyle}>
-          Id:
-        </Typography>
-
-        <JobsiteDataField isExpected>
-          <b>
-            {jobsiteId ?? null}
-          </b>
-        </JobsiteDataField>
-      </Typography>
-
-      <Typography variant={textVariant} component="p">
-        <Typography component="span" sx={useFieldTitleStyle}>
-          Name:
-        </Typography>
-
-        <JobsiteDataField>
-          {jobsiteName ?? null}
-        </JobsiteDataField>
-      </Typography>
-
-      <Box sx={useSpacerBlockStyle} />
-
-      <Typography variant={textVariant} component="p"
-        sx={{
-          height: '3em',
-        }}
-      >
-        <Typography component="span" sx={useFieldTitleStyle}>
-          Address:
-        </Typography>
-
-        <JobsiteDataField>
-          {jobsiteAddress ?? null}
-        </JobsiteDataField>
-      </Typography>
-
-      <Box sx={useSpacerBlockStyle} />
-
-      <Typography variant={textVariant} component="p">
-        <Typography component="span" sx={useFieldTitleStyle}>
-          Description:
-        </Typography>
-
-        <JobsiteDataField>
-          {jobsiteDescription ?? null}
-        </JobsiteDataField>
-      </Typography>
-
-      <Typography variant={textVariant} component="p">
-        <Typography component="span" sx={useFieldTitleStyle}>
-          Supervisor:
-        </Typography>
-
-        <JobsiteDataField>
-          {supervisorName ?? null}
-        </JobsiteDataField>
-      </Typography>
-
-      <Box sx={{
-        display: 'flex',
-        width: '100%',
-      }} />
-
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
-        <Typography variant={textVariant} component="p">
-          <Typography component="span" sx={useFieldTitleStyle}>
-            Normal Start:
-          </Typography>
-
-          <JobsiteDataField>
-            {defaultWorkStartTime ? defaultWorkStartTime.toLocaleString('en-US', {
-              hour: 'numeric',
-              minute: '2-digit',
-              hour12: true,
-            }).toLowerCase() : null}
-          </JobsiteDataField>
-        </Typography>
-
-        <Typography variant={textVariant} component="p">
-          <Typography component="span" sx={useFieldTitleStyle}>
-            Normal End:
-          </Typography>
-
-          <JobsiteDataField>
-            {defaultWorkEndTime ? defaultWorkEndTime.toLocaleString('en-US', {
-              hour: 'numeric',
-              minute: '2-digit',
-              hour12: true,
-            }).toLowerCase() : null}
-          </JobsiteDataField>
-        </Typography>
-      </Box>
+      {
+        jobsiteDisplayFields.map(
+          jobsite => (
+            <JobsiteFieldDisplay
+              key={jobsite.title}
+              title={jobsite.title}
+              value={
+                jobsite.value instanceof Temporal.PlainTime
+                  ? jobsite.value.toLocaleString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                  }).toLowerCase()
+                  : jobsite.value
+              }
+            />
+          )
+        )
+      }
 
     </Box >
   )

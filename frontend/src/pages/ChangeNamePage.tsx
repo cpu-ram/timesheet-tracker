@@ -50,6 +50,7 @@ const ChangeNamePage = () => {
         display: 'flex !important',
         width: '100vw',
       }}>
+
       <Navigation />
 
       <Box
@@ -58,7 +59,7 @@ const ChangeNamePage = () => {
         sx={{
           width: '100%',
           maxWidth: '100%',
-          paddingTop: '3.5em',
+          paddingTop: '4.5em',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -84,10 +85,16 @@ const ChangeNamePage = () => {
           label="Full Name"
           value={enteredName}
           onChange={(event) => setEnteredName(event.target.value)}
-          sx={{ marginTop: '2em', minWidth: '18em' }}
+          sx={{
+            marginTop: '2em', minWidth: '18em'
+          }}
         />
 
-        <Typography>
+        <Typography
+          sx={{
+            paddingTop: '0.5em',
+          }}
+        >
           {
             !nameChanged && !error ?
               (<>Current name is <b>{username}</b></>) :
@@ -99,7 +106,11 @@ const ChangeNamePage = () => {
 
         <Button
           variant="contained"
-          sx={{ marginTop: '2em', padding: '0.5em 4em', minWidth: '18em' }}
+          sx={{
+            marginTop: '3.5em',
+            padding: '0.5em 4em',
+            minWidth: '18em'
+          }}
           type="submit"
         >
           Submit

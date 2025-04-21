@@ -1,14 +1,5 @@
 import { useTheme } from '@mui/material/styles';
 
-export const useErrorTextStyle = () => {
-  const theme = useTheme();
-  return (
-    {
-      color: 'red',
-    }
-  )
-}
-
 export const useSubmitButtonStyle = (validationError: boolean) => {
   const theme = useTheme();
   return (
@@ -40,7 +31,6 @@ export const useDiscardButtonStyle = () => {
 export const useAddJobsiteFormWrapperStyle = () => {
   const theme = useTheme();
   return ({
-    padding: '1.5 0 1.5 1',
     width: '100%',
     display: 'flex',
     maxWidth: '45em',
@@ -51,14 +41,23 @@ export const useAddJobsiteFormWrapperStyle = () => {
 export const useErrorWrapperStyle = () => {
   const theme = useTheme();
   return ({
-    padding: '1em 0 0 0',
-    margin: 0,
-    paddingBottom: 1,
-    paddingLeft: 1.5,
+    margin: '0.5em 0 0 0',
     '& p': {
       color: 'red',
-    }
+    },
+    padding: '0 0.5em',
   })
+}
+
+export const useErrorTextStyle = () => {
+  const theme = useTheme();
+  return (
+    {
+      color: 'red',
+      borderLeft: '2px solid red',
+      padding: '0.5em 0 0.5em 0.75em',
+    }
+  )
 }
 
 export const useSpacerBlockStyle = () => {

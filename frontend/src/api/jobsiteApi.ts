@@ -22,12 +22,12 @@ export const fetchJobsite = async ({ jobsiteId }: { jobsiteId: String }) => {
       throw new Error('Failed to fetch jobsite data');
     }
     const data = await response.json();
-    const modifiedData = {
+    const parsedData = data ? {
       ...data,
       defaultWorkStartTime: data.defaultWorkStartTime ? Temporal.PlainTime.from(data.defaultWorkStartTime) : null,
       defaultWorkEndTime: data.defaultWorkEndTime ? Temporal.PlainTime.from(data.defaultWorkEndTime) : null,
-    }
-    return modifiedData;
+    } : null;
+    return parsedData;
   }
   catch (error) {
     console.error('Error fetching jobsite data:', error);
@@ -143,6 +143,13 @@ export const updateJobsite = async ({
         }),
       });
     const responseData = await response.json();
+
+    for (let field of ['defaultWorkStartTime', 'defaultWorkEndTime']) {
+      if (responseData[field]) {
+        responseData[field] = Temporal.PlainTime.from(responseData[field]);
+      }
+    }
+
     if (!response.ok) {
       const error = new ApiError(response.status, responseData.message);
       throw error;

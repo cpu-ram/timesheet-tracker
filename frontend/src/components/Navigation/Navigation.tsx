@@ -11,7 +11,10 @@ const Navigation = ({ resourceNameList }) => {
 
     <Box
       sx={{
-        position: 'fixed',
+        position: 'absolute',
+        display: 'block',
+        boxsizing: 'border-box',
+        maxWidth: '100%',
         width: '100%',
         zIndex: 999,
       }}

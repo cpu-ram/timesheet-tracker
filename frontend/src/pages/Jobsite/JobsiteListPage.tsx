@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import { fetchJobsitePreviews } from '../../api/jobsiteApi';
 import Navigation from '../../components/Navigation/Navigation.tsx';
 
-import { DataField } from '../../components/shared/DataField.tsx';
+import { FieldValue } from '../../components/shared/FieldValue.tsx';
 import { FieldTitle } from './FieldTitle.tsx';
 
 
@@ -33,110 +33,173 @@ const JobsiteListPage = () => {
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'flex-start',
-      maxWidth: '45em',
-      padding: '4em 1em',
+      width: '100%',
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignContent: 'center',
+
+      padding: '4.15em 0',
+
+      margin: 0,
+      backgroundColor: theme.palette.grey[100],
     }}>
 
       <Navigation />
 
-      <Box name="breadcrumbs">
-        <Typography variant='h6'
+      <Box name="breadcrumbs"
+        sx={{
+          display: 'flex',
+          alignSelf: 'center',
+          maxWidth: '45em',
+          width: '100%',
+          padding: '0em 0.6em 0.3em',
+          borderBottom: '0px solid #ccc',
+
+          marginBottom: '0.5em',
+        }}
+      >
+        <Typography variant='h4'
           sx={{
-            borderBottom: '1px solid #ccc',
+
+            width: '100%',
+            maxWidth: '45em',
+            fontWeight: '700',
+            fontSize: '1.8em',
+
+            borderRadius: '4px',
+            padding: '0',
           }}
         >
           Jobsites
 
         </Typography>
       </Box>
-      <Box sx={{
-        padding: '0.6em 0 0.6em 0',
-      }}>
+
+      <Box name="icons"
+        sx={{
+          marginTop: '0em',
+          padding: '0 0.6em',
+          maxWidth: '45em',
+          width: '100%',
+          alignSelf: 'center',
+          backgroundColor: theme.palette.grey[100],
+        }}>
         <Button
           variant='outlined'
-          display='flex'
           sx={{
             alignSelf: 'flex-start',
-            backgroundColor: theme.palette.primary.light,
-            color: 'white',
+            display: 'flex',
+            backgroundColor: 'white',
           }}
           onClick={() => navigate('/jobsites/new')}
         >
-          <AddIcon />
+          <AddIcon
+            sx={{
+              color: 'black',
+            }}
+          />
         </Button>
       </Box>
 
-      {
-        jobsites.map((jobsite) => (
-          <Box
-            onClick={() => navigate(`/jobsites/${jobsite.id}`)}
-            key={jobsite.id}
-            role="button"
-            tabIndex={0}
-            sx={{
-              textDecoration: 'none',
-              color: () => theme.palette.text.primary,
-              boxSizing: 'border-box',
-              borderLeft: `0.2em solid transparent`,
-              '&:hover, &:active': {
-                cursor: 'pointer',
-                color: () => theme.palette.text.primary,
-                textDecoration: 'none',
-                textUnderlineOffset: '0.3em',
-                borderLeft: `0.2em solid ${theme.palette.primary.main}`,
-                backgroundColor: '#f1f1f1',
-              },
-              whiteSpace: 'normal',
-              wordBreak: 'break-word',
-              borderBottom: '1px solid #ccc',
-              padding: '0.5em',
-            }}
-          >
-            <Grid container
+      <Box name="jobsite-list"
+        sx={{
+          width: '100%',
+          maxWidth: '45em',
+          alignSelf: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '0.5em 0.6em',
+          backgroundColor: theme.palette.grey[100],
+
+          '& > .jobsite-preview + .jobsite-preview': {
+            borderTop: '0 !important',
+          }
+        }}
+      >
+        {
+          jobsites &&
+          jobsites.map((jobsite) => (
+            <Box className="jobsite-preview"
+              onClick={() => navigate(`/jobsites/${jobsite.id}`)}
+              key={jobsite.id}
+              role="button"
+              tabIndex={0}
               sx={{
-                justifyContent: 'space-between',
+                textDecoration: 'none',
+                color: () => theme.palette.text.primary,
+                boxSizing: 'border-box',
+                '&:hover, &:active': {
+                  cursor: 'pointer',
+                  color: () => theme.palette.text.primary,
+                  textDecoration: 'none',
+                  textUnderlineOffset: '0.3em',
+                  borderLeft: `1px solid ${theme.palette.primary.main}`,
+                  backgroundColor: '#f1f1f1',
+                },
+                whiteSpace: 'normal',
+                wordBreak: 'break-word',
+                borderBottom: '1px solid #ccc',
+                padding: '0.7em',
+
+                boxSizing: 'border-box',
+                backgroundColor: 'white',
+                border: `1px solid ${theme.palette.grey[300]}`,
+                '&:first-of-type': {
+                  borderTopLeftRadius: '0.5em',
+                  borderTopRightRadius: '0.5em',
+                },
+                '&:last-of-type': {
+                  borderBottomLeftRadius: '0.5em',
+                  borderBottomRightRadius: '0.5em',
+                },
               }}
             >
+              <Grid container
+                sx={{
+                  justifyContent: 'space-between',
+                }}
+              >
 
-              <Grid item xs={4}>
-                <Typography variant="body1">
-                  <FieldTitle>
-                    {"ID:"}
-                  </FieldTitle>
-                  <DataField sx={{ fontWeight: 'bold' }}>
-                    <b>{jobsite.id}</b>
-                  </DataField>
-                </Typography>
+                <Grid item xs={12}>
+                  <Typography variant="body1">
+                    <FieldTitle>
+                      {"ID:"}
+                    </FieldTitle>
+                    <FieldValue>
+                      {jobsite.id}
+                    </FieldValue>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Typography variant="body1">
+                    <FieldTitle>
+                      {"Name:"}
+                    </FieldTitle>
+                    <FieldValue>
+                      {jobsite.name}
+                    </FieldValue>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Typography variant="body1">
+                    <FieldTitle>
+                      {"Address: "}
+                    </FieldTitle>
+                    <FieldValue>
+                      {jobsite.address}
+                    </FieldValue>
+                  </Typography>
+                </Grid>
+
+
               </Grid>
-
-              <Grid item xs={8}>
-                <Typography variant="body1">
-                  <FieldTitle>
-                    {"Name:"}
-                  </FieldTitle>
-                  <DataField>
-                    {jobsite.name}
-                  </DataField>
-                </Typography>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography variant="body1">
-                  <FieldTitle>
-                    {"Address: "}
-                  </FieldTitle>
-                  <DataField>
-                    {jobsite.address}
-                  </DataField>
-                </Typography>
-              </Grid>
-
-
-            </Grid>
-          </Box>
-        ))
-      }
+            </Box>
+          ))
+        }
+      </Box >
     </Box >
   )
 }

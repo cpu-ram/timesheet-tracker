@@ -54,17 +54,22 @@ const Calendar = () => {
   const daysOfSelectedWeek = days.slice(selectedWeekNumber * 7, (selectedWeekNumber + 1) * 7);
 
   return (
-    <Box sx={{
-      display: 'flex',
-      selfAlign: 'center',
-      maxWidth: '45em',
-      borderBottom: '1px solid grey',
-    }}>
-      <GlobalStyles
-        styles={{
-          body: { placeItems: 'start' },
-        }}
-      />
+    <Box
+      className="calendar-root"
+      sx={{
+        display: 'flex',
+        selfAlign: 'center',
+        width: '100%',
+        maxWidth: '100%',
+        margin: 0,
+        backgroundColor: 'white',
+        boxSizing: 'border-box',
+
+        padding: '0.75em 1.5em',
+
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        borderRadius: '0',
+      }}>
 
       <Grid container item
         xs={12}
@@ -400,19 +405,20 @@ const Calendar = () => {
           display={multiDaySelectionMode ? 'flex' : 'none'}
           sx={{
             width: '100%',
+            display: multiDaySelectionMode ? 'flex' : 'none',
             justifyContent: 'center',
-            paddingRight: '1em',
-            paddingLeft: '2em',
-            paddingTop: 0,
+            justifyItems: 'center',
+            alignItems: 'center',
           }}>
           {
             multiDaySelectionMode &&
             <Alert severity="info"
               sx={{
                 width: '100%',
+                margin: '0 0.5em 0.4em',
                 display: 'flex',
+                alignSelf: 'center',
                 justifyContent: 'center',
-                padding: '0.2em 2em',
               }}>
               Choose the days
             </Alert>

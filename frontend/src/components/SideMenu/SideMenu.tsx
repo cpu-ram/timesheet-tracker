@@ -5,7 +5,7 @@ import { useAuthContext } from '../../contexts/AuthContext.tsx';
 import { logout } from '../../api/auth.ts';
 
 import CloseIcon from '@mui/icons-material/Close';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const SideMenu = ({ isOpen, onMenuToggle }) => {
   const theme = useTheme();
@@ -37,23 +37,23 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
           textDecoration: 'none',
         },
         '& button, button.nav-button': {
-          padding: '0 !important',
-          paddingInline: '0 !important',
+          padding: '0',
+          paddingInline: '0',
         },
         '& .drawer-menu-item': {
-          padding: '0.3em 0 0.3em 0.5em !important',
+          padding: '0.3em 0 0.3em 0.5em',
           textTransform: 'none',
           minWidth: 0,
+          width: '100%',
+          display: 'flex',
           margin: 0,
         },
         '& .profile-dashboard': {
           display: 'inline',
-          width: '100%',
         },
         '& .profile-dashboard .drawer-menu-item': {
-          paddingTop: '0 !important',
-          paddingBottom: '0 !important',
-          width: '100%',
+          paddingTop: '0',
+          paddingBottom: '0',
           borderRadius: 0,
         },
 
@@ -66,10 +66,14 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
           color: theme.palette.primary.main,
         },
 
-
         '& .gui-link.drawer-menu-item:hover': {
           textDecoration: 'underline',
           textUnderlineOffset: '0.3em',
+        },
+        '& .gui-link.drawer-menu-item.non-current:hover': {
+          textDecoration: 'underline',
+          backgroundColor: theme.palette.info.main,
+          color: theme.palette.getContrastText(theme.palette.info.main),
         },
         '& button': {
           border: 'none',
@@ -110,7 +114,7 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
             display: 'flex',
             alignSelf: 'flex-end',
             color: theme.palette.warning.main,
-            marginBottom: '1em',
+            margin: '0.25em 0.25em 0.8em',
           }}>
           <CloseIcon
             sx={{
@@ -153,46 +157,81 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
 
         <Box
           className="profile-dashboard"
+          sx={{
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            maxWidth: '100%',
+          }}
         >
           <Typography
             variant="h6"
             className="drawer-menu-item"
             sx={{
               fontStyle: 'oblique',
+              alignItems: 'center',
+              gap: '0.2em',
+              whiteSpace: 'wrap',
+              wordBreak: 'break-word',
+              maxWidth: '10em',
             }}>
+            <AccountCircleIcon
+              sx={{
+                fontSize: '1.5em',
+                color: theme.palette.grey[500],
+              }}
+            />
             {username}
           </Typography>
-
-          <Button
-            onClick={() => navigate("/profile/change-name")}
-            className={
-              `
+          <Box
+            className="profile-action-links"
+            sx={{
+              margin: '0 0 0 1.5em',
+              borderLeft: '1px solid #ccc',
+              '& .profile-action-text': {
+                padding: '0.1em 0 0.2em 0 !important',
+              },
+            }}
+          >
+            <Button
+              onClick={() => navigate("/profile/change-name")}
+              className={
+                `
               drawer-menu-item 
               ${location.pathname === "/profile/change-name" ? 'current' : 'non-current'}
               gui-link
               `
-            }
-          >
-            <Typography variant="h6">
-              —Change name
-            </Typography>
-          </Button>
-
-          <br />
-
-          <Button
-            variant="text"
-            disableRipple
-            onClick={handleLogout}
-            className="nav-button"
-          >
-            <Typography
-              className="drawer-menu-item gui-link"
-              variant="h6"
+              }
             >
-              —Log out
-            </Typography>
-          </Button>
+              <Typography
+                className="profile-action-text"
+
+                variant="h6">
+                —Change name
+              </Typography>
+            </Button>
+
+
+            <Button
+              className={
+                `
+              drawer-menu-item
+              non-current
+              gui-link
+              `
+              }
+              onClick={handleLogout}
+            >
+              <Typography
+                className="profile-action-text"
+                variant="h6"
+                sx={{
+                }}
+              >
+                —Log out
+              </Typography>
+            </Button>
+          </Box>
 
         </Box>
 

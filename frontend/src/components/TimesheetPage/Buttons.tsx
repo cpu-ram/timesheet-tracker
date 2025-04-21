@@ -6,13 +6,28 @@ import EditIcon from '@mui/icons-material/Edit';
 import CompressIcon from '@mui/icons-material/Compress';
 import React from 'react';
 
+import { useState, useEffect } from 'react';
+import { QueryStatsTwoTone } from '@mui/icons-material';
+
+import { SearchMatchMarkedText } from './SearchMatchMarkedText';
+
+import { useTimesheetContext } from '../../contexts/TimesheetContext.tsx';
+import { useStyleContext } from '../../contexts/StyleContext.tsx';
+
 export default function Buttons({
-  theme,
   editMode, addMode,
   handleSetAddMode, handleSetEditMode, handleDiscard,
-  handleSearchJobsites, handleFetchJobsiteData, handleCancelEdit, jobsiteSearchResults,
+  handleCancelEdit,
   currentDayWorkData
 }) {
+
+  const { theme } = useStyleContext();
+  const [jobsiteSearchQuery, setJobsiteSearchQuery] = useState('');
+
+  useEffect(() => {
+    handleDiscard();
+  }, []);
+
   return (
     <Grid name='buttons'
       container
@@ -20,13 +35,14 @@ export default function Buttons({
       item
       xs={12}
       sx={{
-        display: 'flex',
+        display: addMode ? 'none' : 'flex',
         justifyContent: 'flex-start',
         boxSizing: 'border-box',
 
         gap: 1,
-        paddingTop: 1,
-        paddingLeft: 0,
+        padding: '1em 0.5em 1em',
+
+        borderBottom: `0px solid ${theme.palette.divider}`,
       }}>
 
       {
@@ -50,8 +66,9 @@ export default function Buttons({
               onClick={() => handleSetAddMode()}
               variant='outlined'
               sx={{
-                backgroundColor: theme.palette.primary.light,
-                color: 'white',
+                backgroundColor: 'white',
+                color: 'black',
+                boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
               }}>
               <AddIcon />
             </Button>
@@ -62,8 +79,9 @@ export default function Buttons({
                 onClick={() => handleSetEditMode()}
                 variant='outlined'
                 sx={{
-                  backgroundColor: theme.palette.primary.light,
-                  color: 'white'
+                  backgroundColor: 'white',
+                  color: 'black',
+                  boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
                 }}
               >
                 <EditIcon />
@@ -75,79 +93,6 @@ export default function Buttons({
           <></>
       }
 
-      {
-        addMode ?
-          <Box
-            xs={12}
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flex: 1,
-              gap: 1,
-              padding: 0,
-              margin: 0,
-            }}>
-            <Box
-              xs={12}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                width: '100%',
-                padding: 1,
-                paddingRight: 2,
-                gap: 1,
-              }}
-              spacing={2}
-            >
-              <Button
-                onClick={() => handleDiscard()}
-                variant='outlined'
-                display='flex'
-                sx={{
-                  backgroundColor: theme.palette.info.dark,
-                  color: 'white',
-                  margin: 0,
-                  '&:hover': {
-                    backgroundColor: theme.palette.primary.dark,
-                  }
-                }}
-              >
-                <CompressIcon />
-              </Button>
-
-              <Autocomplete
-                options={jobsiteSearchResults}
-                getOptionLabel={
-                  (option) => {
-                    return Object.entries(option).map(([key, value]) => {
-                      if (value != null) {
-                        return (`${key}: ${value}`);
-                      }
-                    }
-                    ).filter((x) => (x != null)).join(', ');
-                  }}
-                onInputChange={handleSearchJobsites}
-                onChange={handleFetchJobsiteData}
-                renderInput={(params) =>
-                  <TextField
-                    {...params}
-                    label="Search Jobsites"
-                    fullWidth
-                    sx={{ fontSize: '16px' }}
-                  />
-                }
-                sx={{
-                  flexGrow: 1,
-                  minWidth: 0,
-                  fontSize: '16px',
-                }}
-              />
-
-            </Box>
-          </Box>
-          :
-          <></>
-      }
 
       {
         editMode ?

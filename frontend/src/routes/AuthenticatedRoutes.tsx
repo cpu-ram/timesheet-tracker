@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { NotificationProvider } from '../contexts/NotificationContext.tsx';
+
 import TimesheetPage from '../pages/TimesheetPage.tsx';
 import ReportPage from '../pages/ReportPage.tsx';
 import AddJobsiteForm from '../components/Jobsite/AddJobsiteForm/AddJobsiteForm.tsx';
-import JobsitePage from '../pages/Jobsite/jobsitePage.tsx';
+import JobsitePage from '../pages/Jobsite/JobsitePage.tsx';
 import JobsiteListPage from '../pages/Jobsite/JobsiteListPage.tsx';
 import ChangeNamePage from '../pages/ChangeNamePage.tsx';
 
@@ -13,9 +15,14 @@ const AuthenticatedRoutes = () => {
       <Route
         path="/timesheet"
         element={
-          (<TimesheetPage />)
+          (
+            <NotificationProvider>
+              <TimesheetPage />
+            </NotificationProvider>
+          )
         }
       />
+
 
       <Route
         path="/reports/weekly"

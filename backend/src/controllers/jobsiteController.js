@@ -33,6 +33,7 @@ export const addJobsiteHandler = async (req, res) => {
       id: req.body.id,
       type: req.body.type,
       address: req.body.address,
+      description: req.body.description,
       name: req.body.name,
       supervisorId: req.body.supervisorId,
       defaultWorkStartTime: req.body.defaultWorkStartTime,
@@ -64,6 +65,8 @@ export const updateJobsiteHandler = async (req, res) => {
       address: req.body.address,
       name: req.body.name,
       supervisorId: req.body.supervisorId,
+      description: req.body.description,
+
       defaultWorkStartTime: req.body.defaultWorkStartTime,
       defaultWorkEndTime: req.body.defaultWorkEndTime,
       defaultBreakStartTime: req.body.defaultBreakStartTime,

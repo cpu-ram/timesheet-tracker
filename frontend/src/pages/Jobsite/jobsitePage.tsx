@@ -1,74 +1,80 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { RecordViewMode } from '../../shared/types/viewModes.ts';
-import Navigation from '../../components/Navigation/Navigation.tsx';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
-import JobsiteProps from '../../components/Jobsite/types.ts';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { RecordViewMode } from "../../shared/types/viewModes.ts";
+import Navigation from "../../components/Navigation/Navigation.tsx";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import { useSpacerBlockStyle } from '../../components/shared/styles/recordStyles.ts';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { Link } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
+import JobsiteProps from "../../components/Jobsite/types.ts";
 
-import { fetchJobsite } from '../../api/jobsiteApi.ts';
+import { useSpacerBlockStyle } from "../../components/shared/styles/recordStyles.ts";
+import { useSearchParams } from "react-router-dom";
 
-import JobsiteDetails from '../../components/Jobsite/JobsiteDetails/JobsiteDetails.tsx';
-import AddJobsiteForm from '../../components/Jobsite/AddJobsiteForm/AddJobsiteForm.tsx';
+import { fetchJobsite } from "../../api/jobsiteApi.ts";
 
-import { createJobsite, deleteJobsite, updateJobsite } from '../../api/jobsiteApi.ts';
+import AddJobsiteForm from "../../components/Jobsite/AddJobsiteForm/AddJobsiteForm.tsx";
+
+import JobsitePanel from "../../components/Jobsite/JobsitePanel.tsx";
 
 import {
-  useErrorWrapperStyle, useErrorTextStyle
-} from '../../components/Jobsite/AddJobsiteForm/styles.ts';
-import { create } from 'domain';
+  createJobsite,
+  deleteJobsite,
+  updateJobsite,
+} from "../../api/jobsiteApi.ts";
 
-const JobsitePage = (props: { initialMode: 'view' | 'create' | 'add' }) => {
+import {
+  useErrorWrapperStyle,
+  useErrorTextStyle,
+} from "../../components/Jobsite/AddJobsiteForm/styles.ts";
+
+const JobsitePage = (props: { initialMode: "view" | "create" | "add" }) => {
   const { jobsiteId } = useParams();
-  const [mode, setMode] = useState<'view' | 'add' | 'edit'>(props.initialMode || 'view'
+  const [mode, setMode] = useState<"view" | "add" | "edit">(
+    props.initialMode || "view",
   );
   const [jobsite, setJobsite] = useState<JobsiteProps | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
-
+  const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
 
   const cancelJobsiteCreation = () => {
-    navigate('/jobsites');
-  }
+    navigate("/jobsites");
+  };
 
   const cancelJobsiteEdit = () => {
-    setMode('view');
-  }
+    setMode("view");
+  };
 
   const handleJobsiteDelete = async () => {
     try {
       const { success } = await deleteJobsite(jobsiteId);
       if (success) {
-        navigate('/jobsites');
+        navigate("/jobsites");
       }
-    }
-    catch (error) {
+    } catch (error) {
       setApiError(error.message);
     }
   };
 
   const fetchJobsiteData = async () => {
     try {
-      if (mode === 'view') {
+      if (mode === "view") {
         if (!jobsiteId) {
-          throw new Error('Jobsite ID is required');
+          throw new Error("Jobsite ID is required");
         }
         const jobsiteData = await fetchJobsite({ jobsiteId: jobsiteId });
         setJobsite(jobsiteData);
       }
+    } catch (error) {
+      console.error("Error fetching jobsite data:", error);
     }
-    catch (error) {
-      console.error('Error fetching jobsite data:', error);
-    }
-  }
+  };
 
   useEffect(() => {
     fetchJobsiteData();
@@ -76,9 +82,9 @@ const JobsitePage = (props: { initialMode: 'view' | 'create' | 'add' }) => {
 
   const handleDiscard = () => {
     switch (mode) {
-      case 'add':
+      case "add":
         return cancelJobsiteCreation();
-      case 'edit':
+      case "edit":
         return cancelJobsiteEdit();
       default:
         throw new Error('Invalid mode: mode must be either "add" or "edit".');
@@ -88,17 +94,17 @@ const JobsitePage = (props: { initialMode: 'view' | 'create' | 'add' }) => {
   const theme = useTheme();
 
   let handleEnteredData;
-  let callUpdateJobsite = ((jobsiteProps) =>
+  const callUpdateJobsite = (jobsiteProps) =>
     updateJobsite({
       jobsiteData: jobsiteProps,
       onSuccess: (updatedRecord) => setJobsite(updatedRecord),
-    }));
+    });
 
   switch (mode) {
-    case 'add':
+    case "add":
       handleEnteredData = createJobsite;
       break;
-    case 'edit':
+    case "edit":
       handleEnteredData = callUpdateJobsite;
       break;
     default:
@@ -108,115 +114,125 @@ const JobsitePage = (props: { initialMode: 'view' | 'create' | 'add' }) => {
 
   return (
     <Box
+      className="jobsite-page"
       sx={{
-        padding: '4em 1em',
-        width: '100vw',
-        maxWidth: '45em',
         display: 'flex',
         flexDirection: 'column',
+        width: '100% !important',
+        minWidth: '100%',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignContent: 'center',
+
+        padding: '3.2em 0.6em',
+
+        margin: 0,
+        backgroundColor: theme.palette.grey[100],
+        '& .breadcrumbs': {
+          display: 'flex',
+          width: '100%',
+          border: 0,
+        }
       }}
     >
       <Navigation />
 
-      <Box name="breadcrumbs">
-        <Typography variant='h6'
+
+      <Box
+        className="main-content"
+        sx={{
+          backgroundColor: 'transparent',
+          borderRadius: '4px',
+          border: `1px solid ${theme.palette.divider}`,
+          border: '0',
+        }}>
+
+        <Box
+          name="breadcrumbs"
+          className="breadcrumbs"
           sx={{
-            borderBottom: '1px solid #ccc',
+            maxWidth: '45em',
+            alignSelf: 'center',
+            padding: '0.95em 0',
           }}
         >
-          <Box component='span'
-            onClick={() => navigate('/jobsites')}
-            sx={{
-              padding: '0.2em',
-              borderRadius: '0.25em',
-              color: theme.palette.primary.dark,
-              '&:hover, &:active': {
-                cursor: 'pointer',
-                backgroundColor: '#ddd',
-              },
-            }}
-          >
-            Jobsites
-          </Box>
-          &gt; <i>{jobsiteId ?? 'New Jobsite'}</i>
-        </Typography>
-      </Box>
-
-      <Box sx={{
-        padding: '0.5em',
-      }}>
-
-        {
-          mode === 'view' &&
-          (<Box>
-
-            {apiError && (
-              <Box sx={useErrorWrapperStyle}>
-                {apiError && <Typography sx={useErrorTextStyle}>{apiError}</Typography>}
-              </Box>
-            )}
-
-
-            <JobsiteDetails {...jobsite} />
-
+          {searchParams.get("fromName") && searchParams.get("fromLink") && (
             <Box
               sx={{
-                marginTop: '1.25em',
-              }}>
-
-              <Button
-                variant='contained'
-                sx={{
-                  alignSelf: 'flex-start',
-                  backgroundColor: theme.palette.primary.light,
-                }}
-                onClick={() => setMode('edit')}
-              >
-                <EditIcon />
-              </Button>
-
-              <Button
-                variant='contained'
-                sx={{
-                  alignSelf: 'flex-start',
-                  backgroundColor: theme.palette.error.dark,
-                  marginLeft: '1em',
-                }}
-                onClick={() => handleJobsiteDelete()}
-              >
-                <DeleteIcon />
-              </Button>
+                "& a": {
+                  color: "black",
+                },
+              }}
+            >
+              <Link to={searchParams.get("fromLink")}>
+                <Typography
+                  key="back-link"
+                  variant="subtitle1"
+                  sx={{
+                    backgroundColor: theme.palette.grey[200],
+                    padding: "0.1em 0.4em",
+                    margin: "0.2em 0 0.25em -0.7em",
+                    width: "fit-content",
+                    borderRadius: "0.25em",
+                    border: "1px solid #ccc",
+                  }}
+                >
+                  <ArrowBackIcon
+                    sx={{
+                      position: "relative",
+                      top: "0.2em",
+                      marginRight: "0.2em",
+                      fontSize: "1em",
+                    }}
+                  />{" "}
+                  <Box
+                    component="span"
+                    sx={{
+                      fontWeight: 500,
+                      textUnderlineOffset: "0.25em",
+                      textDecoration: "none",
+                    }}
+                  >
+                    {searchParams.get("fromName")}
+                  </Box>
+                </Typography>
+              </Link>
             </Box>
-          </Box>
-          )
-        }
-        {
-          mode === 'edit' &&
-          (
-            <AddJobsiteForm
-              handleDiscard={handleDiscard}
-              handleEnteredData={async (props) => {
-                await handleEnteredData(props);
-                setMode('view');
+          )}
+
+          <Typography
+            variant="h4"
+            sx={{
+              padding: "0",
+              fontWeight: '700',
+              fontSize: '1.8em',
+            }}
+          >
+            <Box
+              component="span"
+              onClick={() => navigate("/jobsites")}
+              sx={{
+                borderRadius: "0.25em",
+                color: theme.palette.primary.dark,
+                "&:hover, &:active": {
+                  cursor: "pointer",
+                  backgroundColor: "#ddd",
+                },
               }}
-              jobsite={jobsite}
-              {...{ mode, setMode }}
-            />
-          )
-        }
-        {
-          mode === 'add' &&
-          (
-            <AddJobsiteForm
-              handleDiscard={handleDiscard}
-              handleEnteredData={async (props) => {
-                await handleEnteredData(props);
-                setMode('view');
-              }}
-              {...{ mode, setMode }}
-            />
-          )
-        }
+            >
+              Jobsites
+            </Box>
+            {" > "}
+            <i>{jobsiteId ?? "New Jobsite"}</i>
+          </Typography>
+        </Box>
+
+        <JobsitePanel
+          initialMode={mode}
+          jobsiteId={jobsiteId}
+        />
+
       </Box>
     </Box>
   );

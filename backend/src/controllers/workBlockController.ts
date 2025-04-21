@@ -1,6 +1,5 @@
 import { add } from "date-fns";
-import { addWorkBlock, getWorkBlocks, deleteWorkBlock, updateWorkBlock } from "../services/workBlockService.js";
-import exp from "constants";
+import { addWorkBlock, getWorkBlocks, deleteWorkBlock, updateWorkBlock } from "../services/workBlockService/workBlockService.js";
 
 export const getWorkBlocksController = (req, res) => {
   try {
@@ -12,25 +11,30 @@ export const getWorkBlocksController = (req, res) => {
   }
 };
 
-export const addWorkBlockController = (req, res) => {
+export const addWorkBlockController = async (req, res) => {
   try {
     const {
-      employeeId,
-      reportedById,
       jobsiteId,
       startTime,
       endTime,
       breakStartTime,
       breakEndTime,
-      date,
-      tempJobsiteId,
+      dates,
       tempJobsiteName,
       tempJobsiteAddress,
       tempSupervisorName,
       additionalNotes
-    } = { ...req.body, employeeId: req.user.id, reportedById: req.user.id };
+    } = req.body;
+    if (!Array.isArray(dates) || dates.length === 0) {
+      throw new Error('No dates provided');
+    }
 
-    const result = addWorkBlock(
+    const employeeId = req.user.id;
+    const reportedById = req.user.id;
+
+    let result = {};
+
+    result = await addWorkBlock(
       employeeId,
       reportedById,
       jobsiteId,
@@ -38,19 +42,30 @@ export const addWorkBlockController = (req, res) => {
       endTime,
       breakStartTime,
       breakEndTime,
-      date,
-      tempJobsiteId,
+      dates,
       tempJobsiteName,
       tempJobsiteAddress,
       tempSupervisorName,
       additionalNotes
     );
 
-    res.status(201).json({ success: true, message: 'Work block added successfully' });
-  }
+    const successMessage = result.workBlockIds.length > 1 ?
+      'Work blocks added successfully' :
+      'Work block added successfully';
 
+    res.status(201).json({
+      success: result.success,
+      workBlockIds: result.workBlockIds,
+      message: successMessage,
+      newJobsiteCreated: result.newJobsiteCreated,
+      jobsiteId: result.jobsiteId || null,
+    });
+  }
   catch (error) {
-    throw new Error(error);
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
   }
 }
 
@@ -64,12 +79,12 @@ export const deleteWorkBlockController = (req, res) => {
   }
 }
 
-export const updateWorkBlockController = (req, res) => {
+export const updateWorkBlockController = async (req, res) => {
   try {
     const {
       startTime,
       endTime,
-      tempJobsiteId,
+      jobsiteId,
       tempJobsiteName,
       tempJobsiteAddress,
       tempSupervisorName,
@@ -77,14 +92,21 @@ export const updateWorkBlockController = (req, res) => {
     } = req.body;
     const workBlockId = req.params.workBlockId;
 
-    const result = updateWorkBlock(
+    const result: {
+      success: boolean;
+      newJobsiteCreated: boolean;
+      jobsiteId?: string | null;
+    } = await updateWorkBlock(
       workBlockId, startTime, endTime,
-      tempJobsiteId, tempJobsiteName,
+      jobsiteId, tempJobsiteName,
       tempJobsiteAddress, tempSupervisorName,
       additionalNotes
     );
 
-    res.status(201).json({ success: true, message: 'Work block updated successfully' });
+    res.status(201).json({
+      ...result,
+      message: result.success ? 'Work block updated successfully' : 'Failed to update work block',
+    });
   }
   catch (error) {
     throw new Error(error);
