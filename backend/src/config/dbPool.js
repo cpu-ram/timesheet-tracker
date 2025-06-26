@@ -14,6 +14,10 @@ const dbPool = new Pool({
   host: dbConfig.dbHost,
   database: dbConfig.dbName,
   port: dbConfig.dbPort,
+  ssl:
+    process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' ?
+      { rejectUnathorized: false, }
+      : false,
   types: {
     getTypeParser: (dataTypeID, format) => {
       if (dataTypeID === timestampWithoutTzDataTypeId) {

@@ -7,7 +7,7 @@ export async function addEmployee(
     email: null
   }
 ) {
-  const result = undefined;
+  let result = undefined;
   try {
     result = await addEmployeeRecord({ employeeName, employeeNickname, email });
   }

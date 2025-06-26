@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
-import { Box } from '@mui/system';
+import Box from '@mui/material/Box';
 
 import { useTimesheetContext } from '../../contexts/TimesheetContext.tsx';
 

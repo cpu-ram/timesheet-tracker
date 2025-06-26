@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import dotenv from 'dotenv';
 
-// https://vite.dev/config/
+let allowedHostsArray=process.env.ALLOWED_HOSTS?.split(',') ?? [];
 
 export default defineConfig({
   plugins: [react()],
@@ -12,6 +13,8 @@ export default defineConfig({
     sourcemap: true,
   },
   server: {
-    sourcemap: true
-  }
-})
+    host: true,
+    port: 5173,
+    allowedHosts: allowedHostsArray,
+  },
+});
