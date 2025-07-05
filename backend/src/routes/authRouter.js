@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import dotenv from 'dotenv';
 import passport from 'passport';
-import handleSuccessfulAuth from '../controllers/authController';
-import { getSignUpCompletionStatus } from '../services/authServices/signUpCompletionStatusService';
+import handleSuccessfulAuth from '../controllers/authController.js';
+import { getSignUpCompletionStatus } from '../services/authServices/signUpCompletionStatusService.js';
 
 dotenv.config();
 
