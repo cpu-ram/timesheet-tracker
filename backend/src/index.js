@@ -1,6 +1,7 @@
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
+import dotenv from 'dotenv';
 import cors from 'cors';
 import dbPool from './config/dbPool.js';
 import PgSession from 'connect-pg-simple';
@@ -11,11 +12,13 @@ import { reportRouter } from './routes/reportRouter.js';
 import { employeeRouter } from './routes/employeeRouter.js';
 import authRouter from './routes/authRouter.js'
 
+dotenv.config();
+const corsOrigins=process.env.CORS_ORIGINS?.split(',') ?? [];
 
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: corsOrigins,
   exposedHeaders: ['Content-Disposition', 'X-File-Name'],
   credentials: true,
 }));

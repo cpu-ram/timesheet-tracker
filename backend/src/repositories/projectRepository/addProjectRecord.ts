@@ -1,5 +1,5 @@
 import dbPool from '../../config/dbPool.js';
-import { DatabaseError } from 'pg-protocol';
+import { DatabaseError } from 'pg';
 import { JobsiteConstraintError } from '../../errors/errors.ts';
 
 export async function addProjectRecord({
