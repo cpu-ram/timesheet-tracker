@@ -1,5 +1,5 @@
 import express from 'express';
-import { getWorkBlocksController, addWorkBlockController, deleteWorkBlockController, updateWorkBlockController } from '../controllers/workBlockController.js';
+import { getWorkBlocksController, addWorkBlockController, deleteWorkBlockController, updateWorkBlockController } from '../controllers/workBlockController.ts';
 
 const workBlockRouter = express.Router();
 workBlockRouter.get('/', getWorkBlocksController);

@@ -8,6 +8,7 @@ node_modules/
 Dockerfile
 docker-compose.yml
 .dockerignore
+.vscode/
 
 # Build files
 dist/
