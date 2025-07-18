@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router} from 'react-router-dom';
 import { GlobalStyles } from '@mui/material';
-
-import { usePersistentAuthState } from './hooks/usePersistentAuthState.ts';
 
 import { TimesheetProvider } from './contexts/TimesheetContext.tsx';
 import { PopupProvider } from './contexts/PopupContext.tsx';
 
-import { AuthProvider, useAuthContext } from './contexts/AuthContext.tsx';
-import { StyleProvider } from './contexts/StyleContext.tsx';
+import { useAuthContext } from './contexts/AuthContext.tsx';
 
 import { useStyleContext } from './contexts/StyleContext.tsx';
 

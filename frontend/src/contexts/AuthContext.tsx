@@ -1,11 +1,21 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { usePersistentAuthState } from '../hooks/usePersistentAuthState.ts';
 import { fetchAuthData, fetchUsername } from '../api/auth.ts';
 
+import { Dispatch, SetStateAction } from 'react';
 
-const AuthContext = createContext(null);
+interface AuthContextType {
+  isAuthenticated: boolean;
+  setIsAuthenticated: Dispatch<SetStateAction<boolean>>; 
+  isSignedUp: boolean;
+  setIsSignedUp: Dispatch<SetStateAction<boolean>>; 
+  username: string | null;
+  setUsername: (value: string | null) => void;
+}
 
-export function AuthProvider({ children }) {
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = usePersistentAuthState('isAuthenticated', false);
   const [isSignedUp, setIsSignedUp] = usePersistentAuthState('isSignedUp', false);
   const [username, setUsername] = useState<string | null>(null);

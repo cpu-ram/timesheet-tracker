@@ -1,8 +1,15 @@
+import React from 'react';
+
 import { createContext, useContext, useState } from 'react';
 import { Box } from '@mui/material';
 import Popup from '../components/Popup/Popup';
 
-const PopupContext = createContext(null);
+type PopupContextType = {
+  showPopup: (content: React.ReactNode) => void;
+  hidePopup: () => void;
+};
+
+const PopupContext = createContext<PopupContextType | null>(null);
 
 export function usePopupContext() {
   const context = useContext(PopupContext);
@@ -12,7 +19,7 @@ export function usePopupContext() {
   return context;
 }
 
-export function PopupProvider({ children }) {
+export function PopupProvider({ children }: { children: React.ReactNode }) {
   const [popupContent, setPopupContent] = useState<React.ReactNode | null>(null);
 
   const showPopup = (content: React.ReactNode) => {

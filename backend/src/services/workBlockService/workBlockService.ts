@@ -5,29 +5,29 @@ import {
 import { jobsiteExists, addJobsite } from '../jobsiteService.js';
 
 export async function getWorkBlocks(
-  employeeId,
-  reportedById,
-  startDate,
-  endDate,
+  employeeId: number,
+  reportedById: number,
+  startDate: Date,
+  endDate: Date,
 ) {
   let result = undefined;
   try {
     result = await getWorkBlockRecords(employeeId, reportedById, startDate, endDate);
   }
-  catch (error) { throw new Error(error); }
+  catch (error) { throw error; }
 
   return result;
 }
 
 export const updateWorkBlock = async (
-  workBlockId,
-  startTime,
-  endTime,
-  jobsiteId,
-  tempJobsiteName,
-  tempJobsiteAddress,
-  tempSupervisorName,
-  additionalNotes
+  workBlockId: number,
+  startTime: string,
+  endTime: string,
+  jobsiteId: string,
+  tempJobsiteName: string,
+  tempJobsiteAddress: string,
+  tempSupervisorName: string,
+  additionalNotes: string
 ) => {
   try {
     let newJobsiteCreated = false;
@@ -46,8 +46,8 @@ export const updateWorkBlock = async (
       startTime,
       endTime,
       jobsiteId,
-      jobsiteId ? null : tempJobsiteName,
-      jobsiteId ? null : tempJobsiteAddress,
+      tempJobsiteName,
+      tempJobsiteAddress,
       tempSupervisorName,
       additionalNotes
     );
@@ -66,5 +66,5 @@ export const updateWorkBlock = async (
   }
 }
 
-export const deleteWorkBlock = (workBlockId) => deleteWorkBlockRecord(workBlockId);
+export const deleteWorkBlock = (workBlockId: number) => deleteWorkBlockRecord(workBlockId);
 export { addWorkBlock } from './addWorkBlock.js';

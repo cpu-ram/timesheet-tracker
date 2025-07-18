@@ -1,51 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTheme, alpha } from '@mui/material/styles';
-
 import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
 import { useStyleContext } from '../contexts/StyleContext.tsx';
 import { useNotificationContext } from '../contexts/NotificationContext.tsx';
 
-import { Temporal } from '@js-temporal/polyfill';
-import { startOfWeek } from '../utils/temporalFunctions.ts';
 
-import { Box, Container, AppBar, Toolbar, IconButton, Grid, Typography } from '@mui/material';
-import PrintIcon from '@mui/icons-material/Print';
-import MenuIcon from '@mui/icons-material/Menu';
+import { Box, Grid, Typography } from '@mui/material';
 
 import Navigation from '../components/Navigation/Navigation.tsx';
-import HeaderNav from '../components/HeaderNav/HeaderNav.tsx';
-import SideMenu from '../components/SideMenu/SideMenu.tsx';
 
 import Buttons from '../components/TimesheetPage/Buttons';
 import Calendar from '../components/Calendar.tsx';
-import ReportPage from './ReportPage.tsx';
 import WorkBlockEntryForm from '../components/WorkBlock/WorkBlockEntryForm/WorkBlockEntryForm.tsx';
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
-import HoursTotal from '../components/WorkDay/HoursTotal.tsx';
 
-import fetchTimesheetData from '../api/fetchTimesheetData.ts';
-import { addWorkBlock, updateWorkBlock, deleteWorkBlock } from '../api/workBlockApi.ts';
-import updateWorkData from '../utils/updateWorkData.ts';
-
-import { AddWorkBlockFormProps, WorkBlockProps, AddWorkBlockFormFlags, AddWorkBlockFormHandlers } from '../components/WorkBlock/types.tsx';
+import { TimesheetDayRecord } from '../types/TimesheetDayRecord.ts';
 
 const TimesheetPage = () => {
-  const navigate = useNavigate();
   const { theme } = useStyleContext();
-  const today = Temporal.Now.plainDateISO();
 
   const {
-    workData, setWorkData,
-    multiDaySelectionMode,
+    workData,
     editMode, setEditMode,
     addMode, setAddMode,
     lastSelectedSingleDate,
-    dateSelectionHandler,
-    fetchDayTimesheetData,
-    fetchMultipleDaysTimesheetData,
-    handleEditWorkBlock,
-    handleDeleteWorkBlock,
     handleDiscard,
   } = useTimesheetContext();
 
@@ -62,7 +38,7 @@ const TimesheetPage = () => {
     setAddMode(true);
     setEditMode(false);
   }
-  const currentDayWorkData = lastSelectedSingleDate ? workData.find((day) => (day.date).equals(lastSelectedSingleDate))?.workBlocks || [] : [];
+  const currentDayWorkData = lastSelectedSingleDate ? workData.find((day: TimesheetDayRecord) => (day.date).equals(lastSelectedSingleDate))?.workBlocks || [] : [];
 
   return (
     <Box
@@ -134,9 +110,9 @@ const TimesheetPage = () => {
             }
           }}>
           <Grid id="add-work-block"
-            container name='addWorkBlock'
+            container 
+	    className='addWorkBlock'
             sx={{
-              display: 'flex',
               flexDirection: 'column',
               padding: '0',
               height: 'auto',

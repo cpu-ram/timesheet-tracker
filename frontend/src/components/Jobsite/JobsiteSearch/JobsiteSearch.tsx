@@ -1,27 +1,25 @@
-import { Button, Typography, Box, TextField } from '@mui/material';
+import { Typography, Box, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 
-import CompressIcon from '@mui/icons-material/Compress';
-import React from 'react';
+import { useState } from 'react';
 
-import { useState, useEffect } from 'react';
-
-import markMatchGroups from '../../../utils/naiveSearch';
 import { SearchMatchMarkedText } from './SearchMatchMarkedText';
 
 import { useStyleContext } from '../../../contexts/StyleContext.tsx';
 import { useTimesheetContext } from '../../../contexts/TimesheetContext.tsx';
-import { Calculate } from '@mui/icons-material';
 
-export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback?: (jobsiteId: string) => void }) {
+interface JobsiteOption {
+  id: string;
+  [key: string]: any;
+}
+
+export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback?: (arg: { jobsiteId: string }) => void }) {
 
   const { theme } = useStyleContext();
-  const { jobsiteSearchResults, handleSearchJobsites, handleFetchJobsiteData } = useTimesheetContext();
+  const { jobsiteSearchResults, handleSearchJobsites } = useTimesheetContext();
 
   const [jobsiteSearchQuery, setJobsiteSearchQuery] = useState('');
 
@@ -29,13 +27,9 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
     <Grid item xs={12}>
       <Box
         sx={{
-          display: 'flex',
           flexDirection: 'row',
-          width: '100%',
           alignSelf: 'top',
           flex: 1,
-          gap: 1,
-          padding: 0,
           margin: 0,
 
           display: 'flex',
@@ -66,10 +60,9 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
           }
 
         }}
-        spacing={2}
       >
 
-        <Autocomplete
+        <Autocomplete<JobsiteOption>
           value={null}
 
           id="jobsite-search-autocomplete"
@@ -90,11 +83,11 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
           slotProps={{
             paper: {
               elevation: 20,
-              sx: (theme) => ({
+              sx: {
                 borderRadius: '4px',
                 marginTop: '0.5em',
                 boxShadow: '0px 30px 100px rgba(0,0,0,0.35)',
-              }),
+              },
             },
             listbox: {
               sx: theme => ({
@@ -161,13 +154,16 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
             );
           }}
           onInputChange={
-            (event, newValue) => {
+            (_event, newValue) => {
               setJobsiteSearchQuery(newValue);
-              handleSearchJobsites(event, newValue);
+              handleSearchJobsites(newValue);
             }
           }
-          onChange={(event, value) => {
-            foundDataCallback({ jobsiteId: value?.id || null });
+          onChange={(_, value) => {
+            if (value?.id && foundDataCallback) {
+              const jobsiteId: string = value.id;
+              foundDataCallback({ jobsiteId });
+            }
           }}
           renderInput={(params) => (
             <Box
@@ -219,9 +215,6 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
                 {...params}
                 label="Search Jobsites"
                 fullWidth
-                InputProps={{
-                  ...params.InputProps,
-                }}
               />
               <Box
                 sx={{

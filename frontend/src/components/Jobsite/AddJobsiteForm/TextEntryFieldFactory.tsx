@@ -1,3 +1,4 @@
+import React from 'react';
 import TextEntryField from "./TextEntryField";
 
 interface FormField {
@@ -5,13 +6,13 @@ interface FormField {
   label: string,
 }
 
-function TextEntryFieldFactory(
+function createTextEntryFieldFactory(
   {
     handleInputChange,
     formStructure,
     formData,
   }: {
-    handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) => void,
     formStructure: FormField[],
     formData: Record<string, any>,
   }) {
@@ -20,13 +21,11 @@ function TextEntryFieldFactory(
     {
       name,
       required = false,
-      gridWidth = null,
       disabled = false,
-      maxLength = null,
+      maxLength = 10000,
     }: {
       name: string;
       required?: boolean;
-      gridWidth?: number;
       disabled?: boolean;
       maxLength?: number;
     }
@@ -45,7 +44,6 @@ function TextEntryFieldFactory(
         required={required}
         value={formData[name] ?? ''}
         handleInputChange={handleInputChange}
-        gridWidth={gridWidth}
         disabled={disabled}
         maxLength={maxLength}
       />
@@ -54,4 +52,4 @@ function TextEntryFieldFactory(
   return { createField };
 }
 
-export default TextEntryFieldFactory;
+export default createTextEntryFieldFactory;

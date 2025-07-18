@@ -1,5 +1,3 @@
-import { useStyleContext } from '../../../contexts/StyleContext';
-
 export const useSpacerBlockStyle = () => {
   return ({
     display: 'flex',
@@ -9,7 +7,6 @@ export const useSpacerBlockStyle = () => {
 }
 
 export const useErrorWrapperStyle = () => {
-  const { theme } = { useStyleContext };
   return ({
     margin: '0.5em 0 0.5em 0',
     '& p': {
@@ -20,7 +17,6 @@ export const useErrorWrapperStyle = () => {
 }
 
 export const useErrorTextStyle = () => {
-  const { theme } = { useStyleContext };
   return (
     {
       color: 'red',

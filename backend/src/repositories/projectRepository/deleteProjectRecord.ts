@@ -29,7 +29,9 @@ export const deleteProjectRecord = async (id: string) => {
   }
   catch (error) {
     await client.query('ROLLBACK');
-    throw new Error("Unable to delete project record: " + error.message);
+    if(error instanceof Error){
+      throw new Error("Unable to delete project record: " + error.message);
+    }
   }
   finally {
     client.release();

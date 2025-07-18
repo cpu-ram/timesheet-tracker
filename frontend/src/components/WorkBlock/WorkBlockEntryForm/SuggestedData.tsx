@@ -1,11 +1,10 @@
 import { Box, Typography } from '@mui/material';
 import { Temporal } from '@js-temporal/polyfill';
-import { WorkBlockProps } from '../types.ts';
+import { WorkBlockData } from '../../../types/WorkBlock.types.js';
 
 import { useStyleContext } from '../../../contexts/StyleContext.tsx';
 
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 const dictionary = [
@@ -41,8 +40,14 @@ export function SuggestedData(
     handleMerge
   }: {
     fields: string[],
-    suggestedWorkBlockProps: WorkBlockProps,
-    handleMerge: ({ fields }: { fields: (keyof WorkBlockProps)[] }) => void
+    suggestedWorkBlockProps: WorkBlockData,
+    handleMerge: ({
+      fields,
+      suggestedData
+    }: {
+      fields: Array<keyof WorkBlockData>;
+      suggestedData: WorkBlockData;
+    }) => void
   }) {
 
   const { theme } = useStyleContext();
@@ -108,8 +113,7 @@ export function SuggestedData(
 
             marginTop: '-1.2em',
           }}
-          variant='outlined'
-          onClick={() => handleMerge({ fields })}
+          onClick={() => handleMerge({ fields: fields as Array<keyof WorkBlockData>, suggestedData: suggestedWorkBlockProps })}
         >
           <ArrowBackIosIcon
             sx={{
@@ -139,7 +143,7 @@ export function SuggestedData(
           .filter(field => dictionary.some(item => item.key === field))
           .map((field, _) => {
 
-            let fieldKey = field as keyof WorkBlockProps;
+            let fieldKey = field as keyof WorkBlockData;
             const value = suggestedWorkBlockProps[fieldKey];
             return (
 
@@ -160,7 +164,7 @@ export function SuggestedData(
                     width: '100%',
                   }}
                 >
-                  {dictionary.find(item => item.key === field).label || ''}
+                  {dictionary.find(item => item.key === field)?.label || ''}
                 </Box>
 
                 <Box
@@ -172,8 +176,10 @@ export function SuggestedData(
                 >
                   {
 
-                    suggestedWorkBlockProps[field] ?
-                      formatForDisplay(value) :
+                    suggestedWorkBlockProps[field as keyof WorkBlockData] ?
+                      (
+                        value instanceof Temporal.PlainTime || typeof value === 'string'
+                      ) && formatForDisplay(value) :
                       ''
                   }
                 </Box>

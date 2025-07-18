@@ -4,7 +4,14 @@ import { Typography, Container, TextField, Button } from '@mui/material/';
 import { fetchAuthData } from '../api/auth';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-const SignupPage = ({ setIsSignedUp, setIsAuthenticated }) => {
+import { Dispatch, SetStateAction } from 'react';
+
+const SignupPage = ({ 
+  setIsSignedUp, setIsAuthenticated 
+} : {
+  setIsSignedUp: Dispatch<SetStateAction<boolean>>;
+  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [enteredName, setEnteredName] = useState<string>('');
   const navigate = useNavigate();
 

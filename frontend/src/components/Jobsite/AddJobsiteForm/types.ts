@@ -1,11 +1,11 @@
-import { Temporal } from '@js-temporal/polyfill';
 import { JobsiteProps } from '../types.ts';
 
 export interface AddJobsiteFormProps {
-  jobsite: JobsiteProps;
+  jobsite: JobsiteProps | null;
   handleEnteredData: (data: any) => void;
   handleDiscard: () => void;
   mode: 'add' | 'edit';
+  setMode: (mode: 'add' | 'edit' | 'view') => void;
 }
 
 type FormField = {

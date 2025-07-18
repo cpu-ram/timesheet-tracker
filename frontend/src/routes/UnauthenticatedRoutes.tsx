@@ -1,18 +1,18 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuthContext } from '../contexts/AuthContext.tsx';
+import { useAuthContext } from '../contexts/AuthContext.tsx';
 
 import LoginPage from '../pages/LoginPage.tsx';
 import SignupPage from '../pages/SignupPage.tsx';
 
 const UnauthenticatedRoutes = () => {
-  const { isAuthenticated, setIsAuthenticated, isSignedUp, setIsSignedUp } = useAuthContext();
+  const { isAuthenticated, setIsAuthenticated, setIsSignedUp } = useAuthContext();
 
   return (
     <Routes>
       <Route path="/login"
         element={
           !isAuthenticated ?
-            <LoginPage {...{ setIsAuthenticated, setIsSignedUp }} />
+            <LoginPage />
             : <Navigate to="/signup" />
         }
       />

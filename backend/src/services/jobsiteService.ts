@@ -25,7 +25,7 @@ export async function addJobsite(
     type?: string | null;
     address?: string | null;
     name?: string | null;
-    supervisorId?: string | null;
+    supervisorId?: number | null;
     description?: string | null;
     defaultWorkStartTime?: string | null;
     defaultWorkEndTime?: string | null;
@@ -55,12 +55,12 @@ export async function addJobsite(
 
 }
 
-export async function findJobsites(queryString) {
+export async function findJobsites(queryString: string) {
   let result = undefined;
   try {
     result = await findProjectRecords(queryString);
   }
-  catch (error) { throw new Error(error) };
+  catch (error) { throw error };
 
   return result;
 }
@@ -71,7 +71,7 @@ export async function getJobsitePreviews() {
     result = await fetchJobsitePreviewRecords();
   }
   catch (error) {
-    throw new Error(error);
+    throw error;
   }
   return result;
 }
@@ -127,4 +127,4 @@ export async function deleteJobsite(id: string) {
 
 
 export { getJobsite } from './jobsiteServices/getJobsite.js';
-export { jobsiteExists } from './jobsiteServices/jobsiteExists.ts';
+export { jobsiteExists } from './jobsiteServices/jobsiteExists.js';

@@ -45,9 +45,6 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
       <AppBar
         className="appbar"
         sx={{
-          width: '100vw',
-          maxWidth: '100vw',
-
           position: 'fixed',
           top: 0,
           left: 0,
@@ -69,9 +66,6 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
             width: '100%',
             maxWidth: '45em',
 
-            maxHeight: {
-              xs: '48px',
-            },
             height: {
               xs: '48px',
             },
@@ -87,7 +81,6 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
             justifyContent: 'space-between',
             alignItems: 'center',
 
-            backgroundColor: theme.palette.grey[200],
             backgroundColor: 'transparent',
             borderBottom: '1px solid #ccc',
           }}>
@@ -119,7 +112,9 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
                 (resourceName) => {
                   if (navButtonsConfig.some(item => item.name === resourceName)) {
                     const navButton = navButtonsConfig.find(item => item.name === resourceName);
+		    if (!navButton) console.error('Requested resource navigation button is missing');
                     return (
+		      navButton &&
                       <NavButton
                         key={navButton.name}
                         action={() => navigate(navButton.link)}

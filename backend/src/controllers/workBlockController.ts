@@ -1,9 +1,11 @@
 import { add } from "date-fns";
 import { addWorkBlock, getWorkBlocks, deleteWorkBlock, updateWorkBlock } from "../services/workBlockService/workBlockService.js";
+import { Request, Response } from 'express';
+import { AuthenticatedRequest } from '../types/AuthenticatedRequest.js';
 
-export const getWorkBlocksController = (req, res) => {
+export const getWorkBlocksController = (req: AuthenticatedRequest, res: Response) => {
   try {
-    const workBlocks = getWorkBlocks(req.query.employeeId, req.query.reportedById, new Date(req.query.from), new Date(req.query.to));
+    const workBlocks = getWorkBlocks(Number(req.query.employeeId), Number(req.query.reportedById), new Date(req.query.from as string), new Date(req.query.to as string));
     res.status(200).json({ success: true, workBlocks });
   }
   catch (error) {
@@ -11,7 +13,7 @@ export const getWorkBlocksController = (req, res) => {
   }
 };
 
-export const addWorkBlockController = async (req, res) => {
+export const addWorkBlockController = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       jobsiteId,
@@ -28,13 +30,20 @@ export const addWorkBlockController = async (req, res) => {
     if (!Array.isArray(dates) || dates.length === 0) {
       throw new Error('No dates provided');
     }
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
 
     const employeeId = req.user.id;
     const reportedById = req.user.id;
 
-    let result = {};
 
-    result = await addWorkBlock(
+    let result: {
+      success: boolean;
+      workBlockIds: number[];
+      newJobsiteCreated: boolean;
+      jobsiteId?: string | null;
+    } = await addWorkBlock(
       employeeId,
       reportedById,
       jobsiteId,
@@ -61,25 +70,30 @@ export const addWorkBlockController = async (req, res) => {
       jobsiteId: result.jobsiteId || null,
     });
   }
-  catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
-    });
+  catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+    else {
+      throw error;
+    }
   }
 }
 
-export const deleteWorkBlockController = (req, res) => {
+export const deleteWorkBlockController = (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = deleteWorkBlock(Number(req.params.workBlockId));
     res.status(200).json("Work block deleted successfully");
   }
   catch (error) {
-    throw new error(error);
+    throw error;
   }
 }
 
-export const updateWorkBlockController = async (req, res) => {
+export const updateWorkBlockController = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       startTime,
@@ -90,7 +104,7 @@ export const updateWorkBlockController = async (req, res) => {
       tempSupervisorName,
       additionalNotes
     } = req.body;
-    const workBlockId = req.params.workBlockId;
+    const workBlockId = Number(req.params.workBlockId);
 
     const result: {
       success: boolean;
@@ -109,7 +123,7 @@ export const updateWorkBlockController = async (req, res) => {
     });
   }
   catch (error) {
-    throw new Error(error);
+    throw error;
   }
 }
 

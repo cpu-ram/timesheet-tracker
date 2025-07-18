@@ -1,7 +1,6 @@
-import { format } from 'date-fns';
 import { Temporal } from '@js-temporal/polyfill';
 
-const fetchTimesheetData = async ({ from, to }) => {
+const fetchTimesheetData = async ({ from, to} : { from: Temporal.PlainDate, to: Temporal.PlainDate}) => {
   const fromDateString = from.toString();
   const toDateString = to.toString();
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -22,7 +21,15 @@ const fetchTimesheetData = async ({ from, to }) => {
 
     const modifiedData =
       data ?
-        data.map((day) => ({
+        data.map((day:{
+	  date: string;
+	  workBlocks: {
+	    workBlockStart?: string;
+	    workBlockEnd?: string;
+	    breakStart?: string;
+	    breakEnd?: string;
+	  }[];
+        }) => ({
           date: Temporal.PlainDate.from(day.date),
           workBlocks:
             day.workBlocks.length > 0 ?
@@ -48,7 +55,7 @@ const fetchTimesheetData = async ({ from, to }) => {
   }
   catch (error) {
     console.error('Error fetching timesheet data:', error);
-    throw new Error(error);
+    throw error;
   }
 }
 

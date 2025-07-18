@@ -1,15 +1,15 @@
-import { ThemeContext } from '@emotion/react';
-import { Grid, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
+import { WorkBlockProps } from '../../types/WorkBlock.types.ts';
 
-const HoursTotal = ({ workData }) => {
+const HoursTotal = ({ workData }:{workData: WorkBlockProps[]}) => {
   const { theme } = useStyleContext();
 
   return (
 
     workData && workData.length > 0 ?
       (
-        <Box xs={1.5}
+        <Box 
           className="hours-total"
           sx={{
             width: 'auto',
@@ -22,11 +22,10 @@ const HoursTotal = ({ workData }) => {
 
         >
           <Typography
-            variant='h7'
+            variant='subtitle1'
             align='center'
             sx={{
               display: 'inline-flex',
-              whiteSpace: 'nowrap',
               margin: 0,
 
               fontWeight: 700,
@@ -40,7 +39,7 @@ const HoursTotal = ({ workData }) => {
 
               {workData ?
                 (Math.round(workData
-                  .reduce((acc, workBlock) => (
+                  .reduce((acc: number, workBlock: WorkBlockProps) => (
                     workBlock.workBlockStart && workBlock.workBlockEnd ?
                       acc + (workBlock.workBlockStart).until(workBlock.workBlockEnd).total({ unit: 'hours' })
                       :

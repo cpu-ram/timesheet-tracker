@@ -1,21 +1,20 @@
-export async function fetchAuthData() {
-  const result = false;
+export async function fetchAuthData(): Promise<{ authStatus: boolean; signUpCompletionStatus: boolean }> {
+  let result: { authStatus: boolean; signUpCompletionStatus: boolean } | null = null;
   try {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/auth/status`, {
       method: 'GET',
       credentials: 'include',
     })
     const data = await response.json();
-    return {
+    result = {
       authStatus: data.authStatus,
       signUpCompletionStatus: data.signUpCompletionStatus
     };
   }
-  catch (error) {
-    console.error('Error fetching authentication status:', error);
-    return false;
+  catch (error: unknown) {
+    throw new Error(`Error fetching authentication status: ${error}`);
   }
-  return fetchedAuthData;
+  return result;
 }
 
 export async function fetchUsername() {
@@ -44,7 +43,7 @@ export async function fetchUsername() {
 }
 
 export async function logout() {
-  let result = false;
+  let result: boolean = false;
   try {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
       method: 'POST',
@@ -52,6 +51,7 @@ export async function logout() {
     });
     if (response.ok) {
       result = true;
+      return result;
     } else {
       console.error('Logout failed:', response.statusText);
     }

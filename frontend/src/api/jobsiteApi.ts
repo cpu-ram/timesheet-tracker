@@ -1,9 +1,7 @@
-import { format } from 'date-fns';
 import { JobsiteProps } from '../components/Jobsite/types.ts';
 import { Temporal } from '@js-temporal/polyfill';
 
 import { ApiError } from '../errors/ApiError.ts';
-import { VoidFunctionComponent } from 'react';
 
 export const fetchJobsite = async ({ jobsiteId }: { jobsiteId: String }) => {
 
@@ -31,7 +29,7 @@ export const fetchJobsite = async ({ jobsiteId }: { jobsiteId: String }) => {
   }
   catch (error) {
     console.error('Error fetching jobsite data:', error);
-    throw new Error(error);
+    throw error;
   }
 }
 
@@ -55,60 +53,44 @@ export const fetchJobsitePreviews = async () => {
   }
   catch (error) {
     console.error('Error fetching jobsite previews:', error);
-    throw new Error(error);
+    throw error;
   }
 
 }
 
-export const createJobsite = async ({
-  jobsiteId,
-  jobsiteName,
-  jobsiteAddress,
-  jobsiteDescription,
-  supervisorName,
-  defaultWorkStartTime,
-  defaultWorkEndTime,
-}: {
-  jobsiteId: string;
-  jobsiteName: string;
-  jobsiteAddress: string;
-  jobsiteDescription: string;
-  supervisorName: string;
-  defaultWorkStartTime: Temporal.PlainTime | null;
-  defaultWorkEndTime: Temporal.PlainTime | null;
-}) => {
+export const createJobsite = async (
+  jobsiteProps: JobsiteProps
+) => {
+  const { jobsiteId, jobsiteName, jobsiteAddress, jobsiteDescription, supervisorName, defaultWorkStartTime, defaultWorkEndTime } = jobsiteProps;
+
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   const timesheetDataSubPath = `/jobsites`;
 
-  try {
-    const response = await fetch(
-      `${baseUrl}${timesheetDataSubPath}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          id: jobsiteId,
-          name: jobsiteName,
-          address: jobsiteAddress,
-          description: jobsiteDescription,
-          supervisorName,
-          defaultWorkStartTime: defaultWorkStartTime?.toString({ smallestUnit: 'minute' }),
-          defaultWorkEndTime: defaultWorkEndTime?.toString({ smallestUnit: 'minute' }),
-        }),
-      });
-    const responseData = await response.json();
-    if (!response.ok) {
-      const error = new ApiError(response.status, responseData.message);
-      throw error;
-    }
-    return responseData;
-  }
-  catch (error) {
+
+  const response = await fetch(
+    `${baseUrl}${timesheetDataSubPath}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        id: jobsiteId,
+        name: jobsiteName,
+        address: jobsiteAddress,
+        description: jobsiteDescription,
+        supervisorName,
+        defaultWorkStartTime: defaultWorkStartTime?.toString({ smallestUnit: 'minute' }),
+        defaultWorkEndTime: defaultWorkEndTime?.toString({ smallestUnit: 'minute' }),
+      }),
+    });
+  const responseData = await response.json();
+  if (!response.ok) {
+    const error = new ApiError(response.status, responseData.message);
     throw error;
   }
+  return responseData;
 };
 
 export const updateJobsite = async ({
@@ -123,43 +105,38 @@ export const updateJobsite = async ({
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   const timesheetDataSubPath = `/jobsites/${jobsiteId}`;
 
-  try {
-    const response = await fetch(
-      `${baseUrl}${timesheetDataSubPath}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          id: jobsiteId,
-          name: jobsiteName,
-          address: jobsiteAddress,
-          description: jobsiteDescription,
-          supervisorName: supervisorName,
-          defaultWorkStartTime: defaultWorkStartTime?.toString({ smallestUnit: 'minute' }),
-          defaultWorkEndTime: defaultWorkEndTime?.toString({ smallestUnit: 'minute' }),
-        }),
-      });
-    const responseData = await response.json();
+  const response = await fetch(
+    `${baseUrl}${timesheetDataSubPath}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        id: jobsiteId,
+        name: jobsiteName,
+        address: jobsiteAddress,
+        description: jobsiteDescription,
+        supervisorName: supervisorName,
+        defaultWorkStartTime: defaultWorkStartTime?.toString({ smallestUnit: 'minute' }),
+        defaultWorkEndTime: defaultWorkEndTime?.toString({ smallestUnit: 'minute' }),
+      }),
+    });
+  const responseData = await response.json();
 
-    for (let field of ['defaultWorkStartTime', 'defaultWorkEndTime']) {
-      if (responseData[field]) {
-        responseData[field] = Temporal.PlainTime.from(responseData[field]);
-      }
+  for (let field of ['defaultWorkStartTime', 'defaultWorkEndTime']) {
+    if (responseData[field]) {
+      responseData[field] = Temporal.PlainTime.from(responseData[field]);
     }
-
-    if (!response.ok) {
-      const error = new ApiError(response.status, responseData.message);
-      throw error;
-    }
-    onSuccess?.(responseData);
-    return responseData;
   }
-  catch (error) {
+
+  if (!response.ok) {
+    const error = new ApiError(response.status, responseData.message);
     throw error;
   }
+  onSuccess?.(responseData);
+  return responseData;
 };
 
 export const deleteJobsite = async (id: string) => {
@@ -182,6 +159,6 @@ export const deleteJobsite = async (id: string) => {
   }
   catch (error) {
     console.error('Error deleting jobsite:', error);
-    throw new Error(error);
+    throw error;
   }
 }

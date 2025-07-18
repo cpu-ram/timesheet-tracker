@@ -1,4 +1,4 @@
-import dbPool from '../../config/dbPool';
+import dbPool from '../../config/dbPool.js';
 
 export async function updateProjectRecord({
   id,
@@ -64,6 +64,8 @@ export async function updateProjectRecord({
       defaultBreakEndTime: row.default_break_end_time,
     };
   } catch (error) {
-    throw new Error("Unable to update project record: " + error.message);
+    if(error instanceof Error){
+      throw new Error("Unable to update project record: " + error.message);
+    }
   }
 }

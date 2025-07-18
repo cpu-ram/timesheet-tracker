@@ -7,7 +7,7 @@ import { logout } from '../../api/auth.ts';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const SideMenu = ({ isOpen, onMenuToggle }) => {
+const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () => void }) => {
   const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ const SideMenu = ({ isOpen, onMenuToggle }) => {
     { name: 'Jobsites', link: '/jobsites' },
   ];
 
-  const profileLinks = []
 
   return (
     <Drawer

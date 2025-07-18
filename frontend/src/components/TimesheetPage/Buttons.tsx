@@ -1,17 +1,11 @@
-import { Button, Typography, Box, TextField } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import Autocomplete from '@mui/material/Autocomplete';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import CompressIcon from '@mui/icons-material/Compress';
-import React from 'react';
 
-import { useState, useEffect } from 'react';
-import { QueryStatsTwoTone } from '@mui/icons-material';
+import { useEffect } from 'react';
 
-import { SearchMatchMarkedText } from './SearchMatchMarkedText';
 
-import { useTimesheetContext } from '../../contexts/TimesheetContext.tsx';
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
 
 export default function Buttons({
@@ -19,17 +13,21 @@ export default function Buttons({
   handleSetAddMode, handleSetEditMode, handleDiscard,
   handleCancelEdit,
   currentDayWorkData
+}: {
+  editMode: boolean; addMode: boolean;
+  handleSetAddMode: () => void; handleSetEditMode: () => void; handleDiscard: () => void;
+  handleCancelEdit: () => void;
+  currentDayWorkData: any[] | null;
 }) {
 
   const { theme } = useStyleContext();
-  const [jobsiteSearchQuery, setJobsiteSearchQuery] = useState('');
 
   useEffect(() => {
     handleDiscard();
   }, []);
 
   return (
-    <Grid name='buttons'
+    <Grid 
       container
       spacing={0}
       item
@@ -62,10 +60,10 @@ export default function Buttons({
               margin: 0,
             }}>
             <Button
-              display='flex'
               onClick={() => handleSetAddMode()}
               variant='outlined'
               sx={{
+		display: 'flex',
                 backgroundColor: 'white',
                 color: 'black',
                 boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
@@ -104,7 +102,7 @@ export default function Buttons({
             }}
             variant='outlined'
           >
-            <Typography variant='h7' sx={{
+            <Typography variant='subtitle1' sx={{
               padding: 0,
               margin: 0,
             }}>

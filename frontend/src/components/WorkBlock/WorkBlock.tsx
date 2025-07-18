@@ -1,36 +1,21 @@
-import { format } from 'date-fns';
-import { Temporal } from '@js-temporal/polyfill';
-
-import { Grid, Typography, Box } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import FieldValue from '../shared/FieldValue.tsx';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { useStyleContext } from '../../contexts/StyleContext.tsx';
 
-interface WorkBlockProps {
-  workBlockStart: Temporal.PlainTime | null;
-  workBlockEnd: Temporal.PlainTime | null;
-  breakStart: Temporal.PlainTime | null;
-  breakEnd: Temporal.PlainTime | null;
-  jobsiteId: number;
-  jobsiteAddress: string;
-  jobsiteName: string;
-  editMode: boolean
-}
+
+import { WorkBlockProps } from '../../types/WorkBlock.types.ts';
 
 const WorkBlock = (
   {
     workBlockId,
     workBlockStart,
     workBlockEnd,
-    breakStart,
-    breakEnd,
     jobsiteId,
     jobsiteAddress,
     jobsiteName,
-    supervisorName,
     additionalNotes,
     editMode,
     handleDeleteWorkBlock,
@@ -40,8 +25,6 @@ const WorkBlock = (
   const coefficient1 = 12 / 4.4;
   const coefficient2 = 12 / 7.6;
   const columnWidths = [1.7 * coefficient1, 2.7 * coefficient1, 2.6 * coefficient2, 5.0 * coefficient2];
-
-  const { theme } = useStyleContext();
 
   return (
 
@@ -141,7 +124,11 @@ const WorkBlock = (
                           },
                           marginBottom: '0.8em',
                         }}
-                        onClick={() => handleSelectForEdit(workBlockId)}
+                        onClick={() => {
+				  if(!workBlockId) throw new Error('Error: Work block ID is missing');
+				  if(!handleSelectForEdit) throw new Error('Error: work block selection handler is missing');
+				  handleSelectForEdit(workBlockId)}
+			        }
                       />
                       <DeleteIcon
                         sx={{
@@ -151,7 +138,11 @@ const WorkBlock = (
                             boxShadow: '0 0 0 0.2rem rgba(220, 53, 69, 0.5)',
                           }
                         }}
-                        onClick={() => handleDeleteWorkBlock(workBlockId)}
+                        onClick={() => {
+				  if(!handleDeleteWorkBlock) throw new Error('Error: Work block deletion handler is missing');
+				  if(!workBlockId) throw new Error('Error: Work block ID is missing');
+				  handleDeleteWorkBlock(workBlockId)}
+			        }
                       />
 
                     </>

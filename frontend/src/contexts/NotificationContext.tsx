@@ -1,20 +1,31 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { ReactNode, createContext, useContext, useState } from 'react';
 
-const NotificationContext = createContext(null);
+interface NotificationContextType {
+  notification: React.ReactNode | null;
+  displayNotification: ({
+    content,
+    period,
+  }: {
+    content: React.ReactNode;
+    period?: number | null;
+  }) => void;
+}
 
-export function NotificationProvider({ children }) {
+const NotificationContext = createContext<NotificationContextType | null>(null);
+
+export function NotificationProvider({ children } : { children: ReactNode }) {
 
   const [notification, setNotification] = useState<React.ReactNode | null>(null);
 
   const defaultNotificationPeriod = 9000;
   const displayNotification = ({
     content,
-    period = defaultNotificationPeriod | null,
+    period = defaultNotificationPeriod ?? null,
   }: {
     content: React.ReactNode,
     period?: number | null,
   }
-  ) => {
+  ): void => {
     setNotification(content);
     if (period) {
       setTimeout(() => {
@@ -26,7 +37,7 @@ export function NotificationProvider({ children }) {
   return (
     <NotificationContext.Provider value={{
       notification,
-      displayNotification,
+      displayNotification
     }} >
       {children}
     </NotificationContext.Provider>

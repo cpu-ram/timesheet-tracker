@@ -1,8 +1,6 @@
-import { ThemeContext } from '@emotion/react';
 import { useTheme } from '@mui/material/styles';
 
-export const useFieldTitleStyle = () => {
-  const theme = useTheme();
+export const getFieldTitleStyle = () => {
   return (
     {
       fontStyle: 'oblique 20deg',
@@ -13,7 +11,7 @@ export const useFieldTitleStyle = () => {
   );
 }
 
-export const useFieldWithMissingDataStyle = () => {
+export const getFieldWithMissingDataStyle = () => {
   const theme = useTheme();
   return (
     {
@@ -23,7 +21,7 @@ export const useFieldWithMissingDataStyle = () => {
 }
 
 
-export const useEntryFieldTextStyle = () => {
+export const getEntryFieldTextStyle = () => {
   return (
     {
       backgroundColor: 'white',
@@ -35,7 +33,7 @@ export const useEntryFieldTextStyle = () => {
   )
 }
 
-export const useSpacerBlockStyle = () => {
+export const getSpacerBlockStyle = () => {
   return ({
     display: 'flex',
     width: '100%',
@@ -43,7 +41,7 @@ export const useSpacerBlockStyle = () => {
   })
 }
 
-export const useHorizontalSeparatorStyle = () => {
+export const getHorizontalSeparatorStyle = () => {
   return ({
     borderRight: '1px solid #ccc',
     height: '100%',

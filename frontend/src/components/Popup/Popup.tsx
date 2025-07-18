@@ -62,9 +62,7 @@ const Popup = ({ onClose, children }: PopupProps) => {
             sx={{
 
               fontSize: '1.5em',
-              fontWeight: 'bold',
 
-              color: '#353736 !important',
               backgroundColor: theme.palette.grey[500],
               color: 'white',
               fontWeight: 800,

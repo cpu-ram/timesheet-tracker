@@ -1,5 +1,5 @@
 import { markMatchGroups } from '../../../utils/naiveSearch';
-import { Typography, Box } from '@mui/material';
+import { Box } from '@mui/material';
 
 export const SearchMatchMarkedText = (props: { text: string; query: string }) => {
   const matchGroups = markMatchGroups(props.text, props.query);

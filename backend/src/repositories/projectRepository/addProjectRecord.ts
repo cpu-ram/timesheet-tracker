@@ -1,6 +1,6 @@
 import dbPool from '../../config/dbPool.js';
 import { DatabaseError } from 'pg';
-import { JobsiteConstraintError } from '../../errors/errors.ts';
+import { BackendError, JobsiteConstraintError } from '../../errors/errors.js';
 
 export async function addProjectRecord({
   id,
@@ -13,7 +13,19 @@ export async function addProjectRecord({
   defaultWorkEndTime = null,
   defaultBreakStartTime = null,
   defaultBreakEndTime = null,
-}
+}:
+  {
+    id: string;
+    type: string | null;
+    address: string | null;
+    name: string | null;
+    supervisorId: number | null;
+    description: string | null;
+    defaultWorkStartTime: string | null;
+    defaultWorkEndTime: string | null;
+    defaultBreakStartTime: string | null;
+    defaultBreakEndTime: string | null;
+  }
 ) {
   const query = `
     INSERT INTO projects(
@@ -42,18 +54,20 @@ export async function addProjectRecord({
     const result = await dbPool.query(query, values);
     return result.rows[0].project_id;
   } catch (error) {
-    if (error instanceof DatabaseError) {
-      if (error.code === '23505') {
-        const duplicateError = new Error(`Project record #${id} already exists`);
-        duplicateError.status = 409;
-        throw duplicateError;
+    if (error instanceof Error) {
+      if (error instanceof DatabaseError) {
+        if (error.code === '23505') {
+          const duplicateError = new BackendError(`Project record #${id} already exists`);
+          duplicateError.status = 409;
+          throw duplicateError;
+        }
+        if (error.code === '22001') {
+          const lengthError = new JobsiteConstraintError(`One or more jobsite record fields exceed the maximum length`);
+          lengthError.status = 400;
+          throw lengthError;
+        }
       }
-      if (error.code === '22001') {
-        const lengthError = new JobsiteConstraintError(`One or more jobsite record fields exceed the maximum length`);
-        lengthError.status = 400;
-        throw lengthError;
-      }
+      throw new Error("Unable to add project record: " + error.message);
     }
-    throw new Error("Unable to add project record: " + error.message);
   }
 }

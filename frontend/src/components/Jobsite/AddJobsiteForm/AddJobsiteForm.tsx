@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
 import React, { useState } from 'react';
-import { Grid, TextField, Box, Button, Typography } from '@mui/material';
-import Navigation from '../../Navigation/Navigation.tsx';
+import { Box, Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 
 import { JOBSITE_ID_MAX_LENGTH } from '../../../utils/validation/jobsiteValidation.ts';
 
-import { Temporal } from '@js-temporal/polyfill';
 import { convertDateToPlainTime, convertPlainTimeToDate } from '../../../utils/temporalFunctions.ts';
 import { LocalizationProvider, DesktopTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -16,16 +14,14 @@ import { AddJobsiteFormProps } from './types.ts';
 import { initializeFormData, validateTimes } from './utils.ts';
 
 import { FormStructure } from './types.ts';
-import TextEntryFieldFactory from './TextEntryFieldFactory.tsx';
+import createTextEntryFieldFactory from './TextEntryFieldFactory.tsx';
 import { JobsiteFieldValue } from '../JobsiteFieldValue.tsx';
-import { JobsiteProps } from '../types.ts';
 
 import {
-  useErrorWrapperStyle, useErrorTextStyle, useSpacerBlockStyle, useSubmitButtonStyle, useDiscardButtonStyle,
-  useAddJobsiteFormWrapperStyle,
-  useEntryFieldColumnStyle,
+  getErrorWrapperStyle, getErrorTextStyle, getSubmitButtonStyle, getDiscardButtonStyle,
+  getAddJobsiteFormWrapperStyle,
 } from './styles.ts';
-import { useFieldTitleStyle } from '../../shared/styles/recordStyles.ts';
+import { getFieldTitleStyle } from '../../shared/styles/recordStyles.ts';
 
 import { ApiError } from '../../../errors/ApiError.ts';
 
@@ -48,7 +44,7 @@ const AddJobsiteForm = ({
       }
       : initializeFormData()
   );
-  const [validationError, setValidationError] = useState(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const [saveLabel, discardLabel] = (() => {
     if (mode === 'add') { return ['Add', 'Discard']; }
@@ -63,7 +59,7 @@ const AddJobsiteForm = ({
     }
   }, [formData.defaultWorkStartTime, formData.defaultWorkEndTime]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
 
     if (validationError && validateTimes({ startTime: formData.defaultWorkStartTime, endTime: formData.defaultWorkEndTime })) {
@@ -77,27 +73,38 @@ const AddJobsiteForm = ({
     }));
   };
 
-  const handleTimeChange =
-    (key: 'defaultWorkStartTime' | 'defaultWorkEndTime') => (date: Date) => {
+  const handleTimeChange = (key: 'defaultWorkStartTime' | 'defaultWorkEndTime') =>
+    (date: Date | null) => {
       if (!date || isNaN(date.getTime())) return;
-      if (validationError && validateTimes(formData.defaultWorkStartTime, formData.defaultWorkEndTime)) {
-        setValidationError(null);
+
+      const newTime = convertDateToPlainTime(date);
+
+      const proposedFormData = {
+        ...formData,
+        [key]: newTime,
       }
 
       setFormData((prevData) => ({
         ...prevData,
-        [key]: convertDateToPlainTime(date),
+        [key]: newTime,
       }));
 
-    }
-
+      if (
+        validationError &&
+        validateTimes({
+          startTime: proposedFormData.defaultWorkStartTime,
+          endTime: proposedFormData.defaultWorkEndTime
+        })) {
+        setValidationError(null);
+      }
+    };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (validateTimes({ startTime: formData.defaultWorkStartTime, endTime: formData.defaultWorkEndTime })) {
       if (validationError !== null) setValidationError(null);
       try {
-        await handleEnteredData(formData);
+        handleEnteredData(formData);
         if (mode === 'add') navigate('/jobsites');
         if (mode === 'edit') {
           setMode('view');
@@ -131,7 +138,7 @@ const AddJobsiteForm = ({
     // { name: 'supervisorName', label: 'Supervisor' }
   ];
 
-  const textEntryFieldFactory = new TextEntryFieldFactory({
+  const textEntryFieldFactory = createTextEntryFieldFactory({
     handleInputChange,
     formStructure: textFieldsStructure,
     formData
@@ -141,9 +148,9 @@ const AddJobsiteForm = ({
 
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <form onSubmit={handleSubmit}>
-        <Box name="addJobsiteFormRootWrapper"
+        <Box id="addJobsiteFormRootWrapper"
           sx={{
-            ...useAddJobsiteFormWrapperStyle,
+            ...getAddJobsiteFormWrapperStyle,
             borderRadius: '4px',
             backgroundColor: 'transparent',
             '& > div > form > div+div': {
@@ -186,8 +193,8 @@ const AddJobsiteForm = ({
           >
 
             {validationError && (
-              <Box sx={useErrorWrapperStyle}>
-                {validationError && <Typography sx={useErrorTextStyle}>{validationError}</Typography>}
+              <Box sx={getErrorWrapperStyle}>
+                {validationError && <Typography sx={getErrorTextStyle}>{validationError}</Typography>}
               </Box>
             )}
             {
@@ -198,8 +205,9 @@ const AddJobsiteForm = ({
                   padding: '0.5em 0 1em 0.56em !important',
                 }}>
                   <Typography
-                    component="span" sx={useFieldTitleStyle}
+                    component="span"
                     sx={{
+                      ...getFieldTitleStyle,
                       display: 'inline-block',
                       width: '7.5em',
                       fontStyle: 'italic',
@@ -217,16 +225,16 @@ const AddJobsiteForm = ({
               mode === 'add' && (
                 <>
                   {textEntryFieldFactory.createField({
-                    name: 'jobsiteId', required: true, gridWidth: 4.5, disabled: mode === 'edit',
+                    name: 'jobsiteId', required: true, 
                     maxLength: JOBSITE_ID_MAX_LENGTH,
                   })}
                 </>
               )
             }
 
-            {textEntryFieldFactory.createField({ name: 'jobsiteName', gridWidth: 7.5 })}
-            {textEntryFieldFactory.createField({ name: 'jobsiteAddress', gridWidth: 12 })}
-            {textEntryFieldFactory.createField({ name: 'jobsiteDescription', gridWidth: 12 })}
+            {textEntryFieldFactory.createField({ name: 'jobsiteName'})}
+            {textEntryFieldFactory.createField({ name: 'jobsiteAddress'})}
+            {textEntryFieldFactory.createField({ name: 'jobsiteDescription'})}
             {
               // textEntryFieldFactory.createField({ name: 'supervisorName', gridWidth: 6.7 })
             }
@@ -236,8 +244,15 @@ const AddJobsiteForm = ({
               label="Typical start"
               value={formData.defaultWorkStartTime ? convertPlainTimeToDate(formData.defaultWorkStartTime) : null}
               onChange={handleTimeChange('defaultWorkStartTime')}
-              onBlur={handleTimeChange('defaultWorkStartTime')}
-              fullWidth
+              slotProps={{
+                textField: {
+                  name: "startTime",
+                  onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+		    const timeEntered=new Date(event.target.value);
+                    () => handleTimeChange('defaultWorkStartTime')(timeEntered);
+                  }
+                }
+              }}
               sx={{
                 marginRight: '0.5em',
               }}
@@ -250,9 +265,17 @@ const AddJobsiteForm = ({
 
               value={formData.defaultWorkEndTime ? convertPlainTimeToDate(formData.defaultWorkEndTime) : null}
               onChange={handleTimeChange('defaultWorkEndTime')}
-              onBlur={handleTimeChange('defaultWorkEndTime')}
-              fullWidth
-            />
+              slotProps={{
+                textField: {
+                  name: "endTime",
+                  onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+		    const timeEntered=new Date(event.target.value);
+                    () => handleTimeChange('defaultWorkEndTime')(timeEntered);
+                  }
+                }
+              }}
+
+	      />
 
 
 
@@ -260,7 +283,7 @@ const AddJobsiteForm = ({
 
 
           <Box
-            name="buttonsWrapper"
+            id="buttonsWrapper"
             sx={{
               width: '100%',
 
@@ -283,7 +306,7 @@ const AddJobsiteForm = ({
               onClick={handleDiscard}
               value="Discard"
               sx={{
-                ...useDiscardButtonStyle,
+                ...getDiscardButtonStyle,
                 color: 'black',
                 backgroundColor: 'white',
                 border: '1.3px solid #777',
@@ -301,7 +324,7 @@ const AddJobsiteForm = ({
               type="submit"
               value="Save"
               sx={
-                useSubmitButtonStyle(validationError)
+                getSubmitButtonStyle(!!validationError)
               }
             >
               {saveLabel}

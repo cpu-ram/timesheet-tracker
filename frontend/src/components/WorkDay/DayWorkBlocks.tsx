@@ -8,18 +8,18 @@ import { WorkBlock } from '../WorkBlock/WorkBlock.tsx';
 import HoursTotal from './HoursTotal.tsx';
 import WorkBlockEntryForm from '../WorkBlock/WorkBlockEntryForm/WorkBlockEntryForm.tsx';
 
-import { WorkBlockProps, AddWorkBlockFormFlags, AddWorkBlockFormHandlers } from '../WorkBlock/types.tsx';
+import { WorkBlockData, AddWorkBlockFormProps } from '../../types/WorkBlock.types.ts';
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
 
-const DayWorkBlocks = ({ workData }) => {
-  const [selectedForEditId, setSelectedForEditId] = useState(null);
+const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
+  const [selectedForEditId, setSelectedForEditId] = useState<number | null>(null);
 
-  const { editMode, setEditMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
+  const { editMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
 
   const handleEnteredData = async ({
     workBlockData, onJobsiteCreated
   }: {
-    workBlockData: WorkBlockProps;
+    workBlockData: WorkBlockData;
     onJobsiteCreated?: (jobsiteId: string) => void;
   }) => {
     await handleEditWorkBlock({
@@ -38,12 +38,8 @@ const DayWorkBlocks = ({ workData }) => {
     }
   }, [editMode])
 
-  const handleSelectForEdit = (workBlockId) => {
+  const handleSelectForEdit = (workBlockId: number) => {
     setSelectedForEditId(workBlockId);
-  }
-  const handleDiscardEdit = () => {
-    setSelectedForEditId(null);
-    setEditMode(false);
   }
 
   const { theme } = useStyleContext();
@@ -74,8 +70,10 @@ const DayWorkBlocks = ({ workData }) => {
           (
             <>
               {
-                workData.map((workBlock) => {
-                  const workBlockProps: WorkBlockProps = {
+                workData.map((workBlock: WorkBlockData) => {
+		  if(!workBlock.workBlockId) throw new Error('Error: Work Block id missing');
+		  	
+                  const workBlockData: WorkBlockData = {
                     ...workBlock,
                     workBlockStart: workBlock.workBlockStart || null,
                     workBlockEnd: workBlock.workBlockEnd || null,
@@ -83,7 +81,7 @@ const DayWorkBlocks = ({ workData }) => {
 
 
                   const editWorkBlockFormProps: AddWorkBlockFormProps = {
-                    workBlockProps,
+                    workBlockData: workBlockData,
                     formFlags: { mode: 'edit' },
                     handlers: {
                       handleEnteredData,

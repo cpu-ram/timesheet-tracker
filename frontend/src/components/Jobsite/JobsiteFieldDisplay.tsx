@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { useFieldTitleStyle, useEntryFieldTextStyle } from '../shared/styles/recordStyles.ts';
-import { useSpacerBlockStyle } from '../shared/styles/generalStyles.ts';
+import { getFieldTitleStyle, getEntryFieldTextStyle } from '../shared/styles/recordStyles.ts';
 import { JobsiteFieldValue } from './JobsiteFieldValue.tsx';
 
 export const JobsiteFieldDisplay = ({
@@ -21,16 +20,17 @@ export const JobsiteFieldDisplay = ({
     >
       <Typography
         sx={{
-          ...useEntryFieldTextStyle(),
+          ...getEntryFieldTextStyle(),
           padding: '0.2em 0.5em',
         }}
         variant={textVariant} component="p"
       >
         <Typography
-          sx={{
-            minWidth: '7em',
-          }}
-          component="span" sx={useFieldTitleStyle}>
+          component="span" sx={[
+	    { getFieldTitleStyle},
+	    { minWidth: '7em',}
+	  ]}
+	>
           {title}
         </Typography>
 

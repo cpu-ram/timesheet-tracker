@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
-import app from './src/index.js'; // Import app logic from index.js
+import app from './src/index.js';
+import './src/config/passportConfig.js';
 
 dotenv.config();
 

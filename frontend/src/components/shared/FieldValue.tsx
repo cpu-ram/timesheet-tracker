@@ -1,4 +1,4 @@
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
 
@@ -32,7 +32,7 @@ export function FieldValue({
           }
           ,
           additionalStyles,
-        ]
+        ] as SxProps<Theme>
       }
     >
       {children ?? <span style={{ color: theme.palette.text.disabled }}>—</span>}

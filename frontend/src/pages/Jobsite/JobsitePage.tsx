@@ -1,116 +1,24 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { RecordViewMode } from "../../shared/types/viewModes.ts";
 import Navigation from "../../components/Navigation/Navigation.tsx";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import JobsiteProps from "../../components/Jobsite/types.ts";
 
-import { useSpacerBlockStyle } from "../../components/shared/styles/recordStyles.ts";
 import { useSearchParams } from "react-router-dom";
-
-import { fetchJobsite } from "../../api/jobsiteApi.ts";
-
-import AddJobsiteForm from "../../components/Jobsite/AddJobsiteForm/AddJobsiteForm.tsx";
 
 import JobsitePanel from "../../components/Jobsite/JobsitePanel.tsx";
 
-import {
-  createJobsite,
-  deleteJobsite,
-  updateJobsite,
-} from "../../api/jobsiteApi.ts";
+const JobsitePage = (props: { initialMode: "view" | "add" | "edit" }) => {
 
-import {
-  useErrorWrapperStyle,
-  useErrorTextStyle,
-} from "../../components/Jobsite/AddJobsiteForm/styles.ts";
-
-const JobsitePage = (props: { initialMode: "view" | "create" | "add" }) => {
   const { jobsiteId } = useParams();
-  const [mode, setMode] = useState<"view" | "add" | "edit">(
-    props.initialMode || "view",
-  );
-  const [jobsite, setJobsite] = useState<JobsiteProps | null>(null);
-  const [apiError, setApiError] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
 
-  const cancelJobsiteCreation = () => {
-    navigate("/jobsites");
-  };
-
-  const cancelJobsiteEdit = () => {
-    setMode("view");
-  };
-
-  const handleJobsiteDelete = async () => {
-    try {
-      const { success } = await deleteJobsite(jobsiteId);
-      if (success) {
-        navigate("/jobsites");
-      }
-    } catch (error) {
-      setApiError(error.message);
-    }
-  };
-
-  const fetchJobsiteData = async () => {
-    try {
-      if (mode === "view") {
-        if (!jobsiteId) {
-          throw new Error("Jobsite ID is required");
-        }
-        const jobsiteData = await fetchJobsite({ jobsiteId: jobsiteId });
-        setJobsite(jobsiteData);
-      }
-    } catch (error) {
-      console.error("Error fetching jobsite data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchJobsiteData();
-  }, []);
-
-  const handleDiscard = () => {
-    switch (mode) {
-      case "add":
-        return cancelJobsiteCreation();
-      case "edit":
-        return cancelJobsiteEdit();
-      default:
-        throw new Error('Invalid mode: mode must be either "add" or "edit".');
-    }
-  };
-
   const theme = useTheme();
-
-  let handleEnteredData;
-  const callUpdateJobsite = (jobsiteProps) =>
-    updateJobsite({
-      jobsiteData: jobsiteProps,
-      onSuccess: (updatedRecord) => setJobsite(updatedRecord),
-    });
-
-  switch (mode) {
-    case "add":
-      handleEnteredData = createJobsite;
-      break;
-    case "edit":
-      handleEnteredData = callUpdateJobsite;
-      break;
-    default:
-      handleEnteredData = undefined;
-      break;
-  }
 
   return (
     <Box
@@ -143,13 +51,9 @@ const JobsitePage = (props: { initialMode: "view" | "create" | "add" }) => {
         className="main-content"
         sx={{
           backgroundColor: 'transparent',
-          borderRadius: '4px',
-          border: `1px solid ${theme.palette.divider}`,
-          border: '0',
         }}>
 
         <Box
-          name="breadcrumbs"
           className="breadcrumbs"
           sx={{
             maxWidth: '45em',
@@ -165,7 +69,7 @@ const JobsitePage = (props: { initialMode: "view" | "create" | "add" }) => {
                 },
               }}
             >
-              <Link to={searchParams.get("fromLink")}>
+              <Link to={searchParams.get("fromLink") as string ?? ''}>
                 <Typography
                   key="back-link"
                   variant="subtitle1"
@@ -229,7 +133,7 @@ const JobsitePage = (props: { initialMode: "view" | "create" | "add" }) => {
         </Box>
 
         <JobsitePanel
-          initialMode={mode}
+          initialMode={props.initialMode ?? "view"}
           jobsiteId={jobsiteId}
         />
 

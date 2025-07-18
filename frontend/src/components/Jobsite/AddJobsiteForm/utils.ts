@@ -4,22 +4,24 @@ export function initializeFormData(
   jobsiteId = null,
   jobsiteAddress = null,
   jobsiteName = null,
-  description = null,
+  jobsiteDescription = null,
   defaultWorkStartTime = null,
   defaultWorkEndTime = null,
   supervisorName = null,
 ): {
-  jobsiteId: string;
-  jobsiteAddress: string;
-  jobsiteName: string;
-  description: string;
+  jobsiteId: string | null;
+  jobsiteAddress: string | null;
+  jobsiteName: string | null;
+  jobsiteDescription: string | null;
   supervisorName: string | null;
+  defaultWorkStartTime: Temporal.PlainTime | null;
+  defaultWorkEndTime: Temporal.PlainTime | null;
 } {
   return ({
     jobsiteId: jobsiteId ?? null,
     jobsiteAddress: jobsiteAddress ?? null,
     jobsiteName: jobsiteName ?? null,
-    description: description ?? null,
+    jobsiteDescription: jobsiteDescription ?? null,
     supervisorName: supervisorName ?? null,
     defaultWorkStartTime: defaultWorkStartTime ?? null,
     defaultWorkEndTime: defaultWorkEndTime ?? null,
@@ -27,7 +29,9 @@ export function initializeFormData(
 }
 
 export function validateTimes(
-  { startTime, endTime, }: {
+  {
+    startTime, endTime,
+  }: {
     startTime: Temporal.PlainTime | null;
     endTime: Temporal.PlainTime | null;
   })

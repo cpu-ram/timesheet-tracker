@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import SideMenu from '../SideMenu/SideMenu.tsx';
 import HeaderNav from '../HeaderNav/HeaderNav.tsx';
 
-const Navigation = ({ resourceNameList }) => {
+const Navigation = ({ resourceNameList = [] }: { resourceNameList?: string[] }) => {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const toggleMenu = () => setMenuIsOpen(!menuIsOpen);
 

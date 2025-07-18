@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
 
 import { Temporal } from '@js-temporal/polyfill';
 import { addDays } from '../utils/temporalFunctions.ts';
 
-import { GlobalStyles, Grid, Typography, IconButton, Box, Alert } from '@mui/material';
+import { Grid, Typography, IconButton, Box, Alert } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import PrintIcon from '@mui/icons-material/Print';
 import CompressIcon from '@mui/icons-material/Compress';
 import { useTheme } from '@mui/material/styles';
 
@@ -14,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 const Calendar = () => {
   const {
     dateRange, multiDaySelectionMode,
-    workData, dateSelectionHandler,
+    dateSelectionHandler,
     workDataAggregator,
   } = useTimesheetContext();
 
@@ -24,7 +23,10 @@ const Calendar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const theme = useTheme();
-  const validateDateRange = (range) => {
+  const validateDateRange = (range: {
+    from: Temporal.PlainDate;
+    to: Temporal.PlainDate;
+  }) => {
     if (!range.from || !range.to || Temporal.PlainDate.compare(range.from, range.to) > 0) {
       throw new Error('Invalid date range');
     }
@@ -37,7 +39,7 @@ const Calendar = () => {
     validateDateRange(dateRange);
   }
   catch (error) {
-    throw Error(error);
+    throw error;
   }
   for (
     let day = dateRange.from; Temporal.PlainDate.compare(day, dateRange.to) <= 0; day = addDays(day, 1)
@@ -121,7 +123,7 @@ const Calendar = () => {
                   justifyContent: 'center'
                 }}>
                 <Typography
-                  variant="h8"
+                  variant="subtitle1"
                   align="center"
                   sx={{
                     fontStyle: 'italic',
@@ -204,7 +206,7 @@ const Calendar = () => {
                   {
                     days.slice(startIndex, startIndex + 7).map((day, index) => {
 
-                      function getDayStyle(day) {
+                      function getDayStyle(day: Temporal.PlainDate) {
                         let dayColor = 'black';
                         let cursor = 'pointer';
                         if (Temporal.PlainDate.compare(day, today) > 0) {

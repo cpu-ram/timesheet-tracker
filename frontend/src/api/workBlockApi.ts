@@ -1,6 +1,8 @@
-import { ApiError } from '../errors/ApiError';
+import { ApiError } from '../errors/ApiError.js';
+import { WorkBlockData } from '../types/WorkBlock.types.js';
+import { Temporal } from '@js-temporal/polyfill';
 
-export const addWorkBlock = async (workBlockData, selectedDates) => {
+export const addWorkBlock = async (workBlockData: WorkBlockData, selectedDates: Temporal.PlainDate[]) => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   try {
     const response = await fetch(`${baseUrl}/workBlocks`, {
@@ -23,7 +25,7 @@ export const addWorkBlock = async (workBlockData, selectedDates) => {
     const responseData = await response.json();
 
     if (!response.ok) {
-      throw new ApiError('Failed to submit work block: ' + (responseData.message || 'Unknown error'));
+      throw new ApiError(400, 'Failed to submit work block: ' + (responseData.message || 'Unknown error'));
     }
 
     return responseData;
@@ -33,7 +35,10 @@ export const addWorkBlock = async (workBlockData, selectedDates) => {
   }
 }
 
-export const updateWorkBlock = async ({ workBlockId, workBlockData, date }) => {
+export const updateWorkBlock = async (
+  { workBlockId, workBlockData, date }: {
+    workBlockId: number, workBlockData: WorkBlockData, date: any
+  }) => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
   try {
@@ -63,7 +68,7 @@ export const updateWorkBlock = async ({ workBlockId, workBlockData, date }) => {
     const responseData = await response.json();
 
     if (!response.ok) {
-      throw new ApiError('Failed to submit work block: ' + (responseData.message || 'Unknown error'));
+      throw new ApiError(500, 'Failed to submit work block: ' + (responseData.message || 'Unknown error'));
     }
 
     return responseData;
@@ -74,7 +79,7 @@ export const updateWorkBlock = async ({ workBlockId, workBlockData, date }) => {
   }
 }
 
-export const deleteWorkBlock = async (workBlockId) => {
+export const deleteWorkBlock = async (workBlockId: number) => {
   try {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/workBlocks/${workBlockId}`, {
@@ -85,7 +90,7 @@ export const deleteWorkBlock = async (workBlockId) => {
       }
     });
     if (!response.ok) {
-      throw new ApiError('Failed to delete work block');
+      throw new ApiError(500, 'Failed to delete work block');
     }
   }
   catch (error) {

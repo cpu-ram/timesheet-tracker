@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { Context } from 'react';
+
+import { WorkBlockData } from '../types/WorkBlock.types.ts';
+import { TimesheetDayRecord } from '../types/TimesheetDayRecord.ts';
 
 import { Temporal } from '@js-temporal/polyfill';
 import { startOfWeek } from '../utils/temporalFunctions.ts';
@@ -6,20 +12,20 @@ import { startOfWeek } from '../utils/temporalFunctions.ts';
 import fetchTimesheetData from '../api/fetchTimesheetData.ts';
 import updateWorkData from '../utils/updateWorkData.ts';
 
-import { fetchJobsite } from '../api/jobsiteApi.ts';
 import { addWorkBlock, updateWorkBlock, deleteWorkBlock } from '../api/workBlockApi.ts';
+
 
 const today = Temporal.Now.plainDateISO();
 
-function generateDateRange(numberOfWeeks = 2) {
+function generateDateRange(numberOfWeeks: number = 2) {
   const firstWeekStart = startOfWeek(today).subtract({ days: 7 * (numberOfWeeks - 1) });
   const lastWeekEnd = firstWeekStart.add({ days: 7 * numberOfWeeks - 1 });
 
   return { from: firstWeekStart, to: lastWeekEnd };
 }
 
-function scaffoldWorkDataContainer(dateRange) {
-  const days = [];
+function scaffoldWorkDataContainer(dateRange: { from: Temporal.PlainDate, to: Temporal.PlainDate }) {
+  const days: TimesheetDayRecord[] = [];
   let curr = dateRange.from;
   while (Temporal.PlainDate.compare(curr, dateRange.to) <= 0) {
     const day = curr;
@@ -29,13 +35,13 @@ function scaffoldWorkDataContainer(dateRange) {
   return days;
 }
 
-const TimesheetContext = createContext(null);
+const TimesheetContext: Context<any> = createContext(null);
 
-export function TimesheetProvider({ children }) {
+export function TimesheetProvider({ children }: { children: React.ReactNode }) {
   const [dateRange, setDateRange] = useState(() => generateDateRange());
   const [workData, setWorkData] = useState(() => scaffoldWorkDataContainer(dateRange));
   const [multiDaySelectionMode, setMultiDaySelectionMode] = useState(false);
-  const [selectedDates, setSelectedDates] = useState([]);
+  const [selectedDates, setSelectedDates] = useState<Temporal.PlainDate[]>([]);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(Temporal.Now.plainDateISO());
@@ -43,7 +49,7 @@ export function TimesheetProvider({ children }) {
 
   const [jobsiteSearchResults, setJobsiteSearchResults] = useState([]);
   const [selectedJobsiteData, setSelectedJobsiteData] = useState(null);
-  const [suggestedJobsiteData, setSuggestedJobsiteData] = useState(null);
+  const [suggestedJobsiteData, setSuggestedJobsiteData] = useState<any | null>(null);
 
   const fetchFullTimesheetData = async () => {
     const today = Temporal.Now.plainDateISO();
@@ -52,8 +58,8 @@ export function TimesheetProvider({ children }) {
     updateWorkData(fetchedData, setWorkData);
   };
 
-  const fetchMultipleDaysTimesheetData = async (dates) => {
-    let combinedData = [];
+  const fetchMultipleDaysTimesheetData = async (dates: Temporal.PlainDate[]) => {
+    let combinedData: TimesheetDayRecord[] = [];
     try {
       for (const date of dates) {
         const fetchedData = await fetchTimesheetData({ from: date, to: date });
@@ -66,12 +72,12 @@ export function TimesheetProvider({ children }) {
     updateWorkData(combinedData, setWorkData);
   }
 
-  const fetchDayTimesheetData = async (date) => {
+  const fetchDayTimesheetData = async (date: Temporal.PlainDate) => {
     const fetchedData = await fetchTimesheetData({ from: date, to: date });
     updateWorkData(fetchedData, setWorkData);
   }
 
-  const handleSearchJobsites = async (event, value) => {
+  const handleSearchJobsites = async (value: string) => {
     const query = value;
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -95,53 +101,26 @@ export function TimesheetProvider({ children }) {
     }
   };
 
-  const handleFetchJobsiteData = async (event, value) => {
-    if (!value || !value.id) {
-      setSelectedJobsiteData(null);
-      return;
-    }
-    try {
-      const responseData = await fetchJobsite({ jobsiteId: value.id });
-      setSelectedJobsiteData({
-        ...responseData, defaultWorkStartTime: null, defaultWorkEndTime: null
-      });
-      setSuggestedJobsiteData({
-        workBlockStart: Temporal.PlainTime.from(responseData.defaultWorkStartTime),
-        workBlockEnd: Temporal.PlainTime.from(responseData.defaultWorkEndTime),
-      });
-    } catch (error) {
-      console.error('Error fetching job site data:', error);
-      setSelectedJobsiteData(null);
-    }
-  }
-
   const handleAddWorkBlock = async ({
     workBlockData,
-    onError,
     onJobsiteCreated
   }: {
-    workBlockData: WorkBlockProps,
-    onError?: (error: Error) => void,
+    workBlockData: WorkBlockData,
     onJobsiteCreated?: (jobsiteId: string) => void
   }) => {
-    try {
-      if (selectedDates.length > 0) {
-        const workBlockCreationResult = await addWorkBlock(workBlockData, selectedDates);
+    if (selectedDates.length > 0) {
+      const workBlockCreationResult = await addWorkBlock(workBlockData, selectedDates);
 
-        if (workBlockCreationResult.newJobsiteCreated && workBlockCreationResult.jobsiteId) {
-          onJobsiteCreated(workBlockCreationResult.jobsiteId);
-        }
+      if (workBlockCreationResult.newJobsiteCreated && workBlockCreationResult.jobsiteId && onJobsiteCreated) {
+        onJobsiteCreated(workBlockCreationResult.jobsiteId);
+      }
 
-        await fetchMultipleDaysTimesheetData(selectedDates);
-        await dateSelectionHandler.multiSelectionOff();
-        setAddMode(false);
-      }
-      else if (selectedDates.length === 0) {
-        throw new Error();
-      }
+      await fetchMultipleDaysTimesheetData(selectedDates);
+      await dateSelectionHandler.multiSelectionOff();
+      setAddMode(false);
     }
-    catch (error) {
-      throw error;
+    else if (selectedDates.length === 0) {
+      throw new Error();
     }
   }
 
@@ -151,8 +130,8 @@ export function TimesheetProvider({ children }) {
     onError,
     onJobsiteCreated,
   }: {
-    workBlockId: string;
-    workBlockData: WorkBlockProps;
+    workBlockId: number;
+    workBlockData: WorkBlockData;
     onError?: (error: Error) => void;
     onJobsiteCreated?: (jobsiteId: string) => void;
   }
@@ -165,19 +144,15 @@ export function TimesheetProvider({ children }) {
       }
       await fetchDayTimesheetData(lastSelectedSingleDate);
     }
-    catch (error) {
+    catch (error: unknown) {
       console.error(error);
+      if (onError && error instanceof Error) onError(error);
     }
   }
 
-  const handleDeleteWorkBlock = async (workBlockId) => {
-    try {
-      await deleteWorkBlock(workBlockId);
-      await fetchDayTimesheetData(lastSelectedSingleDate);
-    }
-    catch (error) {
-      throw new Error(error);
-    }
+  const handleDeleteWorkBlock = async (workBlockId: number) => {
+    await deleteWorkBlock(workBlockId);
+    await fetchDayTimesheetData(lastSelectedSingleDate);
   }
 
 
@@ -212,8 +187,8 @@ export function TimesheetProvider({ children }) {
       return Math.round(nonRoundedTotal * 10) / 10;
     },
 
-    getDayWorkHoursTotal: function (day) {
-      const workDay = workData.find((workDay) => (workDay.date).equals(day));
+    getDayWorkHoursTotal: function (day: Temporal.PlainDate) {
+      const workDay: TimesheetDayRecord | undefined = workData.find((workDay) => (workDay.date).equals(day));
       if (!workDay) {
         throw new RangeError('Day not found');
       }
@@ -233,13 +208,13 @@ export function TimesheetProvider({ children }) {
   }
 
   const dateSelectionHandler = {
-    add: function (date) {
+    add: function (date: Temporal.PlainDate) {
       setSelectedDates((prevSelectedDates) => [...prevSelectedDates, date]);
     },
-    remove: function (date) {
+    remove: function (date: Temporal.PlainDate) {
       setSelectedDates((prevSelectedDates) => prevSelectedDates.filter((d) => !d.equals(date)));
     },
-    selectSingleDay: async function (date) {
+    selectSingleDay: async function (date: Temporal.PlainDate) {
       setMultiDaySelectionMode(false);
       discardSelectedJobsiteData();
       setLastSelectedSingleDate(date);
@@ -247,7 +222,7 @@ export function TimesheetProvider({ children }) {
       setSelectedDates([date]);
     },
     lastSelectedSingleDate: lastSelectedSingleDate,
-    isSelected: function (date) {
+    isSelected: function (date: Temporal.PlainDate) {
       return selectedDates.some((x) => (x.equals(date)));
     },
     multiSelectionOn: function () {
@@ -262,7 +237,7 @@ export function TimesheetProvider({ children }) {
       }
       else this.multiSelectionOn();
     },
-    handleDateClick: function (date: Date) {
+    handleDateClick: function (date: Temporal.PlainDate) {
       if (!multiDaySelectionMode) {
         this.selectSingleDay(date);
         setEditMode(false);
@@ -339,13 +314,11 @@ export function TimesheetProvider({ children }) {
       selectedJobsiteData, setSelectedJobsiteData,
       suggestedJobsiteData, setSuggestedJobsiteData,
       handleSearchJobsites,
-      handleFetchJobsiteData,
       discardSelectedJobsiteData,
       fetchDayTimesheetData,
       fetchMultipleDaysTimesheetData,
       handleAddWorkBlock,
       handleEditWorkBlock,
-      handleAddWorkBlock,
       handleDeleteWorkBlock,
       handleDiscard,
     }}>
@@ -354,7 +327,7 @@ export function TimesheetProvider({ children }) {
   );
 }
 
-export function useTimesheetContext() {
+export function useTimesheetContext(): any {
   const context = useContext(TimesheetContext);
   if (!context) {
     throw new Error('useTimesheetContext must be used within a TimesheetProvider');

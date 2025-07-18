@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Link from '@mui/material/Link';
 import { Typography, Grid, Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme } from '@mui/material/styles';
 import { fetchJobsitePreviews } from '../../api/jobsiteApi';
 import Navigation from '../../components/Navigation/Navigation.tsx';
 
+import { JobsiteProps } from '../../components/Jobsite/types.ts';
 import { FieldValue } from '../../components/shared/FieldValue.tsx';
 import { FieldTitle } from './FieldTitle.tsx';
 
@@ -47,7 +47,7 @@ const JobsiteListPage = () => {
 
       <Navigation />
 
-      <Box name="breadcrumbs"
+      <Box className="breadcrumbs"
         sx={{
           display: 'flex',
           alignSelf: 'center',
@@ -76,7 +76,7 @@ const JobsiteListPage = () => {
         </Typography>
       </Box>
 
-      <Box name="icons"
+      <Box className="icons"
         sx={{
           marginTop: '0em',
           padding: '0 0.6em',
@@ -102,7 +102,7 @@ const JobsiteListPage = () => {
         </Button>
       </Box>
 
-      <Box name="jobsite-list"
+      <Box className="jobsite-list"
         sx={{
           width: '100%',
           maxWidth: '45em',
@@ -119,16 +119,15 @@ const JobsiteListPage = () => {
       >
         {
           jobsites &&
-          jobsites.map((jobsite) => (
+          jobsites.map((jobsite: JobsiteProps) => (
             <Box className="jobsite-preview"
-              onClick={() => navigate(`/jobsites/${jobsite.id}`)}
-              key={jobsite.id}
+              onClick={() => navigate(`/jobsites/${jobsite.jobsiteId}`)}
+              key={jobsite.jobsiteId}
               role="button"
               tabIndex={0}
               sx={{
                 textDecoration: 'none',
                 color: () => theme.palette.text.primary,
-                boxSizing: 'border-box',
                 '&:hover, &:active': {
                   cursor: 'pointer',
                   color: () => theme.palette.text.primary,
@@ -167,7 +166,7 @@ const JobsiteListPage = () => {
                       {"ID:"}
                     </FieldTitle>
                     <FieldValue>
-                      {jobsite.id}
+                      {jobsite.jobsiteId}
                     </FieldValue>
                   </Typography>
                 </Grid>
@@ -178,7 +177,7 @@ const JobsiteListPage = () => {
                       {"Name:"}
                     </FieldTitle>
                     <FieldValue>
-                      {jobsite.name}
+                      {jobsite.jobsiteName}
                     </FieldValue>
                   </Typography>
                 </Grid>
@@ -189,7 +188,7 @@ const JobsiteListPage = () => {
                       {"Address: "}
                     </FieldTitle>
                     <FieldValue>
-                      {jobsite.address}
+                      {jobsite.jobsiteAddress}
                     </FieldValue>
                   </Typography>
                 </Grid>

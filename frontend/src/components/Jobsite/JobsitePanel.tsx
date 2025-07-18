@@ -1,26 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { RecordViewMode } from '../../shared/types/viewModes.ts';
-import Navigation from '../../components/Navigation/Navigation.tsx';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 
 import { ApiError } from '../../errors/ApiError.ts';
 
-import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import JobsiteProps from '../../components/Jobsite/types.ts';
+import { JobsiteProps } from '../../components/Jobsite/types.ts';
 
-import { useSpacerBlockStyle } from '../../components/shared/styles/recordStyles.ts';
-import { useSearchParams } from 'react-router-dom';
 
 import { fetchJobsite } from '../../api/jobsiteApi.ts';
 
@@ -40,14 +31,12 @@ const JobsitePanel = (
   {
     initialMode,
     jobsiteId,
-    displayId = true,
     onClose,
     onUpdateJobsite,
   }:
     {
       initialMode: 'view' | 'edit' | 'add',
       jobsiteId?: string,
-      displayId?: boolean,
       onClose?: () => void,
       onUpdateJobsite?: (jobsite: JobsiteProps) => void,
     }) => {
@@ -55,7 +44,6 @@ const JobsitePanel = (
   const [mode, setMode] = useState<'view' | 'add' | 'edit'>(initialMode || 'view');
   const [jobsite, setJobsite] = useState<JobsiteProps | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
   const handleClose = onClose || (() => navigate('/jobsites'));
@@ -69,6 +57,7 @@ const JobsitePanel = (
   }
 
   const handleJobsiteDelete = async () => {
+    if (!jobsiteId) throw new Error("Error: No jobsite ID provided for deletion.");
     try {
       const { success } = await deleteJobsite(jobsiteId);
       if (success) {
@@ -116,7 +105,7 @@ const JobsitePanel = (
   const theme = useTheme();
 
   let handleEnteredData;
-  let callUpdateJobsite = ((jobsiteProps) =>
+  let callUpdateJobsite = ((jobsiteProps: JobsiteProps) =>
     updateJobsite({
       jobsiteData: jobsiteProps,
       onSuccess: (updatedRecord) => {
@@ -238,7 +227,8 @@ const JobsitePanel = (
         (
           <AddJobsiteForm
             handleDiscard={handleDiscard}
-            handleEnteredData={async (props) => {
+            handleEnteredData={async (props: JobsiteProps) => {
+              if (!handleEnteredData) throw new Error("Error: Jobsite addition form's data handler is not defined.");
               await handleEnteredData(props);
               setMode('view');
             }}

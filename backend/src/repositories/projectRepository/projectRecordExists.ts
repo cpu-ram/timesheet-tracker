@@ -1,6 +1,6 @@
 import dbPool from '../../config/dbPool.js';
 
-export const projectRecordExists = async (jobsiteId) => {
+export const projectRecordExists = async (jobsiteId: string) => {
   const query = `
     SELECT 
       EXISTS (

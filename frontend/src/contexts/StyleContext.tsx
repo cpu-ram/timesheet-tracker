@@ -1,10 +1,16 @@
-import React, { createContext, useContext } from 'react';
+import { ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 import { useTheme } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
 
-const StyleContext = createContext(null);
+interface StyleContextType {
+  theme: Theme;
+}
 
-export function StyleProvider({ children }) {
-  const theme = useTheme();
+const StyleContext = createContext<StyleContextType | null>(null);
+
+export function StyleProvider({ children }: { children: ReactNode }) {
+  const theme: Theme = useTheme();
 
   return (
     <StyleContext.Provider value={{ theme }} >

@@ -1,16 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Temporal } from '@js-temporal/polyfill';
 
-import { Grid, TextField, Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import JobsiteProps from '../types.ts';
+import {JobsiteProps} from '../types.ts';
 
-import { FieldValue } from '../../shared/FieldValue.tsx';
-import { JobsiteFieldValue } from '../JobsiteFieldValue.tsx';
 
-import { useFieldTitleStyle, useFieldWithMissingDataStyle, useHorizontalSeparatorStyle } from '../../shared/styles/recordStyles.ts';
-import { useEntryFieldTextStyle } from './styles.ts';
-import { useSpacerBlockStyle } from '../../shared/styles/generalStyles.ts';
 
 import { JobsiteFieldDisplay } from '../JobsiteFieldDisplay.tsx';
 
@@ -23,8 +17,9 @@ const JobsiteDetails = ({
   defaultWorkStartTime,
   defaultWorkEndTime,
 }: JobsiteProps) => {
+  
+  supervisorName && true;
 
-  const textVariant = 'h4';
   const jobsiteDisplayFields = [
     { title: 'ID', value: jobsiteId },
     { title: 'Name', value: jobsiteName },

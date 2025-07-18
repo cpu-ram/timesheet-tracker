@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Typography, TextField, Button, Box } from '@mui/material/';
 import { useAuthContext } from '../contexts/AuthContext.tsx';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import Navigation from '../components/Navigation/Navigation.tsx';
 
 const ChangeNamePage = () => {
@@ -10,7 +8,6 @@ const ChangeNamePage = () => {
   const [nameChanged, setNameChanged] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { username, setUsername } = useAuthContext();
-  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,9 +34,9 @@ const ChangeNamePage = () => {
       else {
         throw new Error('Failure to update name: ' + queryResult.statusText);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      setError(error.toString());
+      if(error instanceof Error) setError(error.toString());
       setNameChanged(false);
     }
   };

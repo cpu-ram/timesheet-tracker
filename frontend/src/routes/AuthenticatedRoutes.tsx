@@ -2,8 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { NotificationProvider } from '../contexts/NotificationContext.tsx';
 
 import TimesheetPage from '../pages/TimesheetPage.tsx';
-import ReportPage from '../pages/ReportPage.tsx';
-import AddJobsiteForm from '../components/Jobsite/AddJobsiteForm/AddJobsiteForm.tsx';
+import ReportPage from '../pages/ReportPage/ReportPage.tsx';
 import JobsitePage from '../pages/Jobsite/JobsitePage.tsx';
 import JobsiteListPage from '../pages/Jobsite/JobsiteListPage.tsx';
 import ChangeNamePage from '../pages/ChangeNamePage.tsx';
@@ -33,7 +32,6 @@ const AuthenticatedRoutes = () => {
 
       <Route
         path="/jobsites/new/"
-        mode="add"
         element={
           <JobsitePage
             initialMode="add"

@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material/styles';
 
-export const useSubmitButtonStyle = (validationError: boolean) => {
+export const getSubmitButtonStyle = (validationError: boolean) => {
   const theme = useTheme();
   return (
     validationError ? {
@@ -15,8 +15,7 @@ export const useSubmitButtonStyle = (validationError: boolean) => {
     })
 };
 
-export const useDiscardButtonStyle = () => {
-  const theme = useTheme();
+export const getDiscardButtonStyle = () => {
   return (
     {
       backgroundColor: "#e2e3e5",
@@ -28,8 +27,7 @@ export const useDiscardButtonStyle = () => {
   )
 }
 
-export const useAddJobsiteFormWrapperStyle = () => {
-  const theme = useTheme();
+export const getAddJobsiteFormWrapperStyle = () => {
   return ({
     width: '100%',
     display: 'flex',
@@ -38,8 +36,7 @@ export const useAddJobsiteFormWrapperStyle = () => {
   })
 }
 
-export const useErrorWrapperStyle = () => {
-  const theme = useTheme();
+export const getErrorWrapperStyle = () => {
   return ({
     margin: '0.5em 0 0 0',
     '& p': {
@@ -49,8 +46,7 @@ export const useErrorWrapperStyle = () => {
   })
 }
 
-export const useErrorTextStyle = () => {
-  const theme = useTheme();
+export const getErrorTextStyle = () => {
   return (
     {
       color: 'red',
@@ -60,8 +56,7 @@ export const useErrorTextStyle = () => {
   )
 }
 
-export const useSpacerBlockStyle = () => {
-  const theme = useTheme();
+export const getSpacerBlockStyle = () => {
   return ({
     display: 'flex',
     width: '100%',
@@ -69,8 +64,7 @@ export const useSpacerBlockStyle = () => {
   })
 }
 
-export const useEntryFieldColumnStyle = () => {
-  const theme = useTheme();
+export const getEntryFieldColumnStyle = () => {
   return ({
     'div + div': {
       marginTop: '0.7em',

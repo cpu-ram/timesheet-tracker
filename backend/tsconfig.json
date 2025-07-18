@@ -7,6 +7,10 @@
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "allowJs": true,
+  },
+  "include": ["src", "server.ts"]
 }

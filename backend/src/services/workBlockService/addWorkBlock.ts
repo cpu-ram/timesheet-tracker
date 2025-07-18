@@ -1,20 +1,20 @@
 import { addWorkBlockRecord } from '../../repositories/workBlockRepository/addWorkBlockRecord.js';
-import { addJobsite } from '../jobsiteService.ts';
+import { addJobsite } from '../jobsiteService.js';
 import { jobsiteExists } from '../jobsiteServices/jobsiteExists.js';
 
 export const addWorkBlock = async (
-  employeeId,
-  reportedById,
-  jobsiteId = null,
+  employeeId: number,
+  reportedById: number,
+  jobsiteId: string | null = null,
   startDateTime = null,
   endDateTime = null,
   breakStartTime = null,
   breakEndTime = null,
-  dates = [],
-  tempJobsiteName = null,
-  tempJobsiteAddress = null,
-  tempSupervisorName = null,
-  additionalNotes = null
+  dates: string[] = [],
+  tempJobsiteName: string | null = null,
+  tempJobsiteAddress: string | null = null,
+  tempSupervisorName: string | null = null,
+  additionalNotes: string | null = null
 ) => {
   if (dates.length === 0) {
     throw new RangeError("No dates provided for work block creation");
