@@ -63,7 +63,7 @@ export function formatWorkDataForDailyReport(workBlockArray: WorkBlock[]): Forma
         breakStart: workBlock.workBlockEnd ? formatTime(workBlock.workBlockEnd) : '-',
         breakEnd: workBlock.workBlockEnd ? formatTime(workBlock.workBlockEnd) : '-',
       };
-
+	
       return formattedWorkBlock;
     }
 

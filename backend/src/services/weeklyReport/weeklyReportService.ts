@@ -12,11 +12,11 @@ import { Temporal } from '@js-temporal/polyfill';
 import { ReportData } from '../../types/ReportData.js';
 
 
-export default async function generateWeeklyReport(employeeId: number, from: Temporal.PlainDate , to: Temporal.PlainDate, employeeName: string = 'John Doe', reportFileFormat: string) {
+export default async function generateWeeklyReport(employeeId: number, from: Temporal.PlainDate, to: Temporal.PlainDate, employeeName: string = 'John Doe', reportFileFormat: string) {
 
   let reportData: ReportData = await generateWeeklyReportData(employeeId, from, to, employeeName);
   let resultBuffer = undefined;
-
+  try{
   switch (reportFileFormat) {
     case '.pdf':
       const htmlTemplate = generateHtmlTemplate(reportData);
@@ -30,13 +30,16 @@ export default async function generateWeeklyReport(employeeId: number, from: Tem
       const zip = new PizZip(content);
 
       const doc = new Docxtemplater(zip);
-      doc.setData(reportData);
-      doc.render();
+      doc.render({ data: reportData });
 
       resultBuffer = doc.getZip().generate({ type: 'nodebuffer' });
       break;
     default:
       throw new TypeError('Invalid report file format');
+  }
+  }
+  catch(error){
+	  console.log(error);
   }
 
   return resultBuffer;
