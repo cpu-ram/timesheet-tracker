@@ -16,30 +16,34 @@ export default async function generateWeeklyReport(employeeId: number, from: Tem
 
   let reportData: ReportData = await generateWeeklyReportData(employeeId, from, to, employeeName);
   let resultBuffer = undefined;
-  try{
-  switch (reportFileFormat) {
-    case '.pdf':
-      const htmlTemplate = generateHtmlTemplate(reportData);
-      resultBuffer = Buffer.from(await convertHtmlToPdf(htmlTemplate));
-      break;
-    case '.docx':
-      const filename = fileURLToPath(import.meta.url);
-      const directory = dirname(filename);
-      const templatePath = path.resolve(directory, '../../assets/timesheet-template.docx');
-      const content = fs.readFileSync(templatePath, 'binary');
-      const zip = new PizZip(content);
+  try {
+    switch (reportFileFormat.toLowerCase()) {
+      case '.pdf':
+        const htmlTemplate = generateHtmlTemplate(reportData);
+        resultBuffer = Buffer.from(await convertHtmlToPdf(htmlTemplate));
+        break;
+      case '.docx':
+        const filename = fileURLToPath(import.meta.url);
+        const directory = dirname(filename);
+        const templatePath = path.resolve(directory, '../../assets/timesheet-template.docx');
 
-      const doc = new Docxtemplater(zip);
-      doc.render({ data: reportData });
+        if (!fs.existsSync(templatePath)) {
+          throw new Error(`Template file not found at path: ${templatePath}`);
+        }
+        const content = fs.readFileSync(templatePath, 'binary');
+        const zip = new PizZip(content);
 
-      resultBuffer = doc.getZip().generate({ type: 'nodebuffer' });
-      break;
-    default:
-      throw new TypeError('Invalid report file format');
+        const doc = new Docxtemplater(zip);
+        doc.render(reportData);
+
+        resultBuffer = doc.getZip().generate({ type: 'nodebuffer' });
+        break;
+      default:
+        throw new TypeError('Invalid report file format');
+    }
   }
-  }
-  catch(error){
-	  console.log(error);
+  catch (error) {
+    console.error(`Report generation error: ${error}`);
   }
 
   return resultBuffer;
