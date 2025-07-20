@@ -107,11 +107,12 @@ const TimesheetPage = () => {
             padding: {
               xs: '0 0.5em',
               md: 0,
-            }
+            },
+            marginBottom: '5em',
           }}>
           <Grid id="add-work-block"
-            container 
-	    className='addWorkBlock'
+            container
+            className='addWorkBlock'
             sx={{
               flexDirection: 'column',
               padding: '0',

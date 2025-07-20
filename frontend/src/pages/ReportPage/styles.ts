@@ -50,11 +50,7 @@ export const getWeekTitleContainerStyle = () => {
     display: 'flex',
     alignSelf: 'left',
     flexGrow: 1,
-    paddingLeft: 0,
-    marginBottom: '1em',
-    borderBottom: '1px solid #ccc',
-
-    padding: '0.5em 0',
+    padding: '0.6em 0 1.1em',
     boxSizing: 'border-box',
     backgroundColor: 'transparent',
 
@@ -64,6 +60,10 @@ export const getWeekTitleContainerStyle = () => {
       fontFamily: 'Roboto',
       letterSpacing: '0',
       paddingLeft: '0.5em',
+    },
+
+    '& h5': {
+      fontWeight: 500,
     },
   };
 }
@@ -100,6 +100,7 @@ export const getWeekTotalStyle = () => {
     maxWidth: '1200px',
     margin: '0 auto',
     padding: '0',
+    border: 0,
   };
 }
 
@@ -133,7 +134,7 @@ export const getSignatureStyle = () => {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'left',
-    marginLeft: '2em',
+    marginLeft: '0 1em',
   };
 }
 

@@ -145,6 +145,26 @@ const ReportPage = () => {
         resourceNameList={['timesheet']}
       />
 
+      <Box key='title'
+        className="week-title-container"
+        sx={getWeekTitleContainerStyle()}>
+
+        <Typography variant="h5">
+          {
+            selectedWeekDateRange.from.toLocaleString('en-US', {
+              weekday: 'short',
+              month: 'short',
+              day: '2-digit',
+            })
+          }—{
+            selectedWeekDateRange.to.toLocaleString('en-US', {
+              weekday: 'short',
+              month: 'short',
+              day: '2-digit',
+            })}
+        </Typography>
+      </Box>
+
       <Grid className="main-content"
         container
         justifyContent="center"
@@ -161,25 +181,7 @@ const ReportPage = () => {
             backgroundColor: 'transparent',
           }}>
 
-          <Box key='title'
-            className="week-title-container"
-            sx={getWeekTitleContainerStyle()}>
 
-            <Typography variant="h5">
-              {
-                selectedWeekDateRange.from.toLocaleString('en-US', {
-                  weekday: 'short',
-                  month: 'short',
-                  day: '2-digit',
-                })
-              }—{
-                selectedWeekDateRange.to.toLocaleString('en-US', {
-                  weekday: 'short',
-                  month: 'short',
-                  day: '2-digit',
-                })}
-            </Typography>
-          </Box>
 
 
           <Box key="data"
@@ -288,7 +290,16 @@ const ReportPage = () => {
             <Box
               className="signature"
               component="form"
-              sx={getSignatureStyle()}>
+              sx={[
+                getSignatureStyle(),
+                {
+                  justifyContent: {
+                    xs: isSigned ? 'center' : 'flex-end',
+                    sm: isSigned ? 'center' : 'flex-start',
+                  },
+                  padding: 0,
+                }
+              ]}>
 
               {!isSigned ?
                 <Button
@@ -321,65 +332,82 @@ const ReportPage = () => {
 
         </Box>
 
-        {isSigned &&
-          <Box
-            className="content-element"
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              padding: '1em 1em',
-            }}>
 
-
-            <Typography
-              className="downloads-box"
-              ref={downloadsBoxRef}
-              sx={getDownloadsBoxStyle()}>
-              Download:
-              <Button variant='contained' sx={{
-                margin: '0 0.5em',
-              }}
-                disabled={!reports.find((x) => (x.format === '.pdf'))?.reportDocument}
-              >
-                <a href={reports
-                  .find(x => x.format === '.pdf')?.reportDocument?.blobUrl ?? ''}
-                  download={reports
-                    .find(x => x.format === '.pdf')?.reportDocument?.fileName ?? ''}>
-                  .pdf
-                </a>
-                {!reports.find(x => x.format === '.docx')?.reportDocument &&
-                  <CircularProgress size={20} thickness={6}
-                    sx={{
-                      alignContent: 'center',
-                      justifyContent: 'center',
-                      position: 'absolute',
-                      left: '50%',
-                      marginLeft: '-0.8em',
-                    }}
-                  />}
-              </Button>
-              <Button variant='contained'
-                disabled={!reports.find(x => x.format === '.docx')?.reportDocument}
-              >
-                <a href={reports
-                  .find(x => x.format === '.docx')?.reportDocument?.blobUrl ?? ''}
-                  download={reports
-                    .find(x => x?.format === '.docx')?.reportDocument?.fileName ?? ''}>
-                  .docx
-                </a>
-                {!reports.find(x => x.format === '.docx')?.reportDocument &&
-                  <CircularProgress
-                    id="circular-progress"
-                    size={20} thickness={6}
-                    sx={getCircularProgressStyle()}
-                  />}
-              </Button>
-
-            </Typography>
-          </Box>
-        }
 
       </Grid >
+
+      {isSigned &&
+        <Box
+          className="content-element"
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '2em 1em',
+
+            marginTop: {
+              xs: '2em',
+              sm: '1em',
+            },
+
+            marginBottom: '4em',
+
+            border: '1px solid #dcdcdc',
+            borderRadius: '4px',
+            width: '100%',
+            maxWidth: '45em',
+
+            backgroundColor: '#f6f6f8',
+
+          }}>
+
+
+          <Typography
+            className="downloads-box"
+            ref={downloadsBoxRef}
+            sx={getDownloadsBoxStyle()}>
+            Download:
+            <Button variant='contained' sx={{
+              margin: '0 0.5em',
+            }}
+              disabled={!reports.find((x) => (x.format === '.pdf'))?.reportDocument}
+            >
+              <a href={reports
+                .find(x => x.format === '.pdf')?.reportDocument?.blobUrl ?? ''}
+                download={reports
+                  .find(x => x.format === '.pdf')?.reportDocument?.fileName ?? ''}>
+                .pdf
+              </a>
+              {!reports.find(x => x.format === '.docx')?.reportDocument &&
+                <CircularProgress size={20} thickness={6}
+                  sx={{
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    left: '50%',
+                    marginLeft: '-0.8em',
+                  }}
+                />}
+            </Button>
+            <Button variant='contained'
+              disabled={!reports.find(x => x.format === '.docx')?.reportDocument}
+            >
+              <a href={reports
+                .find(x => x.format === '.docx')?.reportDocument?.blobUrl ?? ''}
+                download={reports
+                  .find(x => x?.format === '.docx')?.reportDocument?.fileName ?? ''}>
+                .docx
+              </a>
+              {!reports.find(x => x.format === '.docx')?.reportDocument &&
+                <CircularProgress
+                  id="circular-progress"
+                  size={20} thickness={6}
+                  sx={getCircularProgressStyle()}
+                />}
+            </Button>
+
+          </Typography>
+        </Box>
+      }
     </Box >
   );
 }

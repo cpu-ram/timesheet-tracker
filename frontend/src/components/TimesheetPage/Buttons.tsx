@@ -27,18 +27,26 @@ export default function Buttons({
   }, []);
 
   return (
-    <Grid 
+    <Grid
       container
       spacing={0}
       item
       xs={12}
       sx={{
         display: addMode ? 'none' : 'flex',
-        justifyContent: 'flex-start',
+
+        flexDirection: {
+          xs: 'row-reverse',
+          sm: 'row',
+        },
+        justifyContent: {
+          xs: 'flex-start',
+          sm: 'flex-start',
+        },
         boxSizing: 'border-box',
 
         gap: 1,
-        padding: '1em 0.5em 1em',
+        padding: '1em 1em 1em',
 
         borderBottom: `0px solid ${theme.palette.divider}`,
       }}>
@@ -58,12 +66,16 @@ export default function Buttons({
               gap: 1,
               padding: 0,
               margin: 0,
+              flexDirection: {
+                xs: 'row-reverse',
+                sm: 'row',
+              },
             }}>
             <Button
               onClick={() => handleSetAddMode()}
               variant='outlined'
               sx={{
-		display: 'flex',
+                display: 'flex',
                 backgroundColor: 'white',
                 color: 'black',
                 boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
@@ -80,6 +92,7 @@ export default function Buttons({
                   backgroundColor: 'white',
                   color: 'black',
                   boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+                  padding: '0',
                 }}
               >
                 <EditIcon />
@@ -102,8 +115,8 @@ export default function Buttons({
             }}
             variant='outlined'
           >
-            <Typography variant='subtitle1' sx={{
-              padding: 0,
+            <Typography variant='subtitle2' sx={{
+              padding: '0.08em 0',
               margin: 0,
             }}>
               Done
