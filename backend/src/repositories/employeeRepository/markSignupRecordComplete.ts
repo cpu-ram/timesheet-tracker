@@ -6,7 +6,7 @@ export async function markSignupRecordComplete(employeeId: number) {
   let query = `
     UPDATE employees
     SET sign_up_complete=true
-    WHERE employee_id=$1
+    WHERE id=$1
     `;
   let values = [employeeId];
 

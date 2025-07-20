@@ -3,9 +3,9 @@ import dbPool from '../../config/dbPool.js';
 export async function fetchJobsitePreviewRecords() {
   const query = `
     SELECT 
-      UPPER(project_id) as "jobsiteId", 
-      project_address as "jobsiteAddress", 
-      project_name as "jobsiteName"
+      UPPER(id) as "jobsiteId", 
+      address as "jobsiteAddress", 
+      name as "jobsiteName"
     FROM
       projects 
   `;

@@ -9,7 +9,7 @@ export const projectRecordExists = async (jobsiteId: string) => {
         FROM
           projects
         WHERE 
-          project_id=$1
+          id=$1
       );
   `;
   const values = [jobsiteId];

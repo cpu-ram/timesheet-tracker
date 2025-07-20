@@ -22,7 +22,7 @@ export const updateWorkBlockRecord = async (
       temp_supervisor_name=$6,
       additional_notes=$7
     WHERE
-      work_period_id=$8
+      id=$8
     ;
   `
   const values = [

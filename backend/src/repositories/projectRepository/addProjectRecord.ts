@@ -29,8 +29,8 @@ export async function addProjectRecord({
 ) {
   const query = `
     INSERT INTO projects(
-    project_id, project_type, project_address, project_name, 
-    supervisor_id, project_description,
+    id, type, address, name, 
+    supervisor_id, description,
 
     default_work_start_time, default_work_end_time, 
     default_break_start_time, default_break_end_time
@@ -42,7 +42,7 @@ export async function addProjectRecord({
     $7, $8, 
     $9, $10
     )
-    RETURNING project_id
+    RETURNING id
     ;
   `;
   const values = [
@@ -52,7 +52,7 @@ export async function addProjectRecord({
     defaultBreakStartTime, defaultBreakEndTime];
   try {
     const result = await dbPool.query(query, values);
-    return result.rows[0].project_id;
+    return result.rows[0].id;
   } catch (error) {
     if (error instanceof Error) {
       if (error instanceof DatabaseError) {

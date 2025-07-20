@@ -17,7 +17,7 @@ export const deleteProjectRecord = async (id: string) => {
       `
       DELETE 
       FROM projects
-      WHERE project_id = $1
+      WHERE id = $1
       `, [id]);
 
     await client.query(
@@ -29,7 +29,7 @@ export const deleteProjectRecord = async (id: string) => {
   }
   catch (error) {
     await client.query('ROLLBACK');
-    if(error instanceof Error){
+    if (error instanceof Error) {
       throw new Error("Unable to delete project record: " + error.message);
     }
   }

@@ -5,8 +5,8 @@ export async function updateEmployeeNameRecord(employeeId: number, newName: stri
 
   let query = `
     UPDATE employees
-    SET employee_name = $1
-    WHERE employee_id = $2
+    SET name = $1
+    WHERE id = $2
     `;
   let values = [newName, employeeId];
 

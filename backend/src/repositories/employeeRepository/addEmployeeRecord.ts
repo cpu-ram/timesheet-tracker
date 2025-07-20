@@ -8,9 +8,9 @@ export async function addEmployeeRecord(
   }
 ) {
   const query = `
-    INSERT INTO employees(employee_name, employee_nickname, email, sign_up_complete)
+    INSERT INTO employees(name, nickname, email, sign_up_complete)
     VALUES($1, $2, $3, $4)
-    RETURNING employee_id as id, employee_name as name, employee_nickname as nickname;
+    RETURNING id, name, nickname;
   `;
   const values = [employeeName, employeeNickname, email, false];
   try {

@@ -20,25 +20,25 @@ export async function fetchTimesheetDataRecords(employeeId: number, from: Tempor
   }
   const query = `
     SELECT 
-      work_periods.work_period_id as "workBlockId",
-      coalesce(projects.project_address, work_periods.temp_project_location) as "jobsiteAddress",
-      coalesce(projects.project_name, work_periods.temp_project_name) as "jobsiteName",
-      coalesce(projects.project_id, work_periods.temp_project_id) as "jobsiteId",
+      work_periods.id as "workBlockId",
+      coalesce(projects.address, work_periods.temp_project_location) as "jobsiteAddress",
+      coalesce(projects.name, work_periods.temp_project_name) as "jobsiteName",
+      coalesce(projects.id, work_periods.temp_project_id) as "jobsiteId",
       work_start as "workBlockStart",
       break_start as "breakStart",
       break_end as "breakEnd",
       work_end as "workBlockEnd",
       date as "workBlockDate",
-      coalesce(employees.employee_nickname, employees.employee_name, work_periods.temp_supervisor_name) as "supervisorName",
+      coalesce(employees.nickname, employees.name, work_periods.temp_supervisor_name) as "supervisorName",
       additional_notes as "additionalNotes"
     FROM
       work_periods
     LEFT JOIN 
       projects
     ON
-      work_periods.project_id=projects.project_id
+      work_periods.project_id=projects.id
     LEFT JOIN 
-      employees on projects.supervisor_id=employees.employee_id
+      employees on projects.supervisor_id=employees.id
     WHERE
       date >= $1 
     AND

@@ -8,16 +8,16 @@ export const addWorkBlockRecord = async (
   jobsiteId: string | null = null,
   startTime: string | null = null,
   endTime: string | null = null,
-  breakStartTime : string | null = null,
-  breakEndTime : string | null = null,
+  breakStartTime: string | null = null,
+  breakEndTime: string | null = null,
   dates: string[] = [],
-  tempJobsiteName : string | null = null,
-  tempJobsiteAddress : string | null = null,
-  tempSupervisorName : string | null = null,
-  additionalNotes : string | null = null
+  tempJobsiteName: string | null = null,
+  tempJobsiteAddress: string | null = null,
+  tempSupervisorName: string | null = null,
+  additionalNotes: string | null = null
 ): Promise<number[]> => {
 
-  let result: number[]=new Array<number>();
+  let result: number[] = new Array<number>();
 
   if (!Array.isArray(dates) || dates.length === 0) {
     throw new Error('No dates provided');
@@ -46,17 +46,17 @@ export const addWorkBlockRecord = async (
       temp_project_location, temp_supervisor_name, additional_notes
     )
     VALUES %L
-    returning work_period_id AS workBlockId;
+    returning id AS workBlockId;
   `, rows);
 
   try {
     const queryResult = await dbPool.query(query);
-    result = queryResult.rows.map((row: {workBlockId:number}) => row.workBlockId);
+    result = queryResult.rows.map((row: { workBlockId: number }) => row.workBlockId);
 
   } catch (error) {
-    if (error instanceof Error){
+    if (error instanceof Error) {
       throw new Error(`Unable to add record: ${error.message}`);
-    } 
+    }
   }
   return result;
 };

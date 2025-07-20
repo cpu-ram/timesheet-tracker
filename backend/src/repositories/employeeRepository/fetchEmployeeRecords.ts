@@ -3,9 +3,9 @@ import dbPool from '../../config/dbPool.js';
 export async function fetchEmployeeRecords() {
   let query = `
     SELECT
-      employee_id as id,
-      employee_name as name,
-      employee_nickname as nickname
+      id,
+      name,
+      nickname
     FROM
       employees;
     `;
