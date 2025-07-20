@@ -40,16 +40,18 @@ export async function fetchTimesheetDataRecords(employeeId: number, from: Tempor
     LEFT JOIN 
       employees on projects.supervisor_id=employees.id
     WHERE
-      date >= $1 
+      employee_id = $1
     AND
-      date <= $2
+      date >= $2
+    AND
+      date <= $3
     ORDER BY
       date ASC NULLS LAST,
       work_start ASC NULLS LAST,
       work_end ASC NULLS LAST
     ;
   `;
-  const values = [formattedFrom, formattedTo];
+  const values = [employeeId, formattedFrom, formattedTo];
   let result = undefined;
   try {
     result = await dbPool.query(query, values);
