@@ -1,6 +1,6 @@
 import { JobsiteProps } from '../types.ts';
 
-export interface AddJobsiteFormProps {
+export interface JobsiteDataEntryFormProps {
   jobsite: JobsiteProps | null;
   handleEnteredData: (data: any) => void;
   handleDiscard: () => void;

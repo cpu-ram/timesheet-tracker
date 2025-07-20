@@ -12,7 +12,7 @@ function createTextEntryFieldFactory(
     formStructure,
     formData,
   }: {
-    handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) => void,
+    handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     formStructure: FormField[],
     formData: Record<string, any>,
   }) {

@@ -17,7 +17,7 @@ import { fetchJobsite } from '../../api/jobsiteApi.ts';
 
 
 import JobsiteDetails from '../../components/Jobsite/JobsiteDetails/JobsiteDetails.tsx';
-import AddJobsiteForm from '../../components/Jobsite/AddJobsiteForm/AddJobsiteForm.tsx';
+import JobsiteDataEntryForm from './JobsiteDataEntryForm/JobsiteDataEntryForm.tsx';
 
 import { createJobsite, deleteJobsite, updateJobsite } from '../../api/jobsiteApi.ts';
 
@@ -225,7 +225,7 @@ const JobsitePanel = (
       {
         (mode === 'edit' || mode === 'add') &&
         (
-          <AddJobsiteForm
+          <JobsiteDataEntryForm
             handleDiscard={handleDiscard}
             handleEnteredData={async (props: JobsiteProps) => {
               if (!handleEnteredData) throw new Error("Error: Jobsite addition form's data handler is not defined.");

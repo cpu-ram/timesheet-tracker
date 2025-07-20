@@ -10,7 +10,7 @@ import { convertDateToPlainTime, convertPlainTimeToDate } from '../../../utils/t
 import { LocalizationProvider, DesktopTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-import { AddJobsiteFormProps } from './types.ts';
+import { JobsiteDataEntryFormProps } from './types.ts';
 import { initializeFormData, validateTimes } from './utils.ts';
 
 import { FormStructure } from './types.ts';
@@ -25,9 +25,9 @@ import { getFieldTitleStyle } from '../../shared/styles/recordStyles.ts';
 
 import { ApiError } from '../../../errors/ApiError.ts';
 
-const AddJobsiteForm = ({
+const JobsiteDataEntryForm = ({
   jobsite, handleEnteredData, handleDiscard, mode, setMode
-}: AddJobsiteFormProps) => {
+}: JobsiteDataEntryFormProps) => {
 
   const navigate = useNavigate();
 
@@ -165,7 +165,7 @@ const AddJobsiteForm = ({
               borderRadius: '4px',
               padding: '0.5em',
               border: `1px solid ${theme.palette.divider}`,
-              '& input, .entry-field, textarea, .MuiOutlinedInput-root': {
+              '& .MuiInputBase-root': {
                 backgroundColor: `${theme.palette.grey[100]} !important`,
               },
               '& > div': {
@@ -177,7 +177,7 @@ const AddJobsiteForm = ({
 
 
               '& .MuiInputAdornment-root .MuiIconButton-root': {
-                backgroundColor: `${theme.palette.grey[100]} !important`,
+                // backgroundColor: `${theme.palette.grey[100]} !important`,
                 borderRadius: '50%',
                 padding: '4px',
                 boxShadow: 'none',
@@ -225,16 +225,16 @@ const AddJobsiteForm = ({
               mode === 'add' && (
                 <>
                   {textEntryFieldFactory.createField({
-                    name: 'jobsiteId', required: true, 
+                    name: 'jobsiteId', required: true,
                     maxLength: JOBSITE_ID_MAX_LENGTH,
                   })}
                 </>
               )
             }
 
-            {textEntryFieldFactory.createField({ name: 'jobsiteName'})}
-            {textEntryFieldFactory.createField({ name: 'jobsiteAddress'})}
-            {textEntryFieldFactory.createField({ name: 'jobsiteDescription'})}
+            {textEntryFieldFactory.createField({ name: 'jobsiteName' })}
+            {textEntryFieldFactory.createField({ name: 'jobsiteAddress' })}
+            {textEntryFieldFactory.createField({ name: 'jobsiteDescription' })}
             {
               // textEntryFieldFactory.createField({ name: 'supervisorName', gridWidth: 6.7 })
             }
@@ -248,7 +248,7 @@ const AddJobsiteForm = ({
                 textField: {
                   name: "startTime",
                   onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-		    const timeEntered=new Date(event.target.value);
+                    const timeEntered = new Date(event.target.value);
                     () => handleTimeChange('defaultWorkStartTime')(timeEntered);
                   }
                 }
@@ -269,13 +269,13 @@ const AddJobsiteForm = ({
                 textField: {
                   name: "endTime",
                   onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-		    const timeEntered=new Date(event.target.value);
+                    const timeEntered = new Date(event.target.value);
                     () => handleTimeChange('defaultWorkEndTime')(timeEntered);
                   }
                 }
               }}
 
-	      />
+            />
 
 
 
@@ -338,4 +338,4 @@ const AddJobsiteForm = ({
   );
 };
 
-export default AddJobsiteForm;
+export default JobsiteDataEntryForm;
