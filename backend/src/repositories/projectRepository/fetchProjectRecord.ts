@@ -28,7 +28,7 @@ export const fetchProjectRecord = async (jobsiteId: string) => {
   const values = [jobsiteId];
   try {
     const result = await dbPool.query(query, values);
-    if (!result.rowCount) throw new Error('Postgres query error');
+    if (result.rowCount == null) throw new Error('Postgres query error');
     if (result.rowCount === 0) return null;
     if (result.rowCount > 1) throw new Error();
     return result.rows[0];

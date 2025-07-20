@@ -14,7 +14,7 @@ export async function fetchSignUpCompletionStatusRecord(employeeId: number) {
 
   try {
     result = await dbPool.query(query, values);
-    if (!result.rowCount) throw new Error('Bad database response');
+    if (result.rowCount == null) throw new Error('Bad database response');
 
     if (result.rowCount === 0) {
       throw new Error('No employee found with the given ID');
