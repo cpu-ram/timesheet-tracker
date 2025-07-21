@@ -1,12 +1,11 @@
-import { BrowserRouter as Router} from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { GlobalStyles } from '@mui/material';
-
-import { TimesheetProvider } from './contexts/TimesheetContext.tsx';
-import { PopupProvider } from './contexts/PopupContext.tsx';
+import { useStyleContext } from './contexts/StyleContext.tsx';
 
 import { useAuthContext } from './contexts/AuthContext.tsx';
 
-import { useStyleContext } from './contexts/StyleContext.tsx';
+import { PopupProvider } from './contexts/PopupContext.tsx';
+import { TimesheetProvider } from './contexts/TimesheetContext.tsx';
 
 import AuthenticatedRoutes from './routes/AuthenticatedRoutes.tsx';
 import UnauthenticatedRoutes from './routes/UnauthenticatedRoutes.tsx';

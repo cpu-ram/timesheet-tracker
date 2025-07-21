@@ -1,10 +1,32 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 
 export default async function convertHtmlToPdf(htmlContent: string) {
-  const browser = await puppeteer.launch({args: ['--no-sandbox']});
-  const page = await browser.newPage();
-  await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-  const pdfBuffer = await page.pdf({ format: 'A4', landscape: true });
-  await browser.close();
-  return pdfBuffer;
+
+  let browser: Browser | undefined;
+
+  try {
+    browser = await puppeteer.launch({
+      headless: 'new' as any,
+      args: ['--no-sandbox'],
+      timeout: 60000,
+      protocolTimeout: 60000,
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, {
+      waitUntil: 'networkidle0',
+      timeout: 60000,
+    });
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      landscape: true,
+      printBackground: true,
+    });
+
+    return pdfBuffer;
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
 }

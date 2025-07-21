@@ -16,6 +16,11 @@ const dbPool: Pool = new Pool({
     process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' ?
       { rejectUnauthorized: true, }
       : false,
+
+  connectionTimeoutMillis: 3000,
+  idleTimeoutMillis: 10000,
+  max: 10,
+
   types: {
     getTypeParser: (dataTypeID, format) => {
       if (dataTypeID === timestampWithoutTzDataTypeId) {
