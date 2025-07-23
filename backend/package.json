@@ -10,7 +10,7 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "start-db": "node local/run-postgres.js",
-    "dev": "nodemon server.js",
+    "dev": "nodemon --exec tsx server.ts",
     "build": "tsc"
   },
   "keywords": [],

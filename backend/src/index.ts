@@ -30,7 +30,30 @@ const app = express();
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) throw new Error('SESSION_SECRET is not set in environment variables');
 
-const PgSession = connectPgSimple(session);
+let sessionMiddleware: any;
+try {
+  const PgSession = connectPgSimple(session);
+  sessionMiddleware = session({
+    store: new PgSession({ pool: dbPool }),
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production',
+      maxAge: 10*24*60*60*1000,
+    },
+  });
+  console.log('Session store initialized.');
+} catch (error: unknown){
+  console.error('Failed to initialize session store: ', error);
+  sessionMiddleware = session({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+  });
+}
 
 app.use(cors({
   origin: corsOrigins,
@@ -38,18 +61,7 @@ app.use(cors({
   credentials: true,
 }));
 app.set('trust proxy', 1);
-app.use(session({
-  store: new PgSession({ pool: dbPool }),
-  secret: sessionSecret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    maxAge: 10 * 24 * 60 * 60 * 1000,
-  }
-}));
+app.use( sessionMiddleware );
 
 app.use(passport.initialize());
 app.use(passport.session());
