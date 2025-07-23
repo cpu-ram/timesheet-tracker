@@ -1,10 +1,10 @@
-import { useStyleContext } from "../../contexts/StyleContext"
+import { useStyleContext } from '../../contexts/StyleContext';
 
 export const getReportPageStyle = () => {
   const { theme } = useStyleContext();
   return {
-    height: 'auto',
-    minHeight: '100%',
+    //height: 'auto',
+    //minHeight: '100%',
     width: '100%',
     display: 'flex',
 
@@ -15,9 +15,11 @@ export const getReportPageStyle = () => {
     alignItems: 'center',
     flexDirection: 'column',
 
-    padding: '3.5em 0.5em',
+    padding: '3.5em 0.5em 7em',
+    marginBottom: '2em',
+    marginTop: 0,
   };
-}
+};
 
 export const getMainContentStyle = () => {
   const { theme } = useStyleContext();
@@ -29,6 +31,8 @@ export const getMainContentStyle = () => {
     alignItems: 'center',
     boxSizing: 'border-box',
     left: '0',
+
+    margin: '0',
 
     padding: '0',
     borderRadius: '4px',
@@ -43,54 +47,56 @@ export const getMainContentStyle = () => {
       borderRadius: '0 0 4px 4px',
     },
   };
-}
+};
 
 export const getWeekTitleContainerStyle = () => {
   return {
     display: 'flex',
     alignSelf: 'left',
-    flexGrow: 1,
+    flexGrow: 0,
     padding: '0.6em 0 1.1em',
     boxSizing: 'border-box',
     backgroundColor: 'transparent',
-
+    margin: '0',
+    height: '4em !important',
     '& h2,h3,h4,h5,h6': {
       display: 'flex',
       alignItems: 'center',
       fontFamily: 'Roboto',
       letterSpacing: '0',
       paddingLeft: '0.5em',
+      height: '3em',
     },
 
     '& h5': {
       fontWeight: 500,
     },
   };
-}
+};
 
 export const getWorkDayStyle = () => {
-  return { marginBottom: '1em', };
-}
+  return { marginBottom: '1em' };
+};
 
 export const getWorkDayHeaderStyle = () => {
   return {
     display: 'flex',
     justifyContent: 'space-between',
   };
-}
+};
 
 export const getWorkDayDateStyle = () => {
   return {
-    textAlign: 'left'
+    textAlign: 'left',
   };
-}
+};
 
 export const getWorkDayHoursStyle = () => {
   return {
     fontStyle: 'italic',
     paddingLeft: '1em',
   };
-}
+};
 
 export const getWeekTotalStyle = () => {
   return {
@@ -102,7 +108,7 @@ export const getWeekTotalStyle = () => {
     padding: '0',
     border: 0,
   };
-}
+};
 
 export const getSignBoxStyle = () => {
   const { theme } = useStyleContext();
@@ -113,7 +119,7 @@ export const getSignBoxStyle = () => {
     alignSelf: 'center',
     mx: 'auto',
   };
-}
+};
 
 export const getSignedStatementStyle = () => {
   return {
@@ -126,7 +132,7 @@ export const getSignedStatementStyle = () => {
     color: 'black',
     width: '100%',
   };
-}
+};
 
 export const getSignatureStyle = () => {
   return {
@@ -136,7 +142,7 @@ export const getSignatureStyle = () => {
     justifyContent: 'left',
     marginLeft: '0 1em',
   };
-}
+};
 
 export const getSignButtonStyle = () => {
   return {
@@ -146,7 +152,7 @@ export const getSignButtonStyle = () => {
     justifyContent: 'left',
     marginLeft: '2em',
   };
-}
+};
 
 export const getDownloadsBoxStyle = () => {
   return {
@@ -157,11 +163,11 @@ export const getDownloadsBoxStyle = () => {
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    'a': {
+    a: {
       color: 'white',
-    }
+    },
   };
-}
+};
 
 export const getCircularProgressStyle = () => {
   return {
@@ -171,9 +177,7 @@ export const getCircularProgressStyle = () => {
     left: '50%',
     marginLeft: '-0.8em',
   };
-}
-
-
+};
 
 export const getWorkBlocksWrapperStyle = () => {
   const { theme } = useStyleContext();
@@ -188,6 +192,6 @@ export const getWorkBlocksWrapperStyle = () => {
 
     '& .work-block + .work-block': {
       borderTop: `1.5px solid ${theme.palette.divider}`,
-    }
+    },
   };
-}
+};
