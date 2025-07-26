@@ -28,8 +28,9 @@ function LoginPage() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: '1em',
+          justifyContent: 'flex-start',
+          paddingTop: '7em',
+          minHeight: '100dvh',
         }}
       >
         <Typography

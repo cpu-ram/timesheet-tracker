@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
 import { useStyleContext } from '../contexts/StyleContext.tsx';
 import { useNotificationContext } from '../contexts/NotificationContext.tsx';
@@ -44,113 +45,137 @@ const TimesheetPage = () => {
         ?.workBlocks || []
     : [];
 
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    const isMobileChrome = /(Chrome|CriOS)/.test(ua) && /(Mobile|Android|iPhone|iPad)/.test(ua);
+    if (!isMobileChrome) return;
+
+    if (addMode || editMode) {
+      const nudge = () => {
+        window.scrollBy(0, 1);
+        window.scrollBy(0, -1);
+      };
+      window.addEventListener('focusin', nudge, true);
+      const t = setTimeout(nudge, 150);
+      return () => {
+        window.removeEventListener('focusin', nudge, true);
+        clearTimeout(t);
+      };
+    }
+  }, [addMode, editMode]);
+
   return (
-    <Box
-      className="timesheet-page"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        padding: {
-          xs: '48px 0 0 0',
-        },
-
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignContent: 'center',
-
-        backgroundColor: theme.palette.grey[100],
-      }}
-    >
-      <Navigation resourceNameList={['weekly_report']} />
+    <>
       <Box
+        className="timesheet-page"
         sx={{
-          maxWidth: '45em',
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          padding: {
+            xs: '48px 0 0 0',
+          },
+
+          alignSelf: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignContent: 'center',
+          boxSizing: 'border-box',
+
+          backgroundColor: theme.palette.grey[100],
+          WebkitOverflowScrolling: 'touch',
         }}
       >
-        <Calendar></Calendar>
-
-        <Buttons
-          {...{
-            editMode,
-            addMode,
-            handleSetAddMode,
-            handleSetEditMode,
-            handleDiscard,
-            handleCancelEdit,
-            currentDayWorkData,
-          }}
-        ></Buttons>
-
-        {notification && (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              margin: '0.75em 0 0.75em 0',
-            }}
-          >
-            {
-              <Typography
-                sx={{
-                  padding: '0.5em',
-                  border: '1px solid grey',
-                  backgroundColor: theme.palette.info.light,
-                  color: theme.palette.info.contrastText,
-                  borderRadius: '4px',
-                  fontWeight: 500,
-                  fontSize: '1em',
-                }}
-              >
-                {notification}
-              </Typography>
-            }
-          </Grid>
-        )}
-
+        <Navigation resourceNameList={['weekly_report']} />
         <Box
-          id="main-content"
           sx={{
-            padding: {
-              xs: '0 0.5em',
-              md: 0,
-            },
-            marginBottom: '5em',
+            maxWidth: '45em',
           }}
         >
-          <Grid
-            id="add-work-block"
-            container
-            className="addWorkBlock"
-            sx={{
-              flexDirection: 'column',
-              padding: '0',
-              height: 'auto',
-              backgroundColor: theme.palette.grey[100],
+          <Calendar></Calendar>
 
-              borderRadius: '0.7em',
-              '& > .work-block-entry-form': {
-                borderRadius: '0.7em',
+          <Buttons
+            {...{
+              editMode,
+              addMode,
+              handleSetAddMode,
+              handleSetEditMode,
+              handleDiscard,
+              handleCancelEdit,
+              currentDayWorkData,
+            }}
+          ></Buttons>
+
+          {notification && (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                margin: '0.75em 0 0.75em 0',
+              }}
+            >
+              {
+                <Typography
+                  sx={{
+                    padding: '0.5em',
+                    border: '1px solid grey',
+                    backgroundColor: theme.palette.info.light,
+                    color: theme.palette.info.contrastText,
+                    borderRadius: '4px',
+                    fontWeight: 500,
+                    fontSize: '1em',
+                  }}
+                >
+                  {notification}
+                </Typography>
+              }
+            </Grid>
+          )}
+
+          <Box
+            id="main-content"
+            className={addMode || editMode ? 'no-anchor' : undefined}
+            sx={{
+              padding: {
+                xs: '0 0.5em',
+                md: 0,
               },
-              margin: '0.5em 0',
-              border: `1px solid ${theme.palette.divider}`,
-              display: addMode ? 'flex' : 'none',
+              marginBottom: '5em',
             }}
           >
-            {addMode && (
-              <WorkBlockEntryForm
-                formFlags={{
-                  mode: 'add',
-                }}
-              />
-            )}
-          </Grid>
+            <Grid
+              id="add-work-block"
+              container
+              className="addWorkBlock"
+              sx={{
+                flexDirection: 'column',
+                padding: '0',
+                height: 'auto',
+                backgroundColor: theme.palette.grey[100],
 
-          <DayWorkBlocks {...{ workData: currentDayWorkData }}></DayWorkBlocks>
+                borderRadius: '0.7em',
+                '& > .work-block-entry-form': {
+                  borderRadius: '0.7em',
+                },
+                margin: '0.5em 0',
+                border: `1px solid ${theme.palette.divider}`,
+                display: addMode ? 'flex' : 'none',
+              }}
+            >
+              {addMode && (
+                <WorkBlockEntryForm
+                  formFlags={{
+                    mode: 'add',
+                  }}
+                />
+              )}
+            </Grid>
+
+            <DayWorkBlocks {...{ workData: currentDayWorkData }}></DayWorkBlocks>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 export default TimesheetPage;

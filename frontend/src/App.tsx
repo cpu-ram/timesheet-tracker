@@ -28,7 +28,7 @@ function App() {
         styles={{
           '*': { boxSizing: 'border-box' },
           'html, body, #root': {
-            height: '100%',
+            minHeight: '100%',
             margin: 0,
             padding: 0,
             width: '100%',
@@ -36,6 +36,8 @@ function App() {
             flexDirection: 'column',
             backgroundColor: `${theme.palette.grey[100]}`,
             overflowX: 'hidden',
+            overflowY: 'auto',
+            minHeight: '100dvh',
           },
         }}
       />
