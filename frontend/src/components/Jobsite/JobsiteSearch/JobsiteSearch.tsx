@@ -16,8 +16,11 @@ interface JobsiteOption {
   [key: string]: any;
 }
 
-export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback?: (arg: { jobsiteId: string }) => void }) {
-
+export default function JobsiteSearch({
+  foundDataCallback,
+}: {
+  foundDataCallback?: (arg: { jobsiteId: string }) => void;
+}) {
   const { theme } = useStyleContext();
   const { jobsiteSearchResults, handleSearchJobsites } = useTimesheetContext();
 
@@ -57,14 +60,11 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
 
           '& fieldset > legend': {
             marginLeft: '3.2em',
-          }
-
+          },
         }}
       >
-
         <Autocomplete<JobsiteOption>
           value={null}
-
           id="jobsite-search-autocomplete"
           sx={{
             padding: '0 0',
@@ -76,10 +76,9 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
               '& .MuiPaper-root::first-of-type': {
                 borderTopLeftRadius: '0.3em',
                 borderTopRightRadius: '0.3em',
-              }
+              },
             },
           }}
-
           slotProps={{
             paper: {
               elevation: 20,
@@ -99,29 +98,19 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
               }),
             },
           }}
-
           inputValue={jobsiteSearchQuery}
-          filterOptions={(options) => options}
+          filterOptions={options => options}
           options={jobsiteSearchResults}
-          getOptionLabel={(option) =>
-            option.id
-          }
-          isOptionEqualToValue={(option, value) =>
-            option.id === value.id
-          }
+          getOptionLabel={option => option.id}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
           renderOption={(props, option) => {
-
             const { key, ...restProps } = props;
             return (
-              <li
-                key={key}
-                {...restProps}
-              >
+              <li key={key} {...restProps}>
                 <Box component="span" sx={{}}>
                   {Object.entries(option)
                     .filter(([, value]) => value != null)
                     .map(([key, value]) => {
-
                       return (
                         <Typography
                           key={key}
@@ -144,28 +133,24 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
                             text={value.toString()}
                             query={jobsiteSearchQuery}
                           />
-
                         </Typography>
                       );
-                    }
-                    )}
+                    })}
                 </Box>
               </li>
             );
           }}
-          onInputChange={
-            (_event, newValue) => {
-              setJobsiteSearchQuery(newValue);
-              handleSearchJobsites(newValue);
-            }
-          }
+          onInputChange={(_event, newValue) => {
+            setJobsiteSearchQuery(newValue);
+            handleSearchJobsites(newValue);
+          }}
           onChange={(_, value) => {
             if (value?.id && foundDataCallback) {
               const jobsiteId: string = value.id;
               foundDataCallback({ jobsiteId });
             }
           }}
-          renderInput={(params) => (
+          renderInput={params => (
             <Box
               sx={{
                 position: 'relative',
@@ -174,7 +159,6 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
             >
               <TextField
                 sx={{
-
                   fontStyle: 'italic',
                   backgroundColor: theme.palette.grey[100],
                   boxShadow: '0px 5px 5px rgba(0,0,0,0.15)',
@@ -185,7 +169,6 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
                   borderBottomRightRadius: '1.5em 50%',
 
                   padding: 0,
-
 
                   '& input': {
                     borderTopLeftRadius: '1.5em 50%',
@@ -211,7 +194,6 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
 
                   boxSizing: 'border-box',
                 }}
-
                 {...params}
                 label="Search Jobsites"
                 fullWidth
@@ -222,21 +204,21 @@ export default function JobsiteSearch({ foundDataCallback }: { foundDataCallback
                   top: 'calc(50% - 10px)',
                   left: '1em',
                   zIndex: 10,
-                }}>
+                }}
+              >
                 <SearchIcon
                   sx={{
                     color: theme.palette.grey[700],
                     fontSize: {
                       sx: '40px',
-                    }
+                    },
                   }}
                 />
               </Box>
             </Box>
           )}
         />
-
       </Box>
-    </Grid >
+    </Grid>
   );
 }

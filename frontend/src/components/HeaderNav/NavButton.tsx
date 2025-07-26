@@ -2,14 +2,13 @@ import React from 'react';
 import { alpha, useTheme } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
 
-
 interface NavButtonProps {
   action: () => void;
   key: string;
   icon: React.ElementType;
 }
 
-const NavButton = (({ action, icon: Icon }: NavButtonProps) => {
+const NavButton = ({ action, icon: Icon }: NavButtonProps) => {
   const theme = useTheme();
 
   return (
@@ -36,8 +35,8 @@ const NavButton = (({ action, icon: Icon }: NavButtonProps) => {
           margin: 0,
         }}
       />
-    </IconButton >
-  )
-});
+    </IconButton>
+  );
+};
 
 export default NavButton;

@@ -6,7 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { JOBSITE_ID_MAX_LENGTH } from '../../../utils/validation/jobsiteValidation.ts';
 
-import { convertDateToPlainTime, convertPlainTimeToDate } from '../../../utils/temporalFunctions.ts';
+import {
+  convertDateToPlainTime,
+  convertPlainTimeToDate,
+} from '../../../utils/temporalFunctions.ts';
 import { LocalizationProvider, DesktopTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
@@ -18,7 +21,10 @@ import createTextEntryFieldFactory from './TextEntryFieldFactory.tsx';
 import { JobsiteFieldValue } from '../JobsiteFieldValue.tsx';
 
 import {
-  getErrorWrapperStyle, getErrorTextStyle, getSubmitButtonStyle, getDiscardButtonStyle,
+  getErrorWrapperStyle,
+  getErrorTextStyle,
+  getSubmitButtonStyle,
+  getDiscardButtonStyle,
   getAddJobsiteFormWrapperStyle,
 } from './styles.ts';
 import { getFieldTitleStyle } from '../../shared/styles/recordStyles.ts';
@@ -26,35 +32,46 @@ import { getFieldTitleStyle } from '../../shared/styles/recordStyles.ts';
 import { ApiError } from '../../../errors/ApiError.ts';
 
 const JobsiteDataEntryForm = ({
-  jobsite, handleEnteredData, handleDiscard, mode, setMode
+  jobsite,
+  handleEnteredData,
+  handleDiscard,
+  mode,
+  setMode,
 }: JobsiteDataEntryFormProps) => {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState(() =>
     jobsite
       ? {
-        jobsiteId: jobsite.jobsiteId ?? '',
-        jobsiteName: jobsite.jobsiteName ?? '',
-        jobsiteAddress: jobsite.jobsiteAddress ?? '',
-        jobsiteDescription: jobsite.jobsiteDescription ?? '',
-        supervisorName: jobsite.supervisorName ?? '',
-        defaultWorkStartTime: jobsite.defaultWorkStartTime ?? null,
-        defaultWorkEndTime: jobsite.defaultWorkEndTime ?? null,
-      }
-      : initializeFormData()
+          jobsiteId: jobsite.jobsiteId ?? '',
+          jobsiteName: jobsite.jobsiteName ?? '',
+          jobsiteAddress: jobsite.jobsiteAddress ?? '',
+          jobsiteDescription: jobsite.jobsiteDescription ?? '',
+          supervisorName: jobsite.supervisorName ?? '',
+          defaultWorkStartTime: jobsite.defaultWorkStartTime ?? null,
+          defaultWorkEndTime: jobsite.defaultWorkEndTime ?? null,
+        }
+      : initializeFormData(),
   );
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const [saveLabel, discardLabel] = (() => {
-    if (mode === 'add') { return ['Add', 'Discard']; }
+    if (mode === 'add') {
+      return ['Add', 'Discard'];
+    }
     if (mode === 'edit') return ['Save', 'Cancel'];
 
     throw new Error('Invalid mode: mode must be either "add" or "edit".');
   })();
 
   useEffect(() => {
-    if (validationError && validateTimes({ startTime: formData.defaultWorkStartTime, endTime: formData.defaultWorkEndTime })) {
+    if (
+      validationError &&
+      validateTimes({
+        startTime: formData.defaultWorkStartTime,
+        endTime: formData.defaultWorkEndTime,
+      })
+    ) {
       setValidationError(null);
     }
   }, [formData.defaultWorkStartTime, formData.defaultWorkEndTime]);
@@ -62,19 +79,24 @@ const JobsiteDataEntryForm = ({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
 
-    if (validationError && validateTimes({ startTime: formData.defaultWorkStartTime, endTime: formData.defaultWorkEndTime })) {
+    if (
+      validationError &&
+      validateTimes({
+        startTime: formData.defaultWorkStartTime,
+        endTime: formData.defaultWorkEndTime,
+      })
+    ) {
       setValidationError(null);
     }
 
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
-      [name]:
-        name === 'jobsiteId' ? value.toUpperCase() : value
+      [name]: name === 'jobsiteId' ? value.toUpperCase() : value,
     }));
   };
 
-  const handleTimeChange = (key: 'defaultWorkStartTime' | 'defaultWorkEndTime') =>
-    (date: Date | null) => {
+  const handleTimeChange =
+    (key: 'defaultWorkStartTime' | 'defaultWorkEndTime') => (date: Date | null) => {
       if (!date || isNaN(date.getTime())) return;
 
       const newTime = convertDateToPlainTime(date);
@@ -82,9 +104,9 @@ const JobsiteDataEntryForm = ({
       const proposedFormData = {
         ...formData,
         [key]: newTime,
-      }
+      };
 
-      setFormData((prevData) => ({
+      setFormData(prevData => ({
         ...prevData,
         [key]: newTime,
       }));
@@ -93,15 +115,21 @@ const JobsiteDataEntryForm = ({
         validationError &&
         validateTimes({
           startTime: proposedFormData.defaultWorkStartTime,
-          endTime: proposedFormData.defaultWorkEndTime
-        })) {
+          endTime: proposedFormData.defaultWorkEndTime,
+        })
+      ) {
         setValidationError(null);
       }
     };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (validateTimes({ startTime: formData.defaultWorkStartTime, endTime: formData.defaultWorkEndTime })) {
+    if (
+      validateTimes({
+        startTime: formData.defaultWorkStartTime,
+        endTime: formData.defaultWorkEndTime,
+      })
+    ) {
       if (validationError !== null) setValidationError(null);
       try {
         handleEnteredData(formData);
@@ -109,24 +137,21 @@ const JobsiteDataEntryForm = ({
         if (mode === 'edit') {
           setMode('view');
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Error while creating jobsite:', error);
         setValidationError(
-          (error instanceof ApiError) ?
-            error.status === 409 ?
-              'Jobsite with this ID already exists. Please choose a different ID.' :
-              'API error: ' + error.message :
-            'An unexpected error occurred. Please try again.'
+          error instanceof ApiError
+            ? error.status === 409
+              ? 'Jobsite with this ID already exists. Please choose a different ID.'
+              : 'API error: ' + error.message
+            : 'An unexpected error occurred. Please try again.',
         );
       }
-    }
-    else {
-      const validationErrorString = "Error: end time must be after start time";
+    } else {
+      const validationErrorString = 'Error: end time must be after start time';
       setValidationError(validationErrorString);
     }
   };
-
 
   const theme = useTheme();
 
@@ -141,14 +166,14 @@ const JobsiteDataEntryForm = ({
   const textEntryFieldFactory = createTextEntryFieldFactory({
     handleInputChange,
     formStructure: textFieldsStructure,
-    formData
+    formData,
   });
 
   return (
-
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <form onSubmit={handleSubmit}>
-        <Box id="addJobsiteFormRootWrapper"
+        <Box
+          id="addJobsiteFormRootWrapper"
           sx={{
             ...getAddJobsiteFormWrapperStyle,
             borderRadius: '4px',
@@ -158,7 +183,6 @@ const JobsiteDataEntryForm = ({
             },
           }}
         >
-
           <Box
             sx={{
               backgroundColor: 'white',
@@ -175,7 +199,6 @@ const JobsiteDataEntryForm = ({
                 backgroundColor: 'transparent',
               },
 
-
               '& .MuiInputAdornment-root .MuiIconButton-root': {
                 // backgroundColor: `${theme.palette.grey[100]} !important`,
                 borderRadius: '50%',
@@ -187,50 +210,47 @@ const JobsiteDataEntryForm = ({
                 '& .MuiTouchRipple-root': {
                   display: 'none',
                 },
-              }
-
+              },
             }}
           >
-
             {validationError && (
               <Box sx={getErrorWrapperStyle}>
-                {validationError && <Typography sx={getErrorTextStyle}>{validationError}</Typography>}
+                {validationError && (
+                  <Typography sx={getErrorTextStyle}>{validationError}</Typography>
+                )}
               </Box>
             )}
-            {
-              mode === 'edit' && (
-                <Box sx={{
+            {mode === 'edit' && (
+              <Box
+                sx={{
                   flexDirection: 'row',
                   alignItems: 'center',
                   padding: '0.5em 0 1em 0.56em !important',
-                }}>
-                  <Typography
-                    component="span"
-                    sx={{
-                      ...getFieldTitleStyle,
-                      display: 'inline-block',
-                      width: '7.5em',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    ID
-                  </Typography>
-                  <JobsiteFieldValue isExpected>
-                    {jobsite?.jobsiteId ?? null}
-                  </JobsiteFieldValue>
-                </Box>
-              )
-            }
-            {
-              mode === 'add' && (
-                <>
-                  {textEntryFieldFactory.createField({
-                    name: 'jobsiteId', required: true,
-                    maxLength: JOBSITE_ID_MAX_LENGTH,
-                  })}
-                </>
-              )
-            }
+                }}
+              >
+                <Typography
+                  component="span"
+                  sx={{
+                    ...getFieldTitleStyle,
+                    display: 'inline-block',
+                    width: '7.5em',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  ID
+                </Typography>
+                <JobsiteFieldValue isExpected>{jobsite?.jobsiteId ?? null}</JobsiteFieldValue>
+              </Box>
+            )}
+            {mode === 'add' && (
+              <>
+                {textEntryFieldFactory.createField({
+                  name: 'jobsiteId',
+                  required: true,
+                  maxLength: JOBSITE_ID_MAX_LENGTH,
+                })}
+              </>
+            )}
 
             {textEntryFieldFactory.createField({ name: 'jobsiteName' })}
             {textEntryFieldFactory.createField({ name: 'jobsiteAddress' })}
@@ -239,48 +259,48 @@ const JobsiteDataEntryForm = ({
               // textEntryFieldFactory.createField({ name: 'supervisorName', gridWidth: 6.7 })
             }
 
-
             <DesktopTimePicker
               label="Typical start"
-              value={formData.defaultWorkStartTime ? convertPlainTimeToDate(formData.defaultWorkStartTime) : null}
+              value={
+                formData.defaultWorkStartTime
+                  ? convertPlainTimeToDate(formData.defaultWorkStartTime)
+                  : null
+              }
               onChange={handleTimeChange('defaultWorkStartTime')}
               slotProps={{
                 textField: {
-                  name: "startTime",
+                  name: 'startTime',
                   onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
                     const timeEntered = new Date(event.target.value);
                     () => handleTimeChange('defaultWorkStartTime')(timeEntered);
-                  }
-                }
+                  },
+                },
               }}
               sx={{
                 marginRight: '0.5em',
               }}
-
             />
 
             <DesktopTimePicker
               label="Typical end"
               name="endTime"
-
-              value={formData.defaultWorkEndTime ? convertPlainTimeToDate(formData.defaultWorkEndTime) : null}
+              value={
+                formData.defaultWorkEndTime
+                  ? convertPlainTimeToDate(formData.defaultWorkEndTime)
+                  : null
+              }
               onChange={handleTimeChange('defaultWorkEndTime')}
               slotProps={{
                 textField: {
-                  name: "endTime",
+                  name: 'endTime',
                   onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
                     const timeEntered = new Date(event.target.value);
                     () => handleTimeChange('defaultWorkEndTime')(timeEntered);
-                  }
-                }
+                  },
+                },
               }}
-
             />
-
-
-
           </Box>
-
 
           <Box
             id="buttonsWrapper"
@@ -297,12 +317,11 @@ const JobsiteDataEntryForm = ({
               justifyContent: {
                 xs: 'flex-end',
                 sm: 'flex-start',
-              }
+              },
             }}
           >
-
             <Button
-              variant='contained'
+              variant="contained"
               onClick={handleDiscard}
               value="Discard"
               sx={{
@@ -313,7 +332,7 @@ const JobsiteDataEntryForm = ({
                 '&:hover': {
                   backgroundColor: '#e0e0e0',
                   border: '1.3px solid #555',
-                }
+                },
               }}
             >
               {discardLabel}
@@ -323,18 +342,14 @@ const JobsiteDataEntryForm = ({
               variant="contained"
               type="submit"
               value="Save"
-              sx={
-                getSubmitButtonStyle(!!validationError)
-              }
+              sx={getSubmitButtonStyle(!!validationError)}
             >
               {saveLabel}
             </Button>
-
           </Box>
-
-        </Box >
+        </Box>
       </form>
-    </LocalizationProvider >
+    </LocalizationProvider>
   );
 };
 

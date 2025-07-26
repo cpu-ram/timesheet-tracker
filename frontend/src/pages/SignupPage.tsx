@@ -6,9 +6,10 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 import { Dispatch, SetStateAction } from 'react';
 
-const SignupPage = ({ 
-  setIsSignedUp, setIsAuthenticated 
-} : {
+const SignupPage = ({
+  setIsSignedUp,
+  setIsAuthenticated,
+}: {
   setIsSignedUp: Dispatch<SetStateAction<boolean>>;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -36,8 +37,9 @@ const SignupPage = ({
           body: JSON.stringify({ name: enteredName }),
           headers: {
             'Content-Type': 'application/json',
-          }
-        });
+          },
+        },
+      );
       if (queryResult.ok) {
         setIsSignedUp(true);
         setIsAuthenticated(true);
@@ -82,17 +84,9 @@ const SignupPage = ({
         Timesheet Tracker
       </Typography>
 
-      <Typography
-        variant="h6"
-        sx={{ color: 'grey.600', fontWeight: '600' }}
-      >
+      <Typography variant="h6" sx={{ color: 'grey.600', fontWeight: '600' }}></Typography>
 
-      </Typography>
-
-      <Typography
-        variant="h5"
-        sx={{ color: 'black', fontWeight: '600' }}
-      >
+      <Typography variant="h5" sx={{ color: 'black', fontWeight: '600' }}>
         Please enter your name
       </Typography>
 
@@ -100,7 +94,7 @@ const SignupPage = ({
         variant="outlined"
         label="Full Name"
         value={enteredName}
-        onChange={(event) => setEnteredName(event.target.value)}
+        onChange={event => setEnteredName(event.target.value)}
         sx={{ marginTop: '2em', minWidth: '18em' }}
       />
 

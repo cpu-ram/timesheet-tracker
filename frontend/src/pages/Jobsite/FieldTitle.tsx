@@ -1,9 +1,5 @@
-import { getFieldTitleStyle } from "../../components/shared/styles/recordStyles";
+import { getFieldTitleStyle } from '../../components/shared/styles/recordStyles';
 
 export const FieldTitle = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <span style={getFieldTitleStyle()}>
-      {children}
-    </span>
-  );
+  return <span style={getFieldTitleStyle()}>{children}</span>;
 };

@@ -17,7 +17,8 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
   const { editMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
 
   const handleEnteredData = async ({
-    workBlockData, onJobsiteCreated
+    workBlockData,
+    onJobsiteCreated,
   }: {
     workBlockData: WorkBlockData;
     onJobsiteCreated?: (jobsiteId: string) => void;
@@ -27,7 +28,7 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
       workBlockData,
       onJobsiteCreated,
     });
-  }
+  };
 
   useEffect(() => {
     setSelectedForEditId(null);
@@ -36,11 +37,11 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
     if (!editMode) {
       setSelectedForEditId(null);
     }
-  }, [editMode])
+  }, [editMode]);
 
   const handleSelectForEdit = (workBlockId: number) => {
     setSelectedForEditId(workBlockId);
-  }
+  };
 
   const { theme } = useStyleContext();
 
@@ -61,72 +62,60 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
             borderTopLeftRadius: '4px',
             borderTopRightRadius: '4px',
           },
-          '& .work-block-element:last-child, .work-block-entry-form:last-of-type, .hours-total:last-of-type': {
-            borderBottomLeftRadius: '4px',
-            borderBottomRightRadius: '4px',
-          },
-        }}>
-        {
-          workData && (workData.length > 0) ?
-            (
-              <>
-                {
-                  workData.map((workBlock: WorkBlockData) => {
-                    if (!workBlock.workBlockId) throw new Error('Error: Work Block id missing');
+          '& .work-block-element:last-child, .work-block-entry-form:last-of-type, .hours-total:last-of-type':
+            {
+              borderBottomLeftRadius: '4px',
+              borderBottomRightRadius: '4px',
+            },
+        }}
+      >
+        {workData && workData.length > 0 ? (
+          <>
+            {workData.map((workBlock: WorkBlockData) => {
+              if (!workBlock.workBlockId) throw new Error('Error: Work Block id missing');
 
-                    const workBlockData: WorkBlockData = {
-                      ...workBlock,
-                      workBlockStart: workBlock.workBlockStart || null,
-                      workBlockEnd: workBlock.workBlockEnd || null,
-                    };
+              const workBlockData: WorkBlockData = {
+                ...workBlock,
+                workBlockStart: workBlock.workBlockStart || null,
+                workBlockEnd: workBlock.workBlockEnd || null,
+              };
 
+              const editWorkBlockFormProps: AddWorkBlockFormProps = {
+                workBlockData: workBlockData,
+                formFlags: { mode: 'edit' },
+                handlers: {
+                  handleEnteredData,
+                },
+              };
 
-                    const editWorkBlockFormProps: AddWorkBlockFormProps = {
-                      workBlockData: workBlockData,
-                      formFlags: { mode: 'edit' },
-                      handlers: {
-                        handleEnteredData,
-                      },
-                    };
-
-                    return (
-                      workBlock ?
-                        (
-                          editMode && (workBlock.workBlockId === selectedForEditId) ?
-                            <WorkBlockEntryForm
-                              key={workBlock.workBlockId}
-                              {...editWorkBlockFormProps}
-                            />
-                            :
-                            <WorkBlock key={workBlock.workBlockId}
-                              {...{ ...workBlock, handleDeleteWorkBlock, handleSelectForEdit, editMode }} />
-                        )
-                        :
-                        null
-                    )
-                  })
-                }
-
-
-              </>
-            )
-            :
-            (
-              <Typography key='no-records'
-                sx={{
-                  fontStyle: 'italic',
-                  padding: '1em',
-                  textAlign: 'center',
-                }}
-              >
-                No work records available for the selected day
-              </Typography>
-            )
-        }
-      </Box >
+              return workBlock ? (
+                editMode && workBlock.workBlockId === selectedForEditId ? (
+                  <WorkBlockEntryForm key={workBlock.workBlockId} {...editWorkBlockFormProps} />
+                ) : (
+                  <WorkBlock
+                    key={workBlock.workBlockId}
+                    {...{ ...workBlock, handleDeleteWorkBlock, handleSelectForEdit, editMode }}
+                  />
+                )
+              ) : null;
+            })}
+          </>
+        ) : (
+          <Typography
+            key="no-records"
+            sx={{
+              fontStyle: 'italic',
+              padding: '1em',
+              textAlign: 'center',
+            }}
+          >
+            No work records available for the selected day
+          </Typography>
+        )}
+      </Box>
       <HoursTotal {...{ workData }}></HoursTotal>
     </Box>
   );
-}
+};
 
 export default DayWorkBlocks;

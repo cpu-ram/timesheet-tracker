@@ -24,22 +24,19 @@ export interface WorkBlockFlags {
 
 export type WorkBlockProps = WorkBlockData & WorkBlockHandlers & WorkBlockFlags;
 
-
 export interface AddWorkBlockFormFlags {
   mode?: 'add' | 'edit';
   multiDaySelectionMode?: boolean;
 }
 
-
 export interface WorkBlockSubmitHandler {
-  handleEnteredData: (
-    {
-      workBlockData,
-      onJobsiteCreated
-    }: {
-      workBlockData: WorkBlockData;
-      onJobsiteCreated?: (jobsiteId: string) => void;
-    }) => void;
+  handleEnteredData: ({
+    workBlockData,
+    onJobsiteCreated,
+  }: {
+    workBlockData: WorkBlockData;
+    onJobsiteCreated?: (jobsiteId: string) => void;
+  }) => void;
   onError?: (error: Error) => void;
 }
 

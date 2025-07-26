@@ -1,4 +1,3 @@
-
 import Box from '@mui/material/Box';
 import { WorkBlockEntryForm } from '../WorkBlock/WorkBlockEntryForm/WorkBlockEntryForm.tsx';
 

@@ -15,41 +15,36 @@ const dictionary = [
   {
     key: 'workBlockEnd',
     label: 'To:',
-  }
+  },
 ];
 
 const formatForDisplay = (value: Temporal.PlainTime | string) => {
   if (value instanceof Temporal.PlainTime) {
-    return value.toLocaleString(
-      'en-US',
-      {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      }
-    )
+    return value.toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
   } else if (typeof value === 'string') {
     return value;
   }
-}
+};
 
-export function SuggestedData(
-  {
+export function SuggestedData({
+  fields,
+  suggestedWorkBlockProps,
+  handleMerge,
+}: {
+  fields: string[];
+  suggestedWorkBlockProps: WorkBlockData;
+  handleMerge: ({
     fields,
-    suggestedWorkBlockProps,
-    handleMerge
+    suggestedData,
   }: {
-    fields: string[],
-    suggestedWorkBlockProps: WorkBlockData,
-    handleMerge: ({
-      fields,
-      suggestedData
-    }: {
-      fields: Array<keyof WorkBlockData>;
-      suggestedData: WorkBlockData;
-    }) => void
-  }) {
-
+    fields: Array<keyof WorkBlockData>;
+    suggestedData: WorkBlockData;
+  }) => void;
+}) {
   const { theme } = useStyleContext();
 
   return (
@@ -113,7 +108,12 @@ export function SuggestedData(
 
             marginTop: '-1.2em',
           }}
-          onClick={() => handleMerge({ fields: fields as Array<keyof WorkBlockData>, suggestedData: suggestedWorkBlockProps })}
+          onClick={() =>
+            handleMerge({
+              fields: fields as Array<keyof WorkBlockData>,
+              suggestedData: suggestedWorkBlockProps,
+            })
+          }
         >
           <ArrowBackIosIcon
             sx={{
@@ -138,55 +138,47 @@ export function SuggestedData(
         </IconButton>
       </Box>
 
-      {
-        fields
-          .filter(field => dictionary.some(item => item.key === field))
-          .map((field, _) => {
-
-            let fieldKey = field as keyof WorkBlockData;
-            const value = suggestedWorkBlockProps[fieldKey];
-            return (
-
-              <Typography
-                key={field}
+      {fields
+        .filter(field => dictionary.some(item => item.key === field))
+        .map((field, _) => {
+          let fieldKey = field as keyof WorkBlockData;
+          const value = suggestedWorkBlockProps[fieldKey];
+          return (
+            <Typography
+              key={field}
+              sx={{
+                display: 'block',
+                padding: '0.15em',
+                color: '#666',
+                fontStyle: 'italic',
+              }}
+            >
+              <Box
+                component="span"
                 sx={{
                   display: 'block',
-                  padding: '0.15em',
-                  color: '#666',
-                  fontStyle: 'italic',
+                  marginRight: 'auto',
+                  width: '100%',
                 }}
               >
-                <Box
-                  component="span"
-                  sx={{
-                    display: 'block',
-                    marginRight: 'auto',
-                    width: '100%',
-                  }}
-                >
-                  {dictionary.find(item => item.key === field)?.label || ''}
-                </Box>
+                {dictionary.find(item => item.key === field)?.label || ''}
+              </Box>
 
-                <Box
-                  component="span"
-                  sx={{
-                    paddingLeft: '1em',
-                    display: 'block',
-                  }}
-                >
-                  {
-
-                    suggestedWorkBlockProps[field as keyof WorkBlockData] ?
-                      (
-                        value instanceof Temporal.PlainTime || typeof value === 'string'
-                      ) && formatForDisplay(value) :
-                      ''
-                  }
-                </Box>
-              </Typography>
-            )
-          })
-      }
+              <Box
+                component="span"
+                sx={{
+                  paddingLeft: '1em',
+                  display: 'block',
+                }}
+              >
+                {suggestedWorkBlockProps[field as keyof WorkBlockData]
+                  ? (value instanceof Temporal.PlainTime || typeof value === 'string') &&
+                    formatForDisplay(value)
+                  : ''}
+              </Box>
+            </Typography>
+          );
+        })}
     </Box>
-  )
+  );
 }

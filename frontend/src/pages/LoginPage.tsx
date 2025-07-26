@@ -21,8 +21,6 @@ function LoginPage() {
 
   const theme = useTheme();
 
-
-
   return (
     <>
       <Container
@@ -32,10 +30,10 @@ function LoginPage() {
           alignItems: 'center',
           justifyContent: 'center',
           paddingTop: '1em',
-        }}>
-
+        }}
+      >
         <Typography
-          variant='h5'
+          variant="h5"
           component="h2"
           sx={{
             display: 'flex',
@@ -46,13 +44,15 @@ function LoginPage() {
             borderBottom: '1px solid #ccc',
             paddingBottom: '0.7em !important',
             padding: '0 1em',
-          }}>
+          }}
+        >
           <CalendarMonthIcon
             sx={{
               marginRight: '0.2em',
               fontSize: '1.2em',
               padding: 0,
-            }} />
+            }}
+          />
           Timesheet Tracker
         </Typography>
 

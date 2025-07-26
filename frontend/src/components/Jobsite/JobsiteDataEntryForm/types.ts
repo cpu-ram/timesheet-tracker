@@ -9,8 +9,8 @@ export interface JobsiteDataEntryFormProps {
 }
 
 type FormField = {
-  name: string,
-  label: string,
-}
+  name: string;
+  label: string;
+};
 
 export type FormStructure = FormField[];

@@ -2,7 +2,6 @@ import { useTheme } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
 
-
 interface FieldValueProps {
   isExpected?: boolean;
   children: React.ReactNode;
@@ -14,13 +13,12 @@ export function FieldValue({
   children,
   additionalStyles = {},
 }: FieldValueProps) {
-
   const theme = useTheme();
-  const undefinedWarningStatus = (isExpected && (children == null));
+  const undefinedWarningStatus = isExpected && children == null;
 
   return (
     <Typography
-      component='span'
+      component="span"
       sx={
         [
           {
@@ -29,8 +27,7 @@ export function FieldValue({
             paddingRight: '0.5em',
             minWidth: '10em',
             fontWeight: '450',
-          }
-          ,
+          },
           additionalStyles,
         ] as SxProps<Theme>
       }

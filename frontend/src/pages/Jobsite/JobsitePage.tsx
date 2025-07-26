@@ -1,18 +1,17 @@
-import { useParams, useNavigate } from "react-router-dom";
-import Navigation from "../../components/Navigation/Navigation.tsx";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useParams, useNavigate } from 'react-router-dom';
+import Navigation from '../../components/Navigation/Navigation.tsx';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { Link } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from 'react-router-dom';
 
-import JobsitePanel from "../../components/Jobsite/JobsitePanel.tsx";
+import JobsitePanel from '../../components/Jobsite/JobsitePanel.tsx';
 
-const JobsitePage = (props: { initialMode: "view" | "add" | "edit" }) => {
-
+const JobsitePage = (props: { initialMode: 'view' | 'add' | 'edit' }) => {
   const { jobsiteId } = useParams();
   const [searchParams] = useSearchParams();
 
@@ -41,18 +40,17 @@ const JobsitePage = (props: { initialMode: "view" | "add" | "edit" }) => {
           display: 'flex',
           width: '100%',
           border: 0,
-        }
+        },
       }}
     >
       <Navigation />
-
 
       <Box
         className="main-content"
         sx={{
           backgroundColor: 'transparent',
-        }}>
-
+        }}
+      >
         <Box
           className="breadcrumbs"
           sx={{
@@ -61,44 +59,44 @@ const JobsitePage = (props: { initialMode: "view" | "add" | "edit" }) => {
             padding: '0.95em 0',
           }}
         >
-          {searchParams.get("fromName") && searchParams.get("fromLink") && (
+          {searchParams.get('fromName') && searchParams.get('fromLink') && (
             <Box
               sx={{
-                "& a": {
-                  color: "black",
+                '& a': {
+                  color: 'black',
                 },
               }}
             >
-              <Link to={searchParams.get("fromLink") as string ?? ''}>
+              <Link to={(searchParams.get('fromLink') as string) ?? ''}>
                 <Typography
                   key="back-link"
                   variant="subtitle1"
                   sx={{
                     backgroundColor: theme.palette.grey[200],
-                    padding: "0.1em 0.4em",
-                    margin: "0.2em 0 0.25em -0.7em",
-                    width: "fit-content",
-                    borderRadius: "0.25em",
-                    border: "1px solid #ccc",
+                    padding: '0.1em 0.4em',
+                    margin: '0.2em 0 0.25em -0.7em',
+                    width: 'fit-content',
+                    borderRadius: '0.25em',
+                    border: '1px solid #ccc',
                   }}
                 >
                   <ArrowBackIcon
                     sx={{
-                      position: "relative",
-                      top: "0.2em",
-                      marginRight: "0.2em",
-                      fontSize: "1em",
+                      position: 'relative',
+                      top: '0.2em',
+                      marginRight: '0.2em',
+                      fontSize: '1em',
                     }}
-                  />{" "}
+                  />{' '}
                   <Box
                     component="span"
                     sx={{
                       fontWeight: 500,
-                      textUnderlineOffset: "0.25em",
-                      textDecoration: "none",
+                      textUnderlineOffset: '0.25em',
+                      textDecoration: 'none',
                     }}
                   >
-                    {searchParams.get("fromName")}
+                    {searchParams.get('fromName')}
                   </Box>
                 </Typography>
               </Link>
@@ -108,35 +106,31 @@ const JobsitePage = (props: { initialMode: "view" | "add" | "edit" }) => {
           <Typography
             variant="h4"
             sx={{
-              padding: "0",
+              padding: '0',
               fontWeight: '700',
               fontSize: '1.8em',
             }}
           >
             <Box
               component="span"
-              onClick={() => navigate("/jobsites")}
+              onClick={() => navigate('/jobsites')}
               sx={{
-                borderRadius: "0.25em",
+                borderRadius: '0.25em',
                 color: theme.palette.primary.dark,
-                "&:hover, &:active": {
-                  cursor: "pointer",
-                  backgroundColor: "#ddd",
+                '&:hover, &:active': {
+                  cursor: 'pointer',
+                  backgroundColor: '#ddd',
                 },
               }}
             >
               Jobsites
             </Box>
-            {" > "}
-            <i>{jobsiteId ?? "New Jobsite"}</i>
+            {' > '}
+            <i>{jobsiteId ?? 'New Jobsite'}</i>
           </Typography>
         </Box>
 
-        <JobsitePanel
-          initialMode={props.initialMode ?? "view"}
-          jobsiteId={jobsiteId}
-        />
-
+        <JobsitePanel initialMode={props.initialMode ?? 'view'} jobsiteId={jobsiteId} />
       </Box>
     </Box>
   );

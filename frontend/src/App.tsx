@@ -35,23 +35,23 @@ function App() {
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: `${theme.palette.grey[100]}`,
-            overflowX: 'hidden', 
-          }
+            overflowX: 'hidden',
+          },
         }}
       />
       <Router>
-        {
-          (isAuthenticated && isSignedUp) ?
-            <PopupProvider>
-              <TimesheetProvider>
-                <AuthenticatedRoutes />
-              </TimesheetProvider>
-            </PopupProvider>
-            : <UnauthenticatedRoutes />
-        }
+        {isAuthenticated && isSignedUp ? (
+          <PopupProvider>
+            <TimesheetProvider>
+              <AuthenticatedRoutes />
+            </TimesheetProvider>
+          </PopupProvider>
+        ) : (
+          <UnauthenticatedRoutes />
+        )}
       </Router>
     </>
-  )
+  );
 }
 
 export default App;

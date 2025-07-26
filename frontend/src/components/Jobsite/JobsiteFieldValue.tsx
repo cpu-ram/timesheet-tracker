@@ -1,8 +1,12 @@
 import { FieldValue } from '../shared/FieldValue.tsx';
 
 export const JobsiteFieldValue = ({
-  children, isExpected
-}: { children: React.ReactNode, isExpected?: boolean }) => (
+  children,
+  isExpected,
+}: {
+  children: React.ReactNode;
+  isExpected?: boolean;
+}) => (
   <FieldValue
     isExpected={isExpected}
     additionalStyles={{
@@ -12,4 +16,5 @@ export const JobsiteFieldValue = ({
     }}
   >
     {children}
-  </FieldValue>);
+  </FieldValue>
+);

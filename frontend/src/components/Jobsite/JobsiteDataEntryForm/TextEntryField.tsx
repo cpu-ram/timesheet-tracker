@@ -9,7 +9,7 @@ function TextEntryField({
   handleInputChange,
   disabled = false,
   maxLength,
-  className
+  className,
 }: {
   name: string;
   label: string;
@@ -26,26 +26,23 @@ function TextEntryField({
       className={className}
       label={label}
       value={value}
-      onChange={
-        (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-          if (maxLength && event.target.value.toString().length > maxLength) {
-            return;
-          }
-          handleInputChange(event)
+      onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (maxLength && event.target.value.toString().length > maxLength) {
+          return;
         }
-      }
+        handleInputChange(event);
+      }}
       fullWidth
       required={required}
       inputProps={{
-        autoComplete: 'off'
+        autoComplete: 'off',
       }}
       disabled={disabled}
-
       sx={{
         backgroundColor: 'white',
       }}
     />
-  )
+  );
 }
 
 export default TextEntryField;

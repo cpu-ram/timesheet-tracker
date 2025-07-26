@@ -45,7 +45,6 @@ const Popup = ({ onClose, children }: PopupProps) => {
 
           alignSelf: 'center',
           display: 'flex',
-
         }}
       >
         <Box
@@ -56,11 +55,10 @@ const Popup = ({ onClose, children }: PopupProps) => {
 
             width: '100%',
             maxWidth: '45em',
-          }}>
-
+          }}
+        >
           <CloseIcon
             sx={{
-
               fontSize: '1.5em',
 
               backgroundColor: theme.palette.grey[500],
@@ -73,13 +71,11 @@ const Popup = ({ onClose, children }: PopupProps) => {
               '&:hover, &:focus, &:active': {
                 cursor: 'pointer',
                 backgroundColor: theme.palette.grey[600],
-              }
+              },
             }}
             onClick={handleClose}
           />
-
         </Box>
-
       </AppBar>
 
       <Box
@@ -90,11 +86,12 @@ const Popup = ({ onClose, children }: PopupProps) => {
           alignItems: 'center',
           justifyContent: 'center',
           padding: 0,
-        }}>
+        }}
+      >
         {children}
       </Box>
     </Box>
-  )
+  );
 };
 
 export default Popup;

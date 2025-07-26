@@ -10,7 +10,6 @@ import { JobsiteProps } from '../../components/Jobsite/types.ts';
 import { FieldValue } from '../../components/shared/FieldValue.tsx';
 import { FieldTitle } from './FieldTitle.tsx';
 
-
 const JobsiteListPage = () => {
   const [jobsites, setJobsites] = useState([]);
   const navigate = useNavigate();
@@ -21,33 +20,34 @@ const JobsiteListPage = () => {
       try {
         const data = await fetchJobsitePreviews();
         setJobsites(data);
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Error fetching jobsite previews:', error);
       }
-    }
+    };
     fetchData();
   }, []);
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      alignSelf: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignContent: 'center',
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignContent: 'center',
 
-      padding: '4.15em 0',
+        padding: '4.15em 0',
 
-      margin: 0,
-      backgroundColor: theme.palette.grey[100],
-    }}>
-
+        margin: 0,
+        backgroundColor: theme.palette.grey[100],
+      }}
+    >
       <Navigation />
 
-      <Box className="breadcrumbs"
+      <Box
+        className="breadcrumbs"
         sx={{
           display: 'flex',
           alignSelf: 'center',
@@ -59,9 +59,9 @@ const JobsiteListPage = () => {
           marginBottom: '0.5em',
         }}
       >
-        <Typography variant='h4'
+        <Typography
+          variant="h4"
           sx={{
-
             width: '100%',
             maxWidth: '45em',
             fontWeight: '700',
@@ -72,11 +72,11 @@ const JobsiteListPage = () => {
           }}
         >
           Jobsites
-
         </Typography>
       </Box>
 
-      <Box className="icons"
+      <Box
+        className="icons"
         sx={{
           marginTop: '0em',
           padding: '0 0.6em',
@@ -84,9 +84,10 @@ const JobsiteListPage = () => {
           width: '100%',
           alignSelf: 'center',
           backgroundColor: theme.palette.grey[100],
-        }}>
+        }}
+      >
         <Button
-          variant='outlined'
+          variant="outlined"
           sx={{
             alignSelf: 'flex-start',
             display: 'flex',
@@ -102,7 +103,8 @@ const JobsiteListPage = () => {
         </Button>
       </Box>
 
-      <Box className="jobsite-list"
+      <Box
+        className="jobsite-list"
         sx={{
           width: '100%',
           maxWidth: '45em',
@@ -114,13 +116,13 @@ const JobsiteListPage = () => {
 
           '& > .jobsite-preview + .jobsite-preview': {
             borderTop: '0 !important',
-          }
+          },
         }}
       >
-        {
-          jobsites &&
+        {jobsites &&
           jobsites.map((jobsite: JobsiteProps) => (
-            <Box className="jobsite-preview"
+            <Box
+              className="jobsite-preview"
               onClick={() => navigate(`/jobsites/${jobsite.jobsiteId}`)}
               key={jobsite.jobsiteId}
               role="button"
@@ -154,53 +156,38 @@ const JobsiteListPage = () => {
                 },
               }}
             >
-              <Grid container
+              <Grid
+                container
                 sx={{
                   justifyContent: 'space-between',
                 }}
               >
-
                 <Grid item xs={12}>
                   <Typography variant="body1">
-                    <FieldTitle>
-                      {"ID:"}
-                    </FieldTitle>
-                    <FieldValue>
-                      {jobsite.jobsiteId}
-                    </FieldValue>
+                    <FieldTitle>{'ID:'}</FieldTitle>
+                    <FieldValue>{jobsite.jobsiteId}</FieldValue>
                   </Typography>
                 </Grid>
 
                 <Grid item xs={12}>
                   <Typography variant="body1">
-                    <FieldTitle>
-                      {"Name:"}
-                    </FieldTitle>
-                    <FieldValue>
-                      {jobsite.jobsiteName}
-                    </FieldValue>
+                    <FieldTitle>{'Name:'}</FieldTitle>
+                    <FieldValue>{jobsite.jobsiteName}</FieldValue>
                   </Typography>
                 </Grid>
 
                 <Grid item xs={12}>
                   <Typography variant="body1">
-                    <FieldTitle>
-                      {"Address: "}
-                    </FieldTitle>
-                    <FieldValue>
-                      {jobsite.jobsiteAddress}
-                    </FieldValue>
+                    <FieldTitle>{'Address: '}</FieldTitle>
+                    <FieldValue>{jobsite.jobsiteAddress}</FieldValue>
                   </Typography>
                 </Grid>
-
-
               </Grid>
             </Box>
-          ))
-        }
-      </Box >
-    </Box >
-  )
-}
+          ))}
+      </Box>
+    </Box>
+  );
+};
 
 export default JobsiteListPage;

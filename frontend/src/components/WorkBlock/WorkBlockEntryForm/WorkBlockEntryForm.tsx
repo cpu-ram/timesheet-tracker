@@ -15,7 +15,10 @@ import LinkIcon from '@mui/icons-material/Link';
 import IconButton from '@mui/material/IconButton';
 
 import { Temporal } from '@js-temporal/polyfill';
-import { convertDateToPlainTime, convertPlainTimeToDate } from '../../../utils/temporalFunctions.ts';
+import {
+  convertDateToPlainTime,
+  convertPlainTimeToDate,
+} from '../../../utils/temporalFunctions.ts';
 
 import { LocalizationProvider, DesktopTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -33,8 +36,8 @@ export const WorkBlockEntryForm = ({
   formFlags: { mode },
   handlers,
 }: AddWorkBlockFormProps) => {
-
-  const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleDiscard } = useTimesheetContext();
+  const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleDiscard } =
+    useTimesheetContext();
   const { displayNotification } = useNotificationContext();
 
   let onEnteredData: ((_: any) => void) | null = null;
@@ -43,18 +46,15 @@ export const WorkBlockEntryForm = ({
       throw new Error('WorkBlockEntryForm in edit mode requires a handleEnteredData function');
     }
     onEnteredData = handlers.handleEnteredData;
-  }
-  else if (mode === 'add') {
+  } else if (mode === 'add') {
     onEnteredData = handlers?.handleEnteredData ?? handleAddWorkBlock;
-  }
-  else throw new Error('Invalid mode: ' + mode);
+  } else throw new Error('Invalid mode: ' + mode);
 
   const workBlockEntryFormTitle = (() => {
     if (mode === 'add') return 'Add work block';
     if (mode === 'edit') return 'Edit work block';
 
     throw new Error('Invalid mode: ' + mode);
-
   })();
 
   const initializeFormData = () => ({
@@ -64,12 +64,12 @@ export const WorkBlockEntryForm = ({
     supervisorName: workBlockData?.supervisorName || null,
     jobsiteAddress: workBlockData?.jobsiteAddress || null,
     jobsiteName: workBlockData?.jobsiteName || null,
-    additionalNotes: workBlockData?.additionalNotes || null
+    additionalNotes: workBlockData?.additionalNotes || null,
   });
 
   function mergeSuggested<K extends keyof WorkBlockData>({
     fields,
-    suggestedData
+    suggestedData,
   }: {
     fields: K[];
     suggestedData: WorkBlockData;
@@ -80,12 +80,12 @@ export const WorkBlockEntryForm = ({
     for (const field of fields) {
       updates[field] = suggestedData[field];
     }
-    setFormData((prevProps) => ({
+    setFormData(prevProps => ({
       ...prevProps,
-      ...updates
+      ...updates,
     }));
 
-    setSuggestedData((prevProps) => {
+    setSuggestedData(prevProps => {
       const newProps = { ...prevProps };
       for (const field of fields) {
         delete newProps[field];
@@ -119,7 +119,8 @@ export const WorkBlockEntryForm = ({
   }, [workBlockData?.jobsiteId]);
 
   const tryUpdateJobsite = async (newIdEntry: string) => {
-    if (newIdEntry !== existingJobsiteRecordId) { // fetch only if the entered ID changed
+    if (newIdEntry !== existingJobsiteRecordId) {
+      // fetch only if the entered ID changed
       const foundJobsiteRecord = await fetchJobsite({ jobsiteId: newIdEntry });
 
       if (foundJobsiteRecord) {
@@ -130,9 +131,9 @@ export const WorkBlockEntryForm = ({
         clearJobsiteBoundData();
       }
     }
-  }
+  };
   const applyJobsiteToFormData = (jobsiteData: JobsiteProps) => {
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       jobsiteAddress: jobsiteData.jobsiteAddress,
       jobsiteName: jobsiteData.jobsiteName,
@@ -141,31 +142,31 @@ export const WorkBlockEntryForm = ({
       workBlockStart: jobsiteData.defaultWorkStartTime || null,
       workBlockEnd: jobsiteData.defaultWorkEndTime || null,
     });
-  }
+  };
   const clearJobsiteBoundData = () => {
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       jobsiteAddress: '',
       jobsiteName: '',
     }));
     setSuggestedData(null);
-  }
+  };
 
   const handleSelectJobsite = ({ jobsiteId }: { jobsiteId: string }) => {
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       jobsiteId: jobsiteId,
     }));
     tryUpdateJobsite(jobsiteId);
-  }
+  };
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    options: { transformUppercase?: boolean } = { transformUppercase: false }
+    options: { transformUppercase?: boolean } = { transformUppercase: false },
   ) => {
     const { name, value } = event.target;
 
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       [name]: options.transformUppercase ? value.toUpperCase() : value,
     }));
@@ -173,7 +174,7 @@ export const WorkBlockEntryForm = ({
 
   const handleStartTimeChange = (date: Date | null) => {
     if (date === null) {
-      setFormData((prevData) => ({
+      setFormData(prevData => ({
         ...prevData,
         workBlockStart: null,
       }));
@@ -184,7 +185,7 @@ export const WorkBlockEntryForm = ({
       setValidationError(null);
     }
 
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       workBlockStart: convertDateToPlainTime(date),
     }));
@@ -192,7 +193,7 @@ export const WorkBlockEntryForm = ({
 
   const handleEndTimeChange = (date: Date | null) => {
     if (date === null) {
-      setFormData((prevData) => ({
+      setFormData(prevData => ({
         ...prevData,
         workBlockEnd: null,
       }));
@@ -203,7 +204,7 @@ export const WorkBlockEntryForm = ({
       setValidationError(null);
     }
 
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       workBlockEnd: convertDateToPlainTime(date),
     }));
@@ -216,7 +217,7 @@ export const WorkBlockEntryForm = ({
       }
     }
     return true;
-  }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -250,8 +251,7 @@ export const WorkBlockEntryForm = ({
                         '&:hover': {
                           fontWeight: 700,
                         },
-                        '&:hover > svg': {
-                        },
+                        '&:hover > svg': {},
                         textDecoration: 'none',
                       }}
                     >
@@ -267,28 +267,26 @@ export const WorkBlockEntryForm = ({
                     </Link>
                   </Box>
                 </>
-              )
+              ),
             });
-          }
+          },
         });
 
         handleDiscard();
-      }
-      catch (error) {
+      } catch (error) {
         if (error instanceof ApiError) {
           setApiError(error.message);
         }
       }
-    }
-    else {
-      const validationErrorString = "Error: end time must be after start time";
+    } else {
+      const validationErrorString = 'Error: end time must be after start time';
       setValidationError(validationErrorString);
     }
   };
 
   const handleSelectMultiDaySelectionMode = () => {
     dateSelectionHandler.switch();
-  }
+  };
 
   const theme = useTheme();
 
@@ -296,7 +294,6 @@ export const WorkBlockEntryForm = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-
       <Box
         id="workBlockEntryFormRootWrapper"
         className="work-block-entry-form work-block-element"
@@ -312,7 +309,6 @@ export const WorkBlockEntryForm = ({
           borderBottom: '1.5px solid ' + theme.palette.divider,
           margin: '0',
 
-
           backgroundColor: 'white',
 
           '& .entry-field + .entry-field': {
@@ -323,7 +319,7 @@ export const WorkBlockEntryForm = ({
           },
           '& div.jobsite-link-wrapper': {
             backgroundColor: theme.palette.grey[100] + ' !important',
-          }
+          },
         }}
       >
         <form
@@ -334,14 +330,16 @@ export const WorkBlockEntryForm = ({
             display: 'contents',
           }}
         >
-          <Typography variant="h5"
+          <Typography
+            variant="h5"
             sx={{
               display: 'block',
               width: '100%',
               padding: '0.5em 0',
 
               fontWeight: 600,
-            }}>
+            }}
+          >
             {workBlockEntryFormTitle}
           </Typography>
 
@@ -349,54 +347,57 @@ export const WorkBlockEntryForm = ({
 
           <Grid container spacing={1}>
             {validationError && (
-              <Grid item
-                xs={12}
-                sx={useErrorWrapperStyle}>
-                {
-                  <Typography
-                    sx={useErrorTextStyle}>
-                    {validationError}
-                  </Typography>
-                }
+              <Grid item xs={12} sx={useErrorWrapperStyle}>
+                {<Typography sx={useErrorTextStyle}>{validationError}</Typography>}
               </Grid>
             )}
 
             {apiError && (
-              <Grid item
+              <Grid
+                item
                 xs={12}
                 sx={{
                   margin: 0,
                   paddingBottom: 1,
                   paddingLeft: 1.5,
-                }}>
+                }}
+              >
                 {
                   <Typography
                     sx={{
                       color: 'red',
                       padding: '0 0.5em',
-                    }}>
+                    }}
+                  >
                     {apiError}
                   </Typography>
                 }
               </Grid>
             )}
 
-            <Grid item xs={5} sm={2.8} md={2.5}
+            <Grid
+              item
+              xs={5}
+              sm={2.8}
+              md={2.5}
               sx={{
                 height: 'auto',
               }}
-
             >
               <DesktopTimePicker
                 className="entry-field"
                 label="From"
                 name="startTime"
-                value={formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null}
+                value={
+                  formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
+                }
                 onChange={handleStartTimeChange}
                 slotProps={{
                   textField: {
                     onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                      handleStartTimeChange(event.target.value ? new Date(event.target.value) : null);
+                      handleStartTimeChange(
+                        event.target.value ? new Date(event.target.value) : null,
+                      );
                     },
                     InputLabelProps: {
                       shrink: true,
@@ -404,11 +405,9 @@ export const WorkBlockEntryForm = ({
                     fullWidth: true,
                     inputProps: {
                       step: 600,
-                    }
-                  }
+                    },
+                  },
                 }}
-
-
               />
               <DesktopTimePicker
                 className="entry-field"
@@ -428,64 +427,43 @@ export const WorkBlockEntryForm = ({
                       step: 600,
                     },
                     fullWidth: true,
-                  }
+                  },
                 }}
               />
 
-              {
-                (
-                  suggestedData && suggestedData.workBlockStart && suggestedData.workBlockEnd
-                  && !(formData.workBlockStart || formData.workBlockEnd)
-                ) && <SuggestedData
-                  fields={[
-                    'workBlockStart',
-                    'workBlockEnd'
-                  ]}
-                  suggestedWorkBlockProps={suggestedData}
-                  handleMerge={
-                    mergeSuggested
-                  }
-                />
-              }
-
+              {suggestedData &&
+                suggestedData.workBlockStart &&
+                suggestedData.workBlockEnd &&
+                !(formData.workBlockStart || formData.workBlockEnd) && (
+                  <SuggestedData
+                    fields={['workBlockStart', 'workBlockEnd']}
+                    suggestedWorkBlockProps={suggestedData}
+                    handleMerge={mergeSuggested}
+                  />
+                )}
             </Grid>
 
-            <Grid item xs={7} sm={9.2} md={9.5}
-            >
-              <Grid
-                xs={12}
-                className="entry-field"
-                container
-                item >
-                <Grid
-                  item xs={
-                    existingJobsiteRecordId ? 9 : 12
-                  }
-                  sx={{
-                  }}
-                >
+            <Grid item xs={7} sm={9.2} md={9.5}>
+              <Grid xs={12} className="entry-field" container item>
+                <Grid item xs={existingJobsiteRecordId ? 9 : 12} sx={{}}>
                   <TextField
                     label="ID"
                     name="jobsiteId"
                     className="entry-field"
                     value={formData.jobsiteId ?? ''}
-                    onChange={
-                      (event) => {
-                        const value = event.target.value;
-                        if (value.length <= JOBSITE_ID_MAX_LENGTH) {
-                          handleInputChange(event, { transformUppercase: true });
-                        }
+                    onChange={event => {
+                      const value = event.target.value;
+                      if (value.length <= JOBSITE_ID_MAX_LENGTH) {
+                        handleInputChange(event, { transformUppercase: true });
                       }
-                    }
-                    onBlur={
-                      (event) => {
-                        tryUpdateJobsite(event.target.value);
-                      }
-                    }
+                    }}
+                    onBlur={event => {
+                      tryUpdateJobsite(event.target.value);
+                    }}
                     fullWidth
                     inputProps={{
                       maxLength: { JOBSITE_ID_MAX_LENGTH },
-                      autoComplete: 'off'
+                      autoComplete: 'off',
                     }}
                   />
                 </Grid>
@@ -493,42 +471,44 @@ export const WorkBlockEntryForm = ({
                 {existingJobsiteRecordId && (
                   <Grid
                     className="jobsite-link-wrapper"
-                    item xs={3}
+                    item
+                    xs={3}
                     sx={{
                       margin: 0,
                       alignItems: 'center',
                       justifyContent: 'center',
                       display: 'flex',
                       backgroundColor: theme.palette.grey[100],
-                    }}>
-
-                    <IconButton onClick={() => showPopup(
-                      <JobsitePanel
-                        initialMode="view"
-                        jobsiteId={existingJobsiteRecordId}
-                        onClose={hidePopup}
-                        onUpdateJobsite={(jobsiteData: JobsiteProps) => {
-                          applyJobsiteToFormData(jobsiteData);
-                          setExistingJobsiteRecordId(jobsiteData.jobsiteId ?? '');
-                        }}
-                      >
-                      </JobsitePanel>
-                    )}>
+                    }}
+                  >
+                    <IconButton
+                      onClick={() =>
+                        showPopup(
+                          <JobsitePanel
+                            initialMode="view"
+                            jobsiteId={existingJobsiteRecordId}
+                            onClose={hidePopup}
+                            onUpdateJobsite={(jobsiteData: JobsiteProps) => {
+                              applyJobsiteToFormData(jobsiteData);
+                              setExistingJobsiteRecordId(jobsiteData.jobsiteId ?? '');
+                            }}
+                          ></JobsitePanel>,
+                        )
+                      }
+                    >
                       <LinkIcon
                         sx={{
                           color: theme.palette.primary.main,
                           fontSize: '1.25em',
                           '&:hover': {
                             color: theme.palette.primary.dark,
-                          }
+                          },
                         }}
                       />
                     </IconButton>
-
                   </Grid>
                 )}
               </Grid>
-
 
               <TextField
                 label="Address"
@@ -538,7 +518,7 @@ export const WorkBlockEntryForm = ({
                 onChange={handleInputChange}
                 fullWidth
                 inputProps={{
-                  autoComplete: 'off'
+                  autoComplete: 'off',
                 }}
                 disabled={!!existingJobsiteRecordId}
                 multiline
@@ -552,7 +532,7 @@ export const WorkBlockEntryForm = ({
                 onChange={handleInputChange}
                 fullWidth
                 inputProps={{
-                  autoComplete: 'off'
+                  autoComplete: 'off',
                 }}
                 disabled={!!existingJobsiteRecordId}
               />
@@ -564,7 +544,7 @@ export const WorkBlockEntryForm = ({
                 onChange={handleInputChange}
                 fullWidth
                 inputProps={{
-                  autoComplete: 'off'
+                  autoComplete: 'off',
                 }}
               />
             </Grid>
@@ -578,7 +558,7 @@ export const WorkBlockEntryForm = ({
                 onChange={handleInputChange}
                 fullWidth
                 inputProps={{
-                  autoComplete: 'off'
+                  autoComplete: 'off',
                 }}
                 multiline
                 minRows={1}
@@ -586,8 +566,8 @@ export const WorkBlockEntryForm = ({
               />
             </Grid>
 
-            <Grid 
-	      className="buttonsWrapper"
+            <Grid
+              className="buttonsWrapper"
               sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -599,16 +579,16 @@ export const WorkBlockEntryForm = ({
                   marginLeft: '0.5em',
                 },
               }}
-              item>
+              item
+            >
               <Button
                 type="submit"
                 variant="outlined"
-
                 disabled={validationError !== null}
                 value="Save"
                 sx={{
-                  boxShadow: validationError ?
-                    `0px 0px 3px ${theme.palette.action.disabledBackground}`
+                  boxShadow: validationError
+                    ? `0px 0px 3px ${theme.palette.action.disabledBackground}`
                     : '1px 1px 2px rgba(0,0,0,0.2)',
                 }}
               >
@@ -616,15 +596,15 @@ export const WorkBlockEntryForm = ({
               </Button>
 
               <Button
-                variant='outlined'
+                variant="outlined"
                 onClick={handleDiscard}
                 value="Discard"
                 sx={{
                   backgroundColor: theme.palette.grey[100],
                   color: theme.palette.grey[900],
                   boxShadow: '2px 2px 3px rgba(0,0,0,0.2)',
-                  "&:hover": {
-                    backgroundColor: "#d6d8db",
+                  '&:hover': {
+                    backgroundColor: '#d6d8db',
                     color: 'black',
                   },
                 }}
@@ -632,41 +612,35 @@ export const WorkBlockEntryForm = ({
                 {discardLabel}
               </Button>
 
-
-              {
-                mode === 'add' && (
-                  <Button
-                    variant='outlined'
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: "#d6d8db",
-                        color: 'black',
-                      },
-                      ...(multiDaySelectionMode ?
-                        {
+              {mode === 'add' && (
+                <Button
+                  variant="outlined"
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: '#d6d8db',
+                      color: 'black',
+                    },
+                    ...(multiDaySelectionMode
+                      ? {
                           backgroundColor: theme.palette.warning.light,
                           color: 'black',
                         }
-                        :
-                        {
+                      : {
                           backgroundColor: theme.palette.grey[100],
                           boxShadow: '2px 2px 3px rgba(0,0,0,0.2)',
                           color: theme.palette.grey[900],
-                        }
-                      )
-                    }}
-                    onClick={handleSelectMultiDaySelectionMode}
-                  >
-                    {multiDaySelectionMode ? 'Duplicate off' : 'Duplicate'}
-                  </Button>
-                )
-              }
+                        }),
+                  }}
+                  onClick={handleSelectMultiDaySelectionMode}
+                >
+                  {multiDaySelectionMode ? 'Duplicate off' : 'Duplicate'}
+                </Button>
+              )}
             </Grid>
-
           </Grid>
         </form>
-      </Box >
-    </LocalizationProvider >
+      </Box>
+    </LocalizationProvider>
   );
 };
 

@@ -12,7 +12,7 @@ const ChangeNamePage = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (enteredName.length < 1) {
-      setError("Please enter a name");
+      setError('Please enter a name');
       return;
     }
     try {
@@ -21,22 +21,22 @@ const ChangeNamePage = () => {
         {
           method: 'PATCH',
           credentials: 'include',
-          body: JSON.stringify({ name: (enteredName || "") }),
+          body: JSON.stringify({ name: enteredName || '' }),
           headers: {
             'Content-Type': 'application/json',
-          }
-        });
+          },
+        },
+      );
       if (queryResult.ok) {
         setError(null);
         setNameChanged(true);
         setUsername(enteredName);
-      }
-      else {
+      } else {
         throw new Error('Failure to update name: ' + queryResult.statusText);
       }
     } catch (error: unknown) {
       console.error(error);
-      if(error instanceof Error) setError(error.toString());
+      if (error instanceof Error) setError(error.toString());
       setNameChanged(false);
     }
   };
@@ -46,8 +46,8 @@ const ChangeNamePage = () => {
       sx={{
         display: 'flex !important',
         width: '100vw',
-      }}>
-
+      }}
+    >
       <Navigation />
 
       <Box
@@ -62,18 +62,9 @@ const ChangeNamePage = () => {
           alignItems: 'center',
         }}
       >
+        <Typography variant="h6" sx={{ color: 'grey.600', fontWeight: '600' }}></Typography>
 
-        <Typography
-          variant="h6"
-          sx={{ color: 'grey.600', fontWeight: '600' }}
-        >
-
-        </Typography>
-
-        <Typography
-          variant="h5"
-          sx={{ color: 'black', fontWeight: '600' }}
-        >
+        <Typography variant="h5" sx={{ color: 'black', fontWeight: '600' }}>
           Update full name:
         </Typography>
 
@@ -81,9 +72,10 @@ const ChangeNamePage = () => {
           variant="outlined"
           label="Full Name"
           value={enteredName}
-          onChange={(event) => setEnteredName(event.target.value)}
+          onChange={event => setEnteredName(event.target.value)}
           sx={{
-            marginTop: '2em', minWidth: '18em'
+            marginTop: '2em',
+            minWidth: '18em',
           }}
         />
 
@@ -92,13 +84,17 @@ const ChangeNamePage = () => {
             paddingTop: '0.5em',
           }}
         >
-          {
-            !nameChanged && !error ?
-              (<>Current name is <b>{username}</b></>) :
-              (nameChanged && !error) ?
-                (<>Name successfully updated to: <b>{username}</b></>)
-                : <>{error}</>
-          }
+          {!nameChanged && !error ? (
+            <>
+              Current name is <b>{username}</b>
+            </>
+          ) : nameChanged && !error ? (
+            <>
+              Name successfully updated to: <b>{username}</b>
+            </>
+          ) : (
+            <>{error}</>
+          )}
         </Typography>
 
         <Button
@@ -106,7 +102,7 @@ const ChangeNamePage = () => {
           sx={{
             marginTop: '3.5em',
             padding: '0.5em 4em',
-            minWidth: '18em'
+            minWidth: '18em',
           }}
           type="submit"
         >

@@ -8,7 +8,6 @@ const Navigation = ({ resourceNameList = [] }: { resourceNameList?: string[] }) 
   const toggleMenu = () => setMenuIsOpen(!menuIsOpen);
 
   return (
-
     <Box
       sx={{
         position: 'absolute',
@@ -22,7 +21,6 @@ const Navigation = ({ resourceNameList = [] }: { resourceNameList?: string[] }) 
       <HeaderNav {...{ resourceNameList }} onMenuToggle={toggleMenu} />
       <SideMenu isOpen={menuIsOpen} onMenuToggle={toggleMenu} />
     </Box>
-
   );
 };
 

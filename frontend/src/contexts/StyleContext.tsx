@@ -12,12 +12,7 @@ const StyleContext = createContext<StyleContextType | null>(null);
 export function StyleProvider({ children }: { children: ReactNode }) {
   const theme: Theme = useTheme();
 
-  return (
-    <StyleContext.Provider value={{ theme }} >
-      {children}
-    </StyleContext.Provider>
-  );
-
+  return <StyleContext.Provider value={{ theme }}>{children}</StyleContext.Provider>;
 }
 
 export function useStyleContext() {

@@ -24,11 +24,11 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
 
   const showPopup = (content: React.ReactNode) => {
     setPopupContent(content);
-  }
+  };
 
   const hidePopup = () => {
     setPopupContent(null);
-  }
+  };
 
   return (
     <PopupContext.Provider
@@ -44,11 +44,7 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
       >
         {children}
       </Box>
-      {popupContent && (
-        <Popup onClose={hidePopup}>
-          {popupContent}
-        </Popup>
-      )}
+      {popupContent && <Popup onClose={hidePopup}>{popupContent}</Popup>}
     </PopupContext.Provider>
-  )
+  );
 }

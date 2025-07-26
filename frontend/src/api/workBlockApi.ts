@@ -2,7 +2,10 @@ import { ApiError } from '../errors/ApiError.js';
 import { WorkBlockData } from '../types/WorkBlock.types.js';
 import { Temporal } from '@js-temporal/polyfill';
 
-export const addWorkBlock = async (workBlockData: WorkBlockData, selectedDates: Temporal.PlainDate[]) => {
+export const addWorkBlock = async (
+  workBlockData: WorkBlockData,
+  selectedDates: Temporal.PlainDate[],
+) => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   try {
     const response = await fetch(`${baseUrl}/workBlocks`, {
@@ -25,59 +28,68 @@ export const addWorkBlock = async (workBlockData: WorkBlockData, selectedDates: 
     const responseData = await response.json();
 
     if (!response.ok) {
-      throw new ApiError(400, 'Failed to submit work block: ' + (responseData.message || 'Unknown error'));
+      throw new ApiError(
+        400,
+        'Failed to submit work block: ' + (responseData.message || 'Unknown error'),
+      );
     }
 
     return responseData;
-  }
-  catch (error) {
+  } catch (error) {
     throw error;
   }
-}
+};
 
-export const updateWorkBlock = async (
-  { workBlockId, workBlockData, date }: {
-    workBlockId: number, workBlockData: WorkBlockData, date: any
-  }) => {
+export const updateWorkBlock = async ({
+  workBlockId,
+  workBlockData,
+  date,
+}: {
+  workBlockId: number;
+  workBlockData: WorkBlockData;
+  date: any;
+}) => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
   try {
-    const startTimeString = workBlockData.workBlockStart ? date.toString() + "T" + workBlockData.workBlockStart.toString() + ".000Z" : null;
-    const endTimeString = workBlockData.workBlockEnd ? date.toString() + "T" + workBlockData.workBlockEnd.toString() + ".000Z" : null;
+    const startTimeString = workBlockData.workBlockStart
+      ? date.toString() + 'T' + workBlockData.workBlockStart.toString() + '.000Z'
+      : null;
+    const endTimeString = workBlockData.workBlockEnd
+      ? date.toString() + 'T' + workBlockData.workBlockEnd.toString() + '.000Z'
+      : null;
 
-    const response = await fetch(`${baseUrl}/workBlocks/${workBlockId}`,
-      {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body:
-          JSON.stringify({
-            workBlockId: workBlockId,
-            startTime: startTimeString,
-            endTime: endTimeString,
-            jobsiteId: workBlockData.jobsiteId,
-            tempJobsiteName: workBlockData.jobsiteName,
-            tempJobsiteAddress: workBlockData.jobsiteAddress,
-            tempSupervisorName: workBlockData.supervisorName,
-            additionalNotes: workBlockData.additionalNotes
-          })
-      }
-    );
+    const response = await fetch(`${baseUrl}/workBlocks/${workBlockId}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        workBlockId: workBlockId,
+        startTime: startTimeString,
+        endTime: endTimeString,
+        jobsiteId: workBlockData.jobsiteId,
+        tempJobsiteName: workBlockData.jobsiteName,
+        tempJobsiteAddress: workBlockData.jobsiteAddress,
+        tempSupervisorName: workBlockData.supervisorName,
+        additionalNotes: workBlockData.additionalNotes,
+      }),
+    });
     const responseData = await response.json();
 
     if (!response.ok) {
-      throw new ApiError(500, 'Failed to submit work block: ' + (responseData.message || 'Unknown error'));
+      throw new ApiError(
+        500,
+        'Failed to submit work block: ' + (responseData.message || 'Unknown error'),
+      );
     }
 
     return responseData;
-  }
-
-  catch (error) {
+  } catch (error) {
     console.error(error);
   }
-}
+};
 
 export const deleteWorkBlock = async (workBlockId: number) => {
   try {
@@ -86,14 +98,13 @@ export const deleteWorkBlock = async (workBlockId: number) => {
       method: 'DELETE',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
     if (!response.ok) {
       throw new ApiError(500, 'Failed to delete work block');
     }
-  }
-  catch (error) {
+  } catch (error) {
     throw error;
   }
-}
+};

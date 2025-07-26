@@ -9,27 +9,13 @@ const UnauthenticatedRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/login"
-        element={
-          !isAuthenticated ?
-            <LoginPage />
-            : <Navigate to="/signup" />
-        }
-      />
+      <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/signup" />} />
 
-      <Route path="/signup"
-        element={
-          <SignupPage {...{ setIsAuthenticated, setIsSignedUp }} />
-        }
-      />
+      <Route path="/signup" element={<SignupPage {...{ setIsAuthenticated, setIsSignedUp }} />} />
 
-      <Route path="*"
-        element={
-          <Navigate to="/login" />
-        }
-      />
+      <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
-}
+};
 
 export default UnauthenticatedRoutes;

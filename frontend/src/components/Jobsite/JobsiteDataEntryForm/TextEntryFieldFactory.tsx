@@ -1,36 +1,32 @@
 import React from 'react';
-import TextEntryField from "./TextEntryField";
+import TextEntryField from './TextEntryField';
 
 interface FormField {
-  name: string,
-  label: string,
+  name: string;
+  label: string;
 }
 
-function createTextEntryFieldFactory(
-  {
-    handleInputChange,
-    formStructure,
-    formData,
+function createTextEntryFieldFactory({
+  handleInputChange,
+  formStructure,
+  formData,
+}: {
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  formStructure: FormField[];
+  formData: Record<string, any>;
+}) {
+  function createField({
+    name,
+    required = false,
+    disabled = false,
+    maxLength = 10000,
   }: {
-    handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-    formStructure: FormField[],
-    formData: Record<string, any>,
+    name: string;
+    required?: boolean;
+    disabled?: boolean;
+    maxLength?: number;
   }) {
-
-  function createField(
-    {
-      name,
-      required = false,
-      disabled = false,
-      maxLength = 10000,
-    }: {
-      name: string;
-      required?: boolean;
-      disabled?: boolean;
-      maxLength?: number;
-    }
-  ) {
-    const label = formStructure.find((field) => field.name === name)?.label;
+    const label = formStructure.find(field => field.name === name)?.label;
     if (!label) {
       throw new Error(`Label not found for field: ${name}`);
     }
@@ -38,7 +34,6 @@ function createTextEntryFieldFactory(
     return (
       <TextEntryField
         name={name}
-
         className="entry-field"
         label={label}
         required={required}

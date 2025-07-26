@@ -9,7 +9,8 @@ export const SearchMatchMarkedText = (props: { text: string; query: string }) =>
       component="span"
       sx={{
         display: 'inline',
-      }}>
+      }}
+    >
       {matchGroups.map((group, id) => (
         <Box
           key={id}
@@ -24,4 +25,4 @@ export const SearchMatchMarkedText = (props: { text: string; query: string }) =>
       ))}
     </Box>
   );
-}
+};

@@ -12,35 +12,26 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { JobsiteProps } from '../../components/Jobsite/types.ts';
 
-
 import { fetchJobsite } from '../../api/jobsiteApi.ts';
-
 
 import JobsiteDetails from '../../components/Jobsite/JobsiteDetails/JobsiteDetails.tsx';
 import JobsiteDataEntryForm from './JobsiteDataEntryForm/JobsiteDataEntryForm.tsx';
 
 import { createJobsite, deleteJobsite, updateJobsite } from '../../api/jobsiteApi.ts';
 
-import {
-  useErrorWrapperStyle, useErrorTextStyle
-} from '../shared/styles/generalStyles.ts';
+import { useErrorWrapperStyle, useErrorTextStyle } from '../shared/styles/generalStyles.ts';
 
-
-
-const JobsitePanel = (
-  {
-    initialMode,
-    jobsiteId,
-    onClose,
-    onUpdateJobsite,
-  }:
-    {
-      initialMode: 'view' | 'edit' | 'add',
-      jobsiteId?: string,
-      onClose?: () => void,
-      onUpdateJobsite?: (jobsite: JobsiteProps) => void,
-    }) => {
-
+const JobsitePanel = ({
+  initialMode,
+  jobsiteId,
+  onClose,
+  onUpdateJobsite,
+}: {
+  initialMode: 'view' | 'edit' | 'add';
+  jobsiteId?: string;
+  onClose?: () => void;
+  onUpdateJobsite?: (jobsite: JobsiteProps) => void;
+}) => {
   const [mode, setMode] = useState<'view' | 'add' | 'edit'>(initialMode || 'view');
   const [jobsite, setJobsite] = useState<JobsiteProps | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -50,25 +41,23 @@ const JobsitePanel = (
 
   const cancelJobsiteCreation = () => {
     handleClose();
-  }
+  };
 
   const cancelJobsiteEdit = () => {
     setMode('view');
-  }
+  };
 
   const handleJobsiteDelete = async () => {
-    if (!jobsiteId) throw new Error("Error: No jobsite ID provided for deletion.");
+    if (!jobsiteId) throw new Error('Error: No jobsite ID provided for deletion.');
     try {
       const { success } = await deleteJobsite(jobsiteId);
       if (success) {
         handleClose();
       }
-    }
-    catch (error) {
+    } catch (error) {
       if (error instanceof ApiError) {
         setApiError(error.message);
-      }
-      else throw error;
+      } else throw error;
     }
   };
 
@@ -81,11 +70,10 @@ const JobsitePanel = (
         const jobsiteData = await fetchJobsite({ jobsiteId });
         setJobsite(jobsiteData);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error fetching jobsite data:', error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchJobsiteData();
@@ -105,16 +93,16 @@ const JobsitePanel = (
   const theme = useTheme();
 
   let handleEnteredData;
-  let callUpdateJobsite = ((jobsiteProps: JobsiteProps) =>
+  let callUpdateJobsite = (jobsiteProps: JobsiteProps) =>
     updateJobsite({
       jobsiteData: jobsiteProps,
-      onSuccess: (updatedRecord) => {
+      onSuccess: updatedRecord => {
         setJobsite(updatedRecord);
         if (onUpdateJobsite) {
           onUpdateJobsite(updatedRecord);
         }
       },
-    }));
+    });
 
   switch (mode) {
     case 'add':
@@ -129,7 +117,6 @@ const JobsitePanel = (
   }
 
   return (
-
     <Box
       sx={{
         display: 'flex',
@@ -162,17 +149,13 @@ const JobsitePanel = (
         },
       }}
     >
-
-      {
-        mode === 'view' &&
-        (<Box>
-
+      {mode === 'view' && (
+        <Box>
           {apiError && (
             <Box sx={useErrorWrapperStyle}>
               {apiError && <Typography sx={useErrorTextStyle}>{apiError}</Typography>}
             </Box>
           )}
-
 
           <JobsiteDetails {...jobsite} />
 
@@ -196,12 +179,12 @@ const JobsitePanel = (
               display: 'flex',
               '& button + button': {
                 marginLeft: '0.9em',
-              }
-            }}>
-
+              },
+            }}
+          >
             <Button
               className="delete-button"
-              variant='outlined'
+              variant="outlined"
               onClick={() => handleJobsiteDelete()}
               sx={{
                 backgroundColor: 'blue',
@@ -210,34 +193,26 @@ const JobsitePanel = (
               <DeleteIcon />
             </Button>
 
-            <Button
-              variant='outlined'
-              onClick={() => setMode('edit')}
-            >
+            <Button variant="outlined" onClick={() => setMode('edit')}>
               <EditIcon />
             </Button>
-
           </Box>
-
         </Box>
-        )
-      }
-      {
-        (mode === 'edit' || mode === 'add') &&
-        (
-          <JobsiteDataEntryForm
-            handleDiscard={handleDiscard}
-            handleEnteredData={async (props: JobsiteProps) => {
-              if (!handleEnteredData) throw new Error("Error: Jobsite addition form's data handler is not defined.");
-              await handleEnteredData(props);
-              setMode('view');
-            }}
-            jobsite={mode === 'edit' ? jobsite : null}
-            {...{ mode, setMode }}
-          />
-        )
-      }
-    </Box >
+      )}
+      {(mode === 'edit' || mode === 'add') && (
+        <JobsiteDataEntryForm
+          handleDiscard={handleDiscard}
+          handleEnteredData={async (props: JobsiteProps) => {
+            if (!handleEnteredData)
+              throw new Error("Error: Jobsite addition form's data handler is not defined.");
+            await handleEnteredData(props);
+            setMode('view');
+          }}
+          jobsite={mode === 'edit' ? jobsite : null}
+          {...{ mode, setMode }}
+        />
+      )}
+    </Box>
   );
 };
 

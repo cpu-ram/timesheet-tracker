@@ -6,9 +6,9 @@ import { Dispatch, SetStateAction } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  setIsAuthenticated: Dispatch<SetStateAction<boolean>>; 
+  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   isSignedUp: boolean;
-  setIsSignedUp: Dispatch<SetStateAction<boolean>>; 
+  setIsSignedUp: Dispatch<SetStateAction<boolean>>;
   username: string | null;
   setUsername: (value: string | null) => void;
 }
@@ -34,24 +34,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isSignedUp) {
       fetchUsername()
-        .then((userName) => setUsername(userName))
-        .catch((error) => {
+        .then(userName => setUsername(userName))
+        .catch(error => {
           console.error('Error fetching username:', error);
           setUsername(null);
-        })
+        });
     }
   }, [isSignedUp]);
 
-  return (<AuthContext.Provider value={{
-    isAuthenticated,
-    setIsAuthenticated,
-    isSignedUp,
-    setIsSignedUp,
-    username,
-    setUsername,
-  }}>
-    {children}
-  </AuthContext.Provider>);
+  return (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        setIsAuthenticated,
+        isSignedUp,
+        setIsSignedUp,
+        username,
+        setUsername,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuthContext() {

@@ -27,7 +27,7 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
       name: 'weekly_report',
       link: '/reports/weekly',
       icon: PrintIcon,
-    }
+    },
   ];
 
   return (
@@ -57,10 +57,9 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
 
           backgroundColor: alpha(theme.palette.grey[100], 0.98),
 
-
           alignItems: 'center',
-
-        }}>
+        }}
+      >
         <Toolbar
           sx={{
             width: '100%',
@@ -83,14 +82,9 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
 
             backgroundColor: 'transparent',
             borderBottom: '1px solid #ccc',
-          }}>
-          <IconButton
-            sx={{
-            }}
-            onClick={onMenuToggle}
-
-          >
-
+          }}
+        >
+          <IconButton sx={{}} onClick={onMenuToggle}>
             <MenuIcon
               sx={{
                 fontSize: '1em',
@@ -99,39 +93,30 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
                 color: `${theme.palette.info.dark} !important`,
                 fontWeight: 500,
               }}
-            >
-            </MenuIcon>
+            ></MenuIcon>
           </IconButton>
 
-          <Box
-            sx={{
-            }}
-          >
-            {
-              resourceNameList?.map(
-                (resourceName) => {
-                  if (navButtonsConfig.some(item => item.name === resourceName)) {
-                    const navButton = navButtonsConfig.find(item => item.name === resourceName);
-		    if (!navButton) console.error('Requested resource navigation button is missing');
-                    return (
-		      navButton &&
-                      <NavButton
-                        key={navButton.name}
-                        action={() => navigate(navButton.link)}
-                        icon={navButton.icon}
-                      />
-                    );
-                  }
-                  else return null;
-                }) ?? <></>
-            }
-
+          <Box sx={{}}>
+            {resourceNameList?.map(resourceName => {
+              if (navButtonsConfig.some(item => item.name === resourceName)) {
+                const navButton = navButtonsConfig.find(item => item.name === resourceName);
+                if (!navButton) console.error('Requested resource navigation button is missing');
+                return (
+                  navButton && (
+                    <NavButton
+                      key={navButton.name}
+                      action={() => navigate(navButton.link)}
+                      icon={navButton.icon}
+                    />
+                  )
+                );
+              } else return null;
+            }) ?? <></>}
           </Box>
-
         </Toolbar>
-      </AppBar >
+      </AppBar>
     </Box>
-  )
+  );
 };
 
 export default HeaderNav;

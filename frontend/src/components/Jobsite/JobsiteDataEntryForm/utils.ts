@@ -17,7 +17,7 @@ export function initializeFormData(
   defaultWorkStartTime: Temporal.PlainTime | null;
   defaultWorkEndTime: Temporal.PlainTime | null;
 } {
-  return ({
+  return {
     jobsiteId: jobsiteId ?? null,
     jobsiteAddress: jobsiteAddress ?? null,
     jobsiteName: jobsiteName ?? null,
@@ -25,17 +25,16 @@ export function initializeFormData(
     supervisorName: supervisorName ?? null,
     defaultWorkStartTime: defaultWorkStartTime ?? null,
     defaultWorkEndTime: defaultWorkEndTime ?? null,
-  });
+  };
 }
 
-export function validateTimes(
-  {
-    startTime, endTime,
-  }: {
-    startTime: Temporal.PlainTime | null;
-    endTime: Temporal.PlainTime | null;
-  })
-  : boolean {
+export function validateTimes({
+  startTime,
+  endTime,
+}: {
+  startTime: Temporal.PlainTime | null;
+  endTime: Temporal.PlainTime | null;
+}): boolean {
   if (startTime && endTime) {
     return Temporal.PlainTime.compare(startTime, endTime) === -1;
   }

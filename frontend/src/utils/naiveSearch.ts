@@ -4,7 +4,6 @@ type MatchGroup = {
 };
 
 function findMatchIndices(corpus: string, query: string): number[] {
-
   const matchStartIndices: number[] = [];
 
   let index: number = corpus.toUpperCase().indexOf(query.toUpperCase(), 0);
@@ -17,17 +16,16 @@ function findMatchIndices(corpus: string, query: string): number[] {
 }
 
 function markMatchGroups(corpus: string, query: string): MatchGroup[] {
-
   let matchIndices: number[] = findMatchIndices(corpus, query);
-  matchIndices = matchIndices.sort((a, b) => (b - a));
+  matchIndices = matchIndices.sort((a, b) => b - a);
 
   let charMatchedTable: boolean[] = new Array(corpus.length).fill(false);
   let matchGroups: MatchGroup[] = [];
 
   let minPosition = -1;
   for (let matchIndex of matchIndices) {
-    if (matchIndex + query.length > corpus.length) throw new Error("Internal logic error: faulty index search");
-
+    if (matchIndex + query.length > corpus.length)
+      throw new Error('Internal logic error: faulty index search');
 
     for (let i = 0; i < query.length; i++) {
       if (matchIndex + i < minPosition) continue;
@@ -36,7 +34,7 @@ function markMatchGroups(corpus: string, query: string): MatchGroup[] {
   }
 
   let currentMatchState = null;
-  let stringBuilder = "";
+  let stringBuilder = '';
 
   for (let i = 0; i < charMatchedTable.length; i++) {
     const currentChar = corpus[i];
@@ -47,7 +45,7 @@ function markMatchGroups(corpus: string, query: string): MatchGroup[] {
         matchGroups.push(matchGroup);
       }
       currentMatchState = charMatchedTable[i];
-      stringBuilder = "" + (currentChar.toString());
+      stringBuilder = '' + currentChar.toString();
     } else {
       stringBuilder += currentChar.toString();
     }

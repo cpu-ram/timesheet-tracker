@@ -3,9 +3,11 @@ import { getFieldTitleStyle, getEntryFieldTextStyle } from '../shared/styles/rec
 import { JobsiteFieldValue } from './JobsiteFieldValue.tsx';
 
 export const JobsiteFieldDisplay = ({
-  title, value = null
+  title,
+  value = null,
 }: {
-  title: string; value?: string | null;
+  title: string;
+  value?: string | null;
 }) => {
   const textVariant = 'h4';
   return (
@@ -23,22 +25,15 @@ export const JobsiteFieldDisplay = ({
           ...getEntryFieldTextStyle(),
           padding: '0.2em 0.5em',
         }}
-        variant={textVariant} component="p"
+        variant={textVariant}
+        component="p"
       >
-        <Typography
-          component="span" sx={[
-	    { getFieldTitleStyle},
-	    { minWidth: '7em',}
-	  ]}
-	>
+        <Typography component="span" sx={[{ getFieldTitleStyle }, { minWidth: '7em' }]}>
           {title}
         </Typography>
 
-        <JobsiteFieldValue>
-          {value}
-        </JobsiteFieldValue>
-
+        <JobsiteFieldValue>{value}</JobsiteFieldValue>
       </Typography>
     </Box>
-  )
-}
+  );
+};

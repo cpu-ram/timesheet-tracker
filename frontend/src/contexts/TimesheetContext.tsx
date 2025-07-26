@@ -14,7 +14,6 @@ import updateWorkData from '../utils/updateWorkData.ts';
 
 import { addWorkBlock, updateWorkBlock, deleteWorkBlock } from '../api/workBlockApi.ts';
 
-
 const today = Temporal.Now.plainDateISO();
 
 function generateDateRange(numberOfWeeks: number = 2) {
@@ -24,7 +23,10 @@ function generateDateRange(numberOfWeeks: number = 2) {
   return { from: firstWeekStart, to: lastWeekEnd };
 }
 
-function scaffoldWorkDataContainer(dateRange: { from: Temporal.PlainDate, to: Temporal.PlainDate }) {
+function scaffoldWorkDataContainer(dateRange: {
+  from: Temporal.PlainDate;
+  to: Temporal.PlainDate;
+}) {
   const days: TimesheetDayRecord[] = [];
   let curr = dateRange.from;
   while (Temporal.PlainDate.compare(curr, dateRange.to) <= 0) {
@@ -65,17 +67,16 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
         const fetchedData = await fetchTimesheetData({ from: date, to: date });
         combinedData = combinedData.concat(fetchedData);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
     updateWorkData(combinedData, setWorkData);
-  }
+  };
 
   const fetchDayTimesheetData = async (date: Temporal.PlainDate) => {
     const fetchedData = await fetchTimesheetData({ from: date, to: date });
     updateWorkData(fetchedData, setWorkData);
-  }
+  };
 
   const handleSearchJobsites = async (value: string) => {
     const query = value;
@@ -87,12 +88,10 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const response = await fetch(`${baseUrl}/jobsites?query=${query}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        }
-      );
+      const response = await fetch(`${baseUrl}/jobsites?query=${query}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
       const responseData = await response.json();
       setJobsiteSearchResults(responseData || []);
     } catch (error) {
@@ -103,30 +102,33 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
 
   const handleAddWorkBlock = async ({
     workBlockData,
-    onJobsiteCreated
+    onJobsiteCreated,
   }: {
-    workBlockData: WorkBlockData,
-    onJobsiteCreated?: (jobsiteId: string) => void
+    workBlockData: WorkBlockData;
+    onJobsiteCreated?: (jobsiteId: string) => void;
   }) => {
     if (selectedDates.length > 0) {
       const workBlockCreationResult = await addWorkBlock(workBlockData, selectedDates);
 
-      if (workBlockCreationResult.newJobsiteCreated && workBlockCreationResult.jobsiteId && onJobsiteCreated) {
+      if (
+        workBlockCreationResult.newJobsiteCreated &&
+        workBlockCreationResult.jobsiteId &&
+        onJobsiteCreated
+      ) {
         onJobsiteCreated(workBlockCreationResult.jobsiteId);
       }
 
       await fetchMultipleDaysTimesheetData(selectedDates);
       await dateSelectionHandler.multiSelectionOff();
       setAddMode(false);
-    }
-    else if (selectedDates.length === 0) {
+    } else if (selectedDates.length === 0) {
       throw new Error();
     }
-  }
-
+  };
 
   const handleEditWorkBlock = async ({
-    workBlockId, workBlockData,
+    workBlockId,
+    workBlockData,
     onError,
     onJobsiteCreated,
   }: {
@@ -134,41 +136,43 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
     workBlockData: WorkBlockData;
     onError?: (error: Error) => void;
     onJobsiteCreated?: (jobsiteId: string) => void;
-  }
-  ) => {
+  }) => {
     try {
-      const editResult = await updateWorkBlock({ workBlockId, workBlockData, date: lastSelectedSingleDate });
+      const editResult = await updateWorkBlock({
+        workBlockId,
+        workBlockData,
+        date: lastSelectedSingleDate,
+      });
 
       if (!!onJobsiteCreated && editResult.newJobsiteCreated && editResult.jobsiteId) {
         onJobsiteCreated(editResult.jobsiteId);
       }
       await fetchDayTimesheetData(lastSelectedSingleDate);
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       console.error(error);
       if (onError && error instanceof Error) onError(error);
     }
-  }
+  };
 
   const handleDeleteWorkBlock = async (workBlockId: number) => {
     await deleteWorkBlock(workBlockId);
     await fetchDayTimesheetData(lastSelectedSingleDate);
-  }
-
+  };
 
   const handleDiscard = async function () {
     if (multiDaySelectionMode) await dateSelectionHandler.multiSelectionOff();
     if (addMode === true) setAddMode(false);
     if (editMode === true) setEditMode(false);
-  }
+  };
 
   function getRangeOfSelectedWeek() {
-    const selectedWeekNumber = Math.floor((dateRange.from)
-      .until(
-        dateSelectionHandler.lastSelectedSingleDate,
-        { largestUnit: 'days', smallestUnit: 'days', roundingMode: 'trunc' }
-      ).days
-      / 7);
+    const selectedWeekNumber = Math.floor(
+      dateRange.from.until(dateSelectionHandler.lastSelectedSingleDate, {
+        largestUnit: 'days',
+        smallestUnit: 'days',
+        roundingMode: 'trunc',
+      }).days / 7,
+    );
     const selectedWeekStartPosition = selectedWeekNumber * 7;
     const startDay = dateRange.from.add({ days: selectedWeekStartPosition });
     const endDay = startDay.add({ days: 6 });
@@ -180,39 +184,39 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
     getWeekWorkHoursTotal: function () {
       const daysOfSelectedWeek = getDaysOfSelectedWeek();
 
-      const nonRoundedTotal = daysOfSelectedWeek.map(
-        (day) => {
+      const nonRoundedTotal = daysOfSelectedWeek
+        .map(day => {
           return this.getDayWorkHoursTotal(day);
-        }).reduce((acc, curr) => acc + curr, 0);
+        })
+        .reduce((acc, curr) => acc + curr, 0);
       return Math.round(nonRoundedTotal * 10) / 10;
     },
 
     getDayWorkHoursTotal: function (day: Temporal.PlainDate) {
-      const workDay: TimesheetDayRecord | undefined = workData.find((workDay) => (workDay.date).equals(day));
+      const workDay: TimesheetDayRecord | undefined = workData.find(workDay =>
+        workDay.date.equals(day),
+      );
       if (!workDay) {
         throw new RangeError('Day not found');
       }
       const preciseTotal = workDay.workBlocks
         .map(workBlock => {
           if (workBlock.workBlockStart && workBlock.workBlockEnd) {
-            return (workBlock.workBlockStart)
-              .until(workBlock.workBlockEnd)
-              .total({ unit: 'hour' });
+            return workBlock.workBlockStart.until(workBlock.workBlockEnd).total({ unit: 'hour' });
           }
           return 0;
         })
-        .reduce(
-          (acc, curr) => acc + curr, 0);
+        .reduce((acc, curr) => acc + curr, 0);
       return Math.round(preciseTotal * 10) / 10;
-    }
-  }
+    },
+  };
 
   const dateSelectionHandler = {
     add: function (date: Temporal.PlainDate) {
-      setSelectedDates((prevSelectedDates) => [...prevSelectedDates, date]);
+      setSelectedDates(prevSelectedDates => [...prevSelectedDates, date]);
     },
     remove: function (date: Temporal.PlainDate) {
-      setSelectedDates((prevSelectedDates) => prevSelectedDates.filter((d) => !d.equals(date)));
+      setSelectedDates(prevSelectedDates => prevSelectedDates.filter(d => !d.equals(date)));
     },
     selectSingleDay: async function (date: Temporal.PlainDate) {
       setMultiDaySelectionMode(false);
@@ -223,7 +227,7 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
     },
     lastSelectedSingleDate: lastSelectedSingleDate,
     isSelected: function (date: Temporal.PlainDate) {
-      return selectedDates.some((x) => (x.equals(date)));
+      return selectedDates.some(x => x.equals(date));
     },
     multiSelectionOn: function () {
       setMultiDaySelectionMode(true);
@@ -234,16 +238,14 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
     switch: async function () {
       if (multiDaySelectionMode) {
         await this.multiSelectionOff();
-      }
-      else this.multiSelectionOn();
+      } else this.multiSelectionOn();
     },
     handleDateClick: function (date: Temporal.PlainDate) {
       if (!multiDaySelectionMode) {
         this.selectSingleDay(date);
         setEditMode(false);
         setAddMode(false);
-      }
-      else {
+      } else {
         switch (this.isSelected(date)) {
           case true:
             this.remove(date);
@@ -255,8 +257,8 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
             break;
         }
       }
-    }
-  }
+    },
+  };
 
   function discardSelectedJobsiteData() {
     setSelectedJobsiteData(null);
@@ -264,13 +266,13 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
   }
 
   function getDaysOfSelectedWeek() {
-    const selectedWeekNumber = Math.floor((dateRange.from)
-      .until(
-        dateSelectionHandler.lastSelectedSingleDate,
-        {
-          largestUnit: 'days', smallestUnit: 'days', roundingMode: 'trunc'
-        }
-      ).days / 7);
+    const selectedWeekNumber = Math.floor(
+      dateRange.from.until(dateSelectionHandler.lastSelectedSingleDate, {
+        largestUnit: 'days',
+        smallestUnit: 'days',
+        roundingMode: 'trunc',
+      }).days / 7,
+    );
 
     const daysOfSelectedWeek = [];
     const selectedWeekStartPosition = selectedWeekNumber * 7;
@@ -289,39 +291,51 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     dateSelectionHandler.selectSingleDay(today);
-    const fetchFullData = async () => (await fetchFullTimesheetData());
+    const fetchFullData = async () => await fetchFullTimesheetData();
     fetchFullData();
   }, []);
 
-
   return (
-    <TimesheetContext.Provider value={{
-      dateRange, setDateRange,
-      workData, setWorkData,
-      multiDaySelectionMode, setMultiDaySelectionMode,
-      selectedDates, setSelectedDates,
-      editMode, setEditMode,
-      addMode, setAddMode,
-      lastSelectedSingleDate, setLastSelectedSingleDate,
-      dateSelectionHandler,
-      calendarMode, setCalendarMode,
-      getDaysOfSelectedWeek,
-      workDataAggregator,
-      getRangeOfSelectedWeek,
-      fetchFullTimesheetData,
+    <TimesheetContext.Provider
+      value={{
+        dateRange,
+        setDateRange,
+        workData,
+        setWorkData,
+        multiDaySelectionMode,
+        setMultiDaySelectionMode,
+        selectedDates,
+        setSelectedDates,
+        editMode,
+        setEditMode,
+        addMode,
+        setAddMode,
+        lastSelectedSingleDate,
+        setLastSelectedSingleDate,
+        dateSelectionHandler,
+        calendarMode,
+        setCalendarMode,
+        getDaysOfSelectedWeek,
+        workDataAggregator,
+        getRangeOfSelectedWeek,
+        fetchFullTimesheetData,
 
-      jobsiteSearchResults, setJobsiteSearchResults,
-      selectedJobsiteData, setSelectedJobsiteData,
-      suggestedJobsiteData, setSuggestedJobsiteData,
-      handleSearchJobsites,
-      discardSelectedJobsiteData,
-      fetchDayTimesheetData,
-      fetchMultipleDaysTimesheetData,
-      handleAddWorkBlock,
-      handleEditWorkBlock,
-      handleDeleteWorkBlock,
-      handleDiscard,
-    }}>
+        jobsiteSearchResults,
+        setJobsiteSearchResults,
+        selectedJobsiteData,
+        setSelectedJobsiteData,
+        suggestedJobsiteData,
+        setSuggestedJobsiteData,
+        handleSearchJobsites,
+        discardSelectedJobsiteData,
+        fetchDayTimesheetData,
+        fetchMultipleDaysTimesheetData,
+        handleAddWorkBlock,
+        handleEditWorkBlock,
+        handleDeleteWorkBlock,
+        handleDiscard,
+      }}
+    >
       {children}
     </TimesheetContext.Provider>
   );

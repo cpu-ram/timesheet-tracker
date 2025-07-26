@@ -7,7 +7,7 @@ import { logout } from '../../api/auth.ts';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () => void }) => {
+const SideMenu = ({ isOpen, onMenuToggle }: { isOpen: boolean; onMenuToggle: () => void }) => {
   const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
     await logout();
 
     setIsAuthenticated(false);
-  }
+  };
 
   const menuItems = [
     { name: 'Calendar', link: '/timesheet' },
@@ -25,10 +25,9 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
     { name: 'Jobsites', link: '/jobsites' },
   ];
 
-
   return (
     <Drawer
-      anchor='left'
+      anchor="left"
       open={isOpen}
       onClose={onMenuToggle}
       sx={{
@@ -93,20 +92,21 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
             border: 'none',
             outline: 'none',
             boxShadow: 'none',
-          }
-        }
-      }}>
-
-      <Box sx={{
-        display: 'flex',
-        width: '12em',
-        justifyContent: 'flex-end',
-        flexDirection: 'column',
-        '& h1, h2, h3, h4, h5, h6': {
-          fontFamily: 'Helvetica',
-        }
-      }}>
-
+          },
+        },
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          width: '12em',
+          justifyContent: 'flex-end',
+          flexDirection: 'column',
+          '& h1, h2, h3, h4, h5, h6': {
+            fontFamily: 'Helvetica',
+          },
+        }}
+      >
         <IconButton
           onClick={onMenuToggle}
           sx={{
@@ -114,7 +114,8 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
             alignSelf: 'flex-end',
             color: theme.palette.warning.main,
             margin: '0.25em 0.25em 0.8em',
-          }}>
+          }}
+        >
           <CloseIcon
             sx={{
               fontSize: '1.1em',
@@ -125,19 +126,14 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
           <Link
             key={item.name}
             href={item.link}
-            className={
-              `
+            className={`
               drawer-menu-item 
               ${location.pathname.startsWith(item.link) ? 'current' : 'non-current'}
               gui-link
-              `
-            }
-            sx={{
-            }}
+              `}
+            sx={{}}
           >
-            <Typography variant='h6'>
-              {item.name}
-            </Typography>
+            <Typography variant="h6">{item.name}</Typography>
           </Link>
         ))}
       </Box>
@@ -153,7 +149,6 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
           flexDirection: 'column',
         }}
       >
-
         <Box
           className="profile-dashboard"
           sx={{
@@ -173,7 +168,8 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
               whiteSpace: 'wrap',
               wordBreak: 'break-word',
               maxWidth: '10em',
-            }}>
+            }}
+          >
             <AccountCircleIcon
               sx={{
                 fontSize: '1.5em',
@@ -193,51 +189,34 @@ const SideMenu = ({ isOpen, onMenuToggle } : {isOpen: boolean; onMenuToggle: () 
             }}
           >
             <Button
-              onClick={() => navigate("/profile/change-name")}
-              className={
-                `
+              onClick={() => navigate('/profile/change-name')}
+              className={`
               drawer-menu-item 
-              ${location.pathname === "/profile/change-name" ? 'current' : 'non-current'}
+              ${location.pathname === '/profile/change-name' ? 'current' : 'non-current'}
               gui-link
-              `
-              }
+              `}
             >
-              <Typography
-                className="profile-action-text"
-
-                variant="h6">
+              <Typography className="profile-action-text" variant="h6">
                 —Change name
               </Typography>
             </Button>
 
-
             <Button
-              className={
-                `
+              className={`
               drawer-menu-item
               non-current
               gui-link
-              `
-              }
+              `}
               onClick={handleLogout}
             >
-              <Typography
-                className="profile-action-text"
-                variant="h6"
-                sx={{
-                }}
-              >
+              <Typography className="profile-action-text" variant="h6" sx={{}}>
                 —Log out
               </Typography>
             </Button>
           </Box>
-
         </Box>
-
       </Box>
-
-    </Drawer >
-
+    </Drawer>
   );
 };
 

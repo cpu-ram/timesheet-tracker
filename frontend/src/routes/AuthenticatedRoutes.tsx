@@ -10,67 +10,28 @@ import ChangeNamePage from '../pages/ChangeNamePage.tsx';
 const AuthenticatedRoutes = () => {
   return (
     <Routes>
-
       <Route
         path="/timesheet"
         element={
-          (
-            <NotificationProvider>
-              <TimesheetPage />
-            </NotificationProvider>
-          )
+          <NotificationProvider>
+            <TimesheetPage />
+          </NotificationProvider>
         }
       />
 
+      <Route path="/reports/weekly" element={<ReportPage />} />
 
-      <Route
-        path="/reports/weekly"
-        element={
-          <ReportPage />
-        }
-      />
+      <Route path="/jobsites/new/" element={<JobsitePage initialMode="add" />} />
 
-      <Route
-        path="/jobsites/new/"
-        element={
-          <JobsitePage
-            initialMode="add"
-          />
-        }
-      />
+      <Route path="/jobsites/:jobsiteId" element={<JobsitePage initialMode="view" />} />
 
-      <Route
-        path="/jobsites/:jobsiteId"
-        element={
-          <JobsitePage
-            initialMode="view"
-          />
-        }
-      />
+      <Route path="/jobsites/" element={<JobsiteListPage />} />
 
-      <Route
-        path="/jobsites/"
-        element={
-          <JobsiteListPage />
-        }
-      />
+      <Route path="/profile/change-name" element={<ChangeNamePage />} />
 
-      <Route
-        path="/profile/change-name"
-        element={
-          <ChangeNamePage />
-        }
-      />
-
-      <Route
-        path="*"
-        element={
-          <Navigate to="/timesheet" />
-        }
-      />
-
+      <Route path="*" element={<Navigate to="/timesheet" />} />
     </Routes>
-  )
-}
+  );
+};
 
 export default AuthenticatedRoutes;

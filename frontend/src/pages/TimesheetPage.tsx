@@ -2,7 +2,6 @@ import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
 import { useStyleContext } from '../contexts/StyleContext.tsx';
 import { useNotificationContext } from '../contexts/NotificationContext.tsx';
 
-
 import { Box, Grid, Typography } from '@mui/material';
 
 import Navigation from '../components/Navigation/Navigation.tsx';
@@ -19,8 +18,10 @@ const TimesheetPage = () => {
 
   const {
     workData,
-    editMode, setEditMode,
-    addMode, setAddMode,
+    editMode,
+    setEditMode,
+    addMode,
+    setAddMode,
     lastSelectedSingleDate,
     handleDiscard,
   } = useTimesheetContext();
@@ -30,15 +31,18 @@ const TimesheetPage = () => {
   const handleSetEditMode = function () {
     setEditMode(true);
     setAddMode(false);
-  }
+  };
   const handleCancelEdit = function () {
     setEditMode(false);
-  }
+  };
   const handleSetAddMode = function () {
     setAddMode(true);
     setEditMode(false);
-  }
-  const currentDayWorkData = lastSelectedSingleDate ? workData.find((day: TimesheetDayRecord) => (day.date).equals(lastSelectedSingleDate))?.workBlocks || [] : [];
+  };
+  const currentDayWorkData = lastSelectedSingleDate
+    ? workData.find((day: TimesheetDayRecord) => day.date.equals(lastSelectedSingleDate))
+        ?.workBlocks || []
+    : [];
 
   return (
     <Box
@@ -51,19 +55,15 @@ const TimesheetPage = () => {
           xs: '48px 0 0 0',
         },
 
-
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
         alignContent: 'center',
 
-
         backgroundColor: theme.palette.grey[100],
-      }}>
-
-      <Navigation
-        resourceNameList={['weekly_report']}
-      />
+      }}
+    >
+      <Navigation resourceNameList={['weekly_report']} />
       <Box
         sx={{
           maxWidth: '45em',
@@ -71,20 +71,26 @@ const TimesheetPage = () => {
       >
         <Calendar></Calendar>
 
-        <Buttons {...{
-          editMode, addMode,
-          handleSetAddMode, handleSetEditMode, handleDiscard,
-          handleCancelEdit,
-          currentDayWorkData
-        }}>
-        </Buttons>
+        <Buttons
+          {...{
+            editMode,
+            addMode,
+            handleSetAddMode,
+            handleSetEditMode,
+            handleDiscard,
+            handleCancelEdit,
+            currentDayWorkData,
+          }}
+        ></Buttons>
 
         {notification && (
-          <Grid item
+          <Grid
+            item
             xs={12}
             sx={{
               margin: '0.75em 0 0.75em 0',
-            }}>
+            }}
+          >
             {
               <Typography
                 sx={{
@@ -95,24 +101,28 @@ const TimesheetPage = () => {
                   borderRadius: '4px',
                   fontWeight: 500,
                   fontSize: '1em',
-                }}>
+                }}
+              >
                 {notification}
               </Typography>
             }
           </Grid>
         )}
 
-        <Box id="main-content"
+        <Box
+          id="main-content"
           sx={{
             padding: {
               xs: '0 0.5em',
               md: 0,
             },
             marginBottom: '5em',
-          }}>
-          <Grid id="add-work-block"
+          }}
+        >
+          <Grid
+            id="add-work-block"
             container
-            className='addWorkBlock'
+            className="addWorkBlock"
             sx={{
               flexDirection: 'column',
               padding: '0',
@@ -126,24 +136,21 @@ const TimesheetPage = () => {
               margin: '0.5em 0',
               border: `1px solid ${theme.palette.divider}`,
               display: addMode ? 'flex' : 'none',
-            }}>
-            {
-              addMode &&
-              (
-                <WorkBlockEntryForm
-                  formFlags={{
-                    mode: 'add',
-                  }}
-                />
-              )
-            }
+            }}
+          >
+            {addMode && (
+              <WorkBlockEntryForm
+                formFlags={{
+                  mode: 'add',
+                }}
+              />
+            )}
           </Grid>
 
-          <DayWorkBlocks {...{ workData: currentDayWorkData }}>
-          </DayWorkBlocks>
+          <DayWorkBlocks {...{ workData: currentDayWorkData }}></DayWorkBlocks>
         </Box>
       </Box>
     </Box>
   );
-}
+};
 export default TimesheetPage;
