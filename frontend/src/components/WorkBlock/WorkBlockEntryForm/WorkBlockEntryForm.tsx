@@ -20,7 +20,7 @@ import {
   convertPlainTimeToDate,
 } from '../../../utils/temporalFunctions.ts';
 
-import { LocalizationProvider, DesktopTimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DesktopTimePicker, MobileTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import { AddWorkBlockFormProps, WorkBlockData } from '../../../types/WorkBlock.types.ts';
@@ -39,6 +39,10 @@ export const WorkBlockEntryForm = ({
   const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleDiscard } =
     useTimesheetContext();
   const { displayNotification } = useNotificationContext();
+
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent,
+  );
 
   let onEnteredData: ((_: any) => void) | null = null;
   if (mode === 'edit') {
@@ -375,74 +379,6 @@ export const WorkBlockEntryForm = ({
               </Grid>
             )}
 
-            <Grid
-              item
-              xs={5}
-              sm={2.8}
-              md={2.5}
-              sx={{
-                height: 'auto',
-              }}
-            >
-              <DesktopTimePicker
-                className="entry-field"
-                label="From"
-                name="startTime"
-                value={
-                  formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
-                }
-                onChange={handleStartTimeChange}
-                slotProps={{
-                  textField: {
-                    onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                      handleStartTimeChange(
-                        event.target.value ? new Date(event.target.value) : null,
-                      );
-                    },
-                    InputLabelProps: {
-                      shrink: true,
-                    },
-                    fullWidth: true,
-                    inputProps: {
-                      step: 600,
-                    },
-                  },
-                }}
-              />
-              <DesktopTimePicker
-                className="entry-field"
-                label="To"
-                name="endTime"
-                value={formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null}
-                onChange={handleEndTimeChange}
-                slotProps={{
-                  textField: {
-                    onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                      handleEndTimeChange(event.target.value ? new Date(event.target.value) : null);
-                    },
-                    InputLabelProps: {
-                      shrink: true,
-                    },
-                    inputProps: {
-                      step: 600,
-                    },
-                    fullWidth: true,
-                  },
-                }}
-              />
-
-              {suggestedData &&
-                suggestedData.workBlockStart &&
-                suggestedData.workBlockEnd &&
-                !(formData.workBlockStart || formData.workBlockEnd) && (
-                  <SuggestedData
-                    fields={['workBlockStart', 'workBlockEnd']}
-                    suggestedWorkBlockProps={suggestedData}
-                    handleMerge={mergeSuggested}
-                  />
-                )}
-            </Grid>
-
             <Grid item xs={7} sm={9.2} md={9.5}>
               <Grid xs={12} className="entry-field" container item>
                 <Grid item xs={existingJobsiteRecordId ? 9 : 12} sx={{}}>
@@ -547,6 +483,134 @@ export const WorkBlockEntryForm = ({
                   autoComplete: 'off',
                 }}
               />
+            </Grid>
+
+            <Grid
+              item
+              xs={5}
+              sm={2.8}
+              md={2.5}
+              sx={{
+                height: 'auto',
+              }}
+            >
+              {!isMobile ? (
+                <DesktopTimePicker
+                  className="entry-field"
+                  label="From"
+                  name="startTime"
+                  value={
+                    formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
+                  }
+                  onChange={handleStartTimeChange}
+                  slotProps={{
+                    textField: {
+                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                        handleStartTimeChange(
+                          event.target.value ? new Date(event.target.value) : null,
+                        );
+                      },
+                      InputLabelProps: {
+                        shrink: true,
+                      },
+                      fullWidth: true,
+                      inputProps: {
+                        step: 600,
+                      },
+                    },
+                  }}
+                />
+              ) : (
+                <MobileTimePicker
+                  className="entry-field"
+                  label="From"
+                  name="startTime"
+                  value={
+                    formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
+                  }
+                  onChange={handleStartTimeChange}
+                  slotProps={{
+                    textField: {
+                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                        handleStartTimeChange(
+                          event.target.value ? new Date(event.target.value) : null,
+                        );
+                      },
+                      InputLabelProps: {
+                        shrink: true,
+                      },
+                      fullWidth: true,
+                      inputProps: {
+                        step: 600,
+                      },
+                    },
+                  }}
+                />
+              )}
+              {!isMobile ? (
+                <DesktopTimePicker
+                  className="entry-field"
+                  label="To"
+                  name="endTime"
+                  value={
+                    formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null
+                  }
+                  onChange={handleEndTimeChange}
+                  slotProps={{
+                    textField: {
+                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                        handleEndTimeChange(
+                          event.target.value ? new Date(event.target.value) : null,
+                        );
+                      },
+                      InputLabelProps: {
+                        shrink: true,
+                      },
+                      inputProps: {
+                        step: 600,
+                      },
+                      fullWidth: true,
+                    },
+                  }}
+                />
+              ) : (
+                <MobileTimePicker
+                  className="entry-field"
+                  label="To"
+                  name="endTime"
+                  value={
+                    formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null
+                  }
+                  onChange={handleEndTimeChange}
+                  slotProps={{
+                    textField: {
+                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                        handleEndTimeChange(
+                          event.target.value ? new Date(event.target.value) : null,
+                        );
+                      },
+                      InputLabelProps: {
+                        shrink: true,
+                      },
+                      inputProps: {
+                        step: 600,
+                      },
+                      fullWidth: true,
+                    },
+                  }}
+                />
+              )}
+
+              {suggestedData &&
+                suggestedData.workBlockStart &&
+                suggestedData.workBlockEnd &&
+                !(formData.workBlockStart || formData.workBlockEnd) && (
+                  <SuggestedData
+                    fields={['workBlockStart', 'workBlockEnd']}
+                    suggestedWorkBlockProps={suggestedData}
+                    handleMerge={mergeSuggested}
+                  />
+                )}
             </Grid>
 
             <Grid item xs={12}>

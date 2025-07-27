@@ -10,7 +10,7 @@ import {
   convertDateToPlainTime,
   convertPlainTimeToDate,
 } from '../../../utils/temporalFunctions.ts';
-import { LocalizationProvider, DesktopTimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DesktopTimePicker, MobileTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import { JobsiteDataEntryFormProps } from './types.ts';
@@ -75,6 +75,10 @@ const JobsiteDataEntryForm = ({
       setValidationError(null);
     }
   }, [formData.defaultWorkStartTime, formData.defaultWorkEndTime]);
+
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent,
+  );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
@@ -259,47 +263,92 @@ const JobsiteDataEntryForm = ({
               // textEntryFieldFactory.createField({ name: 'supervisorName', gridWidth: 6.7 })
             }
 
-            <DesktopTimePicker
-              label="Typical start"
-              value={
-                formData.defaultWorkStartTime
-                  ? convertPlainTimeToDate(formData.defaultWorkStartTime)
-                  : null
-              }
-              onChange={handleTimeChange('defaultWorkStartTime')}
-              slotProps={{
-                textField: {
-                  name: 'startTime',
-                  onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                    const timeEntered = new Date(event.target.value);
-                    () => handleTimeChange('defaultWorkStartTime')(timeEntered);
+            {!isMobile ? (
+              <DesktopTimePicker
+                label="Typical start"
+                value={
+                  formData.defaultWorkStartTime
+                    ? convertPlainTimeToDate(formData.defaultWorkStartTime)
+                    : null
+                }
+                onChange={handleTimeChange('defaultWorkStartTime')}
+                slotProps={{
+                  textField: {
+                    name: 'startTime',
+                    onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                      const timeEntered = new Date(event.target.value);
+                      () => handleTimeChange('defaultWorkStartTime')(timeEntered);
+                    },
                   },
-                },
-              }}
-              sx={{
-                marginRight: '0.5em',
-              }}
-            />
-
-            <DesktopTimePicker
-              label="Typical end"
-              name="endTime"
-              value={
-                formData.defaultWorkEndTime
-                  ? convertPlainTimeToDate(formData.defaultWorkEndTime)
-                  : null
-              }
-              onChange={handleTimeChange('defaultWorkEndTime')}
-              slotProps={{
-                textField: {
-                  name: 'endTime',
-                  onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                    const timeEntered = new Date(event.target.value);
-                    () => handleTimeChange('defaultWorkEndTime')(timeEntered);
+                }}
+                sx={{
+                  marginRight: '0.5em',
+                }}
+              />
+            ) : (
+              <MobileTimePicker
+                label="Typical start"
+                value={
+                  formData.defaultWorkStartTime
+                    ? convertPlainTimeToDate(formData.defaultWorkStartTime)
+                    : null
+                }
+                onChange={handleTimeChange('defaultWorkStartTime')}
+                slotProps={{
+                  textField: {
+                    name: 'startTime',
+                    onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                      const timeEntered = new Date(event.target.value);
+                      () => handleTimeChange('defaultWorkStartTime')(timeEntered);
+                    },
                   },
-                },
-              }}
-            />
+                }}
+                sx={{
+                  marginRight: '0.5em',
+                }}
+              />
+            )}
+            {!isMobile ? (
+              <DesktopTimePicker
+                label="Typical end"
+                name="endTime"
+                value={
+                  formData.defaultWorkEndTime
+                    ? convertPlainTimeToDate(formData.defaultWorkEndTime)
+                    : null
+                }
+                onChange={handleTimeChange('defaultWorkEndTime')}
+                slotProps={{
+                  textField: {
+                    name: 'endTime',
+                    onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                      const timeEntered = new Date(event.target.value);
+                      () => handleTimeChange('defaultWorkEndTime')(timeEntered);
+                    },
+                  },
+                }}
+              />
+            ) : (
+              <MobileTimePicker
+                label="Typical end"
+                name="endTime"
+                value={
+                  formData.defaultWorkEndTime
+                    ? convertPlainTimeToDate(formData.defaultWorkEndTime)
+                    : null
+                }
+                onChange={handleTimeChange('defaultWorkEndTime')}
+                slotProps={{
+                  textField: {
+                    name: 'endTime',
+                    onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                      const timeEntered = new Date(event.target.value);
+                      () => handleTimeChange('defaultWorkEndTime')(timeEntered);
+                    },
+                  },
+                }}
+              />
+            )}
           </Box>
 
           <Box
