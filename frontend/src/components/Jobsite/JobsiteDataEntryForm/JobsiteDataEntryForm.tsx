@@ -302,6 +302,11 @@ const JobsiteDataEntryForm = ({
                       () => handleTimeChange('defaultWorkStartTime')(timeEntered);
                     },
                   },
+                  dialog: {
+                    sx: {
+                      zIndex: 100000,
+                    },
+                  },
                 }}
                 sx={{
                   marginRight: '0.5em',
@@ -346,7 +351,13 @@ const JobsiteDataEntryForm = ({
                       () => handleTimeChange('defaultWorkEndTime')(timeEntered);
                     },
                   },
+                  dialog: {
+                    sx: {
+                      zIndex: 100000,
+                    },
+                  },
                 }}
+                sx={{}}
               />
             )}
           </Box>
