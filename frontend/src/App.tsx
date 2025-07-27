@@ -27,17 +27,17 @@ function App() {
       <GlobalStyles
         styles={{
           '*': { boxSizing: 'border-box' },
-          'html, body, #root': {
-            minHeight: '100%',
+          'html, body': {
             margin: 0,
             padding: 0,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
             backgroundColor: `${theme.palette.grey[100]}`,
             overflowX: 'hidden',
-            overflowY: 'auto',
-            minHeight: '100dvh',
+            display: 'block',
+          },
+          '#root': {
+            minHeight: '100vdh',
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
       />

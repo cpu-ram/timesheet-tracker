@@ -70,6 +70,16 @@ const ReportPage = () => {
     fetchReports();
   }, []);
 
+  useEffect(() => {
+    if (!isSigned) return;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollToDownloads();
+      });
+    });
+  }, [isSigned]);
+
   async function fetchReports(): Promise<void> {
     try {
       const accumulator: Report[] = [];
@@ -112,16 +122,22 @@ const ReportPage = () => {
   async function handleReportSigning() {
     try {
       setIsSigned(true);
-      setTimeout(() => scrollToDownloads(), 400);
     } catch (error) {
       console.error('Error generating report', error);
     }
   }
 
   function scrollToDownloads() {
-    downloadsBoxRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const element = downloadsBoxRef.current;
+    if (!element) return;
+
     window.scrollBy(0, 1);
     window.scrollBy(0, -1);
+
+    const rectangle = element.getBoundingClientRect();
+    const top = rectangle.top + window.pageYOffset;
+
+    window.scrollTo({ top, behavior: 'smooth' });
   }
 
   return (
@@ -290,6 +306,7 @@ const ReportPage = () => {
 
       {isSigned && (
         <Box
+          ref={downloadsBoxRef}
           className="content-element downloads-box"
           sx={{
             display: 'flex',
@@ -311,7 +328,7 @@ const ReportPage = () => {
             backgroundColor: '#f6f6f8',
           }}
         >
-          <Typography ref={downloadsBoxRef} sx={getDownloadsBoxStyle()}>
+          <Typography sx={getDownloadsBoxStyle()}>
             Download:
             <Button
               variant="contained"
