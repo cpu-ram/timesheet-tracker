@@ -1,10 +1,10 @@
-# Timesheet Tracker Application
+# Timesheet Tracker
 
 ## Overview
 
-This Timesheet Tracker is a basic application for tracking work at various projects, and to generate weekly report documents.
+This is a simple amolication for collecting, storing and aggregating timesheet records. 
 
-I intend for this to be eventually expanded — to include reviews and approvals by managers, and integration with payroll systems. 
+It is in an early development stage.  I intend to stablize it, add just a few major features, and then refine and refactor it to a higher standard.
 
 ## Technologies Used
 
@@ -12,17 +12,14 @@ I intend for this to be eventually expanded — to include reviews and approvals
 - **Frontend**: React
 - **Database**: PostgreSQL
 - **Containerization**: Docker
-- **Version Control**: Git
 
 ## Setup and Installation
-- run **npm run start-db** at the /backend directory to start the database (this is for a local, dev use)
+### Dev
 - run **npm run dev** at the /backend directory to start the backend
 - run **npm run dev** at the /frontend directory to start the frontend
-
-### Prerequisites
-
-- Node.js
-- Docker/Colima
+### Prod
+- run **npx build ./src** at the /backend directory to start the backend
+- run **vite run build** at the /frontend directory to start the fronte
 
 ## License
 
