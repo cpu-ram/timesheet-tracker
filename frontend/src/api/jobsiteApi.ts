@@ -3,7 +3,11 @@ import { Temporal } from '@js-temporal/polyfill';
 
 import { ApiError } from '../errors/ApiError.ts';
 
-export const fetchJobsite = async ({ jobsiteId }: { jobsiteId: String }) => {
+export const fetchJobsite = async ({
+  jobsiteId, signal
+}: {
+  jobsiteId: string, signal?: AbortSignal
+}): Promise<JobsiteProps | null> => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   const timesheetDataSubPath = `/jobsites`;
 
@@ -13,24 +17,24 @@ export const fetchJobsite = async ({ jobsiteId }: { jobsiteId: String }) => {
       credentials: 'include',
     });
     if (!response.ok) {
-      console.error('Failed to fetch jobsite data:') + response.statusText;
+      console.error('Failed to fetch jobsite data: ', response.statusText);
       throw new Error('Failed to fetch jobsite data');
     }
     const data = await response.json();
     const parsedData = data
       ? {
-          ...data,
-          defaultWorkStartTime: data.defaultWorkStartTime
-            ? Temporal.PlainTime.from(data.defaultWorkStartTime)
-            : null,
-          defaultWorkEndTime: data.defaultWorkEndTime
-            ? Temporal.PlainTime.from(data.defaultWorkEndTime)
-            : null,
-        }
+        ...data,
+        defaultWorkStartTime: data.defaultWorkStartTime
+          ? Temporal.PlainTime.from(data.defaultWorkStartTime)
+          : null,
+        defaultWorkEndTime: data.defaultWorkEndTime
+          ? Temporal.PlainTime.from(data.defaultWorkEndTime)
+          : null,
+      }
       : null;
     return parsedData;
   } catch (error) {
-    console.error('Error fetching jobsite data:', error);
+    if (error?.name !== 'AbortError') console.error('Error fetching jobsite data:', error);
     throw error;
   }
 };

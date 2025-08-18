@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 
@@ -61,23 +61,21 @@ const JobsitePanel = ({
     }
   };
 
-  const fetchJobsiteData = async () => {
-    try {
-      if (mode === 'view') {
-        if (!jobsiteId) {
-          throw new Error('Jobsite ID is required');
-        }
-        const jobsiteData = await fetchJobsite({ jobsiteId });
-        setJobsite(jobsiteData);
-      }
-    } catch (error) {
-      console.error('Error fetching jobsite data:', error);
-    }
-  };
-
   useEffect(() => {
-    fetchJobsiteData();
-  }, []);
+    if (!jobsiteId || mode === 'add' || (mode === 'edit' && jobsite)) return;
+
+    const abortController = new AbortController();
+    fetchJobsite({ jobsiteId, signal: abortController.signal })
+      .then(data => {
+        setJobsite(data);
+      })
+      .catch((error: unknown) => {
+        if (error?.name !== 'AbortError') {
+          console.error('Error fetching jobsite data: ', error);
+        }
+      });
+    return () => abortController.abort();
+  }, [mode, jobsiteId, jobsite]);
 
   const handleDiscard = () => {
     switch (mode) {
@@ -157,7 +155,7 @@ const JobsitePanel = ({
             </Box>
           )}
 
-          <JobsiteDetails {...jobsite} />
+          {jobsite && <JobsiteDetails {...jobsite} />}
 
           <Box
             className="jobsite-panel-actions"

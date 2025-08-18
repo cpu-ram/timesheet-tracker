@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -43,14 +42,14 @@ const JobsiteDataEntryForm = ({
   const [formData, setFormData] = useState(() =>
     jobsite
       ? {
-          jobsiteId: jobsite.jobsiteId ?? '',
-          jobsiteName: jobsite.jobsiteName ?? '',
-          jobsiteAddress: jobsite.jobsiteAddress ?? '',
-          jobsiteDescription: jobsite.jobsiteDescription ?? '',
-          supervisorName: jobsite.supervisorName ?? '',
-          defaultWorkStartTime: jobsite.defaultWorkStartTime ?? null,
-          defaultWorkEndTime: jobsite.defaultWorkEndTime ?? null,
-        }
+        jobsiteId: jobsite.jobsiteId ?? '',
+        jobsiteName: jobsite.jobsiteName ?? '',
+        jobsiteAddress: jobsite.jobsiteAddress ?? '',
+        jobsiteDescription: jobsite.jobsiteDescription ?? '',
+        supervisorName: jobsite.supervisorName ?? '',
+        defaultWorkStartTime: jobsite.defaultWorkStartTime ?? null,
+        defaultWorkEndTime: jobsite.defaultWorkEndTime ?? null,
+      }
       : initializeFormData(),
   );
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -136,7 +135,7 @@ const JobsiteDataEntryForm = ({
     ) {
       if (validationError !== null) setValidationError(null);
       try {
-        handleEnteredData(formData);
+        await handleEnteredData(formData);
         if (mode === 'add') navigate('/jobsites');
         if (mode === 'edit') {
           setMode('view');
@@ -176,17 +175,7 @@ const JobsiteDataEntryForm = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <form onSubmit={handleSubmit}>
-        <Box
-          id="addJobsiteFormRootWrapper"
-          sx={{
-            ...getAddJobsiteFormWrapperStyle,
-            borderRadius: '4px',
-            backgroundColor: 'transparent',
-            '& > div > form > div+div': {
-              marginTop: '0.57em',
-            },
-          }}
-        >
+        <Box>
           <Box
             sx={{
               backgroundColor: 'white',
@@ -217,13 +206,6 @@ const JobsiteDataEntryForm = ({
               },
             }}
           >
-            {validationError && (
-              <Box sx={getErrorWrapperStyle}>
-                {validationError && (
-                  <Typography sx={getErrorTextStyle}>{validationError}</Typography>
-                )}
-              </Box>
-            )}
             {mode === 'edit' && (
               <Box
                 sx={{
@@ -256,12 +238,17 @@ const JobsiteDataEntryForm = ({
               </>
             )}
 
+            {validationError && (
+              <Box sx={getErrorWrapperStyle}>
+                {validationError && (
+                  <Typography sx={getErrorTextStyle}>{validationError}</Typography>
+                )}
+              </Box>
+            )}
+
             {textEntryFieldFactory.createField({ name: 'jobsiteName' })}
             {textEntryFieldFactory.createField({ name: 'jobsiteAddress' })}
             {textEntryFieldFactory.createField({ name: 'jobsiteDescription' })}
-            {
-              // textEntryFieldFactory.createField({ name: 'supervisorName', gridWidth: 6.7 })
-            }
 
             {!isMobile ? (
               <DesktopTimePicker
@@ -313,6 +300,7 @@ const JobsiteDataEntryForm = ({
                 }}
               />
             )}
+
             {!isMobile ? (
               <DesktopTimePicker
                 label="Typical end"
@@ -362,6 +350,8 @@ const JobsiteDataEntryForm = ({
             )}
           </Box>
 
+
+
           <Box
             id="buttonsWrapper"
             sx={{
@@ -382,10 +372,13 @@ const JobsiteDataEntryForm = ({
           >
             <Button
               variant="contained"
+              type="button"
               onClick={handleDiscard}
-              value="Discard"
+              disableRipple
+              disableFocusRipple
+              disableElevation
               sx={{
-                ...getDiscardButtonStyle,
+                ...getDiscardButtonStyle(),
                 color: 'black',
                 backgroundColor: 'white',
                 border: '1.3px solid #777',
@@ -397,16 +390,21 @@ const JobsiteDataEntryForm = ({
             >
               {discardLabel}
             </Button>
-
             <Button
               variant="contained"
               type="submit"
-              value="Save"
-              sx={getSubmitButtonStyle(!!validationError)}
+              disableRipple
+              disableFocusRipple
+              disableElevation
+              sx={{
+                ...getSubmitButtonStyle(!!validationError),
+
+              }}
             >
               {saveLabel}
             </Button>
           </Box>
+
         </Box>
       </form>
     </LocalizationProvider>

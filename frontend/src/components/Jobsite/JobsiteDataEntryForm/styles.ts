@@ -1,19 +1,18 @@
-import { useTheme } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
 
-export const getSubmitButtonStyle = (validationError: boolean) => {
-  const theme = useTheme();
+export const getSubmitButtonStyle = (validationError: boolean) => (theme: Theme) => {
   return validationError
     ? {
+      backgroundColor: theme.palette.warning.dark,
+      color: 'white',
+      '&:hover': {
         backgroundColor: theme.palette.warning.dark,
-        color: 'white',
-        '&:hover': {
-          backgroundColor: theme.palette.warning.dark,
-        },
-      }
+      },
+    }
     : {
-        backgroundColor: theme.palette.primary.dark,
-        color: 'white',
-      };
+      backgroundColor: theme.palette.primary.dark,
+      color: 'white',
+    };
 };
 
 export const getDiscardButtonStyle = () => {
