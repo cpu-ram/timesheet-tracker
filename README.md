@@ -2,9 +2,9 @@
 
 ## Overview
 
-This is a simple amolication for collecting, storing and aggregating timesheet records. 
+This is a simple application for collecting, viewing and archiving timesheet records. 
 
-It is in an early development stage.  I intend to stablize it, add just a few major features, and then refine and refactor it to a higher standard.
+A demo is available at <a href="lesspaper.work">http://lesspaper.work</a>
 
 ## Technologies Used
 
