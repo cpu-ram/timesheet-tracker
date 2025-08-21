@@ -25,12 +25,13 @@ const JobsitePage = (props: { initialMode: 'view' | 'add' | 'edit' }) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        width: '100% !important',
-        minWidth: '100%',
-        alignSelf: 'center',
-        alignItems: 'center',
+        width: '100vw',
+        minWidth: '100vw',
+        maxWidth: '45em',
+        alignItems: 'flex-start',
         justifyContent: 'center',
         alignContent: 'center',
+        boxSizing: 'border-box',
 
         padding: '3.2em 0.6em',
 
@@ -56,7 +57,7 @@ const JobsitePage = (props: { initialMode: 'view' | 'add' | 'edit' }) => {
           sx={{
             maxWidth: '45em',
             alignSelf: 'center',
-            padding: '0.95em 0',
+            padding: '0.95em 0.3em',
           }}
         >
           {searchParams.get('fromName') && searchParams.get('fromLink') && (

@@ -10,8 +10,8 @@ import { JobsiteProps } from '../../components/Jobsite/types.ts';
 import { FieldValue } from '../../components/shared/FieldValue.tsx';
 import { FieldTitle } from './FieldTitle.tsx';
 
-const JobsiteListPage = () => {
-  const [jobsites, setJobsites] = useState([]);
+function JobsiteListPage() {
+  const [jobsites, setJobsites] = useState<JobsiteProps[]>([]);
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -32,15 +32,13 @@ const JobsiteListPage = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        width: '100%',
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignContent: 'center',
-
-        padding: '4.15em 0',
-
-        margin: 0,
+        width: '100vw',
+        maxWidth: '45em',
+        boxSizing: 'border-box',
+        alignItems: 'stretch',
+        justifyContent: 'flex-start',
+        padding: '3.2em 0.6em',
+        margin: '0 auto',
         backgroundColor: theme.palette.grey[100],
       }}
     >
@@ -50,13 +48,10 @@ const JobsiteListPage = () => {
         className="breadcrumbs"
         sx={{
           display: 'flex',
-          alignSelf: 'center',
-          maxWidth: '45em',
           width: '100%',
-          padding: '0em 0.6em 0.3em',
+          padding: '0.95em 0.3em 0 0.3em',
           borderBottom: '0px solid #ccc',
-
-          marginBottom: '0.5em',
+          margin: '0 auto 0.5em',
         }}
       >
         <Typography
@@ -66,7 +61,6 @@ const JobsiteListPage = () => {
             maxWidth: '45em',
             fontWeight: '700',
             fontSize: '1.8em',
-
             borderRadius: '4px',
             padding: '0',
           }}
@@ -79,11 +73,11 @@ const JobsiteListPage = () => {
         className="icons"
         sx={{
           marginTop: '0em',
-          padding: '0 0.6em',
-          maxWidth: '45em',
+          padding: '0 0',
           width: '100%',
-          alignSelf: 'center',
           backgroundColor: theme.palette.grey[100],
+          marginLeft: 'auto',
+          marginRight: 'auto',
         }}
       >
         <Button
@@ -95,11 +89,7 @@ const JobsiteListPage = () => {
           }}
           onClick={() => navigate('/jobsites/new')}
         >
-          <AddIcon
-            sx={{
-              color: 'black',
-            }}
-          />
+          <AddIcon sx={{ color: 'black' }} />
         </Button>
       </Box>
 
@@ -107,13 +97,12 @@ const JobsiteListPage = () => {
         className="jobsite-list"
         sx={{
           width: '100%',
-          maxWidth: '45em',
-          alignSelf: 'center',
           display: 'flex',
           flexDirection: 'column',
-          padding: '0.5em 0.6em',
+          padding: '0.5em 0em',
           backgroundColor: theme.palette.grey[100],
-
+          marginLeft: 'auto',
+          marginRight: 'auto',
           '& > .jobsite-preview + .jobsite-preview': {
             borderTop: '0 !important',
           },
@@ -142,7 +131,6 @@ const JobsiteListPage = () => {
                 wordBreak: 'break-word',
                 borderBottom: '1px solid #ccc',
                 padding: '0.7em',
-
                 boxSizing: 'border-box',
                 backgroundColor: 'white',
                 border: `1px solid ${theme.palette.grey[300]}`,
@@ -156,12 +144,7 @@ const JobsiteListPage = () => {
                 },
               }}
             >
-              <Grid
-                container
-                sx={{
-                  justifyContent: 'space-between',
-                }}
-              >
+              <Grid container sx={{ justifyContent: 'space-between' }}>
                 <Grid item xs={12}>
                   <Typography variant="body1">
                     <FieldTitle>{'ID:'}</FieldTitle>
@@ -188,6 +171,6 @@ const JobsiteListPage = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default JobsiteListPage;
