@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
 
 export const getFieldTitleStyle = () => {
   return {
@@ -9,8 +9,7 @@ export const getFieldTitleStyle = () => {
   };
 };
 
-export const getFieldWithMissingDataStyle = () => {
-  const theme = useTheme();
+export const getFieldWithMissingDataStyle = (theme: Theme) => {
   return {
     color: theme.palette.warning.dark,
   };
