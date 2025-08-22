@@ -3,5 +3,5 @@
 ## Type Checking
 
 ```bash
-npx tsc -b
+npx tsc --noEmit
 ```

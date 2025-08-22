@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a simple application for collecting, viewing and archiving timesheet records. 
+This is a simple application for collecting, viewing and archiving timesheet records.
 
 A demo is available at <a href="lesspaper.work">http://lesspaper.work</a>
 
@@ -13,11 +13,20 @@ A demo is available at <a href="lesspaper.work">http://lesspaper.work</a>
 - **Database**: PostgreSQL
 - **Containerization**: Docker
 
-## Setup and Installation
+## Setup
+
+### Type Safety Checks
+
+- **Backend**: `cd backend && npx tsc --noEmit`
+- **Frontend**: `cd frontend && npx tsc -b`
+
 ### Dev
+
 - run **npm run dev** at the /backend directory to start the backend
 - run **npm run dev** at the /frontend directory to start the frontend
+
 ### Prod
+
 - run **npx build ./src** at the /backend directory to start the backend
 - run **vite run build** at the /frontend directory to start the fronte
 
