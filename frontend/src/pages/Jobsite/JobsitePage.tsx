@@ -26,16 +26,16 @@ const JobsitePage = (props: { initialMode: 'view' | 'add' | 'edit' }) => {
         display: 'flex',
         flexDirection: 'column',
         width: '100vw',
-        minWidth: '100vw',
         maxWidth: '45em',
         alignItems: 'flex-start',
         justifyContent: 'center',
         alignContent: 'center',
         boxSizing: 'border-box',
+        alignSelf: 'center',
 
         padding: '3.2em 0.6em',
 
-        margin: 0,
+        margin: '0 auto',
         backgroundColor: theme.palette.grey[100],
         '& .breadcrumbs': {
           display: 'flex',
