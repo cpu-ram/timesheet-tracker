@@ -15,6 +15,7 @@ export const fetchJobsite = async ({
     const response = await fetch(`${baseUrl}${timesheetDataSubPath}/${jobsiteId}`, {
       method: 'GET',
       credentials: 'include',
+      signal
     });
     if (!response.ok) {
       console.error('Failed to fetch jobsite data: ', response.statusText);
@@ -33,8 +34,8 @@ export const fetchJobsite = async ({
       }
       : null;
     return parsedData;
-  } catch (error) {
-    if (error?.name !== 'AbortError') console.error('Error fetching jobsite data:', error);
+  } catch (error: unknown) {
+    if (error instanceof Error && error?.name !== 'AbortError') console.error('Error fetching jobsite data:', error);
     throw error;
   }
 };

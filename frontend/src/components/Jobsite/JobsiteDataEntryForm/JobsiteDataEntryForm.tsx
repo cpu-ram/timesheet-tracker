@@ -24,7 +24,6 @@ import {
   getErrorTextStyle,
   getSubmitButtonStyle,
   getDiscardButtonStyle,
-  getAddJobsiteFormWrapperStyle,
 } from './styles.ts';
 import { getFieldTitleStyle } from '../../shared/styles/recordStyles.ts';
 

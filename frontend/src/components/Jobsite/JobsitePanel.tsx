@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 
@@ -30,7 +30,7 @@ const JobsitePanel = ({
   initialMode: 'view' | 'edit' | 'add';
   jobsiteId?: string;
   onClose?: () => void;
-  onUpdateJobsite?: (jobsite: JobsiteProps) => void;
+  onUpdateJobsite?: (_jobsite: JobsiteProps) => void;
 }) => {
   const [mode, setMode] = useState<'view' | 'add' | 'edit'>(initialMode || 'view');
   const [jobsite, setJobsite] = useState<JobsiteProps | null>(null);
@@ -70,7 +70,7 @@ const JobsitePanel = ({
         setJobsite(data);
       })
       .catch((error: unknown) => {
-        if (error?.name !== 'AbortError') {
+        if (error instanceof Error && error?.name !== 'AbortError') {
           console.error('Error fetching jobsite data: ', error);
         }
       });
