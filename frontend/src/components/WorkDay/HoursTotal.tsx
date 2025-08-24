@@ -37,22 +37,17 @@ const HoursTotal = ({ workData }: { workData: WorkBlockProps[] }) => {
       >
         {`T:  `}
 
-        {workData
-          ? (Math.round(
-              workData.reduce(
-                (acc: number, workBlock: WorkBlockProps) =>
-                  workBlock.workBlockStart && workBlock.workBlockEnd
-                    ? acc +
-                      workBlock.workBlockStart
-                        .until(workBlock.workBlockEnd)
-                        .total({ unit: 'hours' })
-                    : acc,
-                0,
-              ),
-            ) *
-              10) /
-            10
-          : 0}
+        {
+          workData ? Math.round(workData.reduce(
+            (acc: number, workBlock: WorkBlockProps) =>
+              workBlock.workBlockStart && workBlock.workBlockEnd ?
+                acc + workBlock.workBlockStart.until(workBlock.workBlockEnd).total({ unit: 'hours' })
+                :
+                acc
+            , 0
+          ) * 10) / 10
+            : 0
+        }
         {'h'}
       </Typography>
     </Box>
