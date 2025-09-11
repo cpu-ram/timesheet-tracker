@@ -13,36 +13,28 @@ import WorkBlockEntryForm from '../components/WorkBlock/WorkBlockEntryForm/WorkB
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 
 import { TimesheetDayRecord } from '../types/TimesheetDayRecord.ts';
+import { set } from 'date-fns';
 
 const TimesheetPage = () => {
   const { theme } = useStyleContext();
 
   const {
     workData,
-    editMode,
-    setEditMode,
-    addMode,
-    setAddMode,
+    timesheetPageMode,
+    setTimesheetPageMode,
     lastSelectedSingleDate,
     handleDiscard,
   } = useTimesheetContext();
 
   const { notification } = useNotificationContext();
 
-  const handleSetEditMode = function () {
-    setEditMode(true);
-    setAddMode(false);
-  };
   const handleCancelEdit = function () {
-    setEditMode(false);
+    setTimesheetPageMode('view');
   };
-  const handleSetAddMode = function () {
-    setAddMode(true);
-    setEditMode(false);
-  };
+
   const currentDayWorkData = lastSelectedSingleDate
     ? workData.find((day: TimesheetDayRecord) => day.date.equals(lastSelectedSingleDate))
-        ?.workBlocks || []
+      ?.workBlocks || []
     : [];
 
   useEffect(() => {
@@ -50,7 +42,7 @@ const TimesheetPage = () => {
     const isMobileChrome = /(Chrome|CriOS)/.test(ua) && /(Mobile|Android|iPhone|iPad)/.test(ua);
     if (!isMobileChrome) return;
 
-    if (addMode || editMode) {
+    if (timesheetPageMode !== 'view') {
       const nudge = () => {
         window.scrollBy(0, 1);
         window.scrollBy(0, -1);
@@ -62,7 +54,7 @@ const TimesheetPage = () => {
         clearTimeout(t);
       };
     }
-  }, [addMode, editMode]);
+  }, [timesheetPageMode]);
 
   return (
     <>
@@ -96,10 +88,8 @@ const TimesheetPage = () => {
 
           <Buttons
             {...{
-              editMode,
-              addMode,
-              handleSetAddMode,
-              handleSetEditMode,
+              mode: timesheetPageMode,
+              setTimesheetPageMode,
               handleDiscard,
               handleCancelEdit,
               currentDayWorkData,
@@ -134,7 +124,7 @@ const TimesheetPage = () => {
 
           <Box
             id="main-content"
-            className={addMode || editMode ? 'no-anchor' : undefined}
+            className={timesheetPageMode !== 'view' ? 'no-anchor' : undefined}
             sx={{
               padding: {
                 xs: '0 0.5em',
@@ -159,10 +149,10 @@ const TimesheetPage = () => {
                 },
                 margin: '0.5em 0',
                 border: `1px solid ${theme.palette.divider}`,
-                display: addMode ? 'flex' : 'none',
+                display: timesheetPageMode === 'add' ? 'flex' : 'none',
               }}
             >
-              {addMode && (
+              {timesheetPageMode === 'add' && (
                 <WorkBlockEntryForm
                   formFlags={{
                     mode: 'add',
