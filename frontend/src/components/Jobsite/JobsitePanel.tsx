@@ -19,7 +19,7 @@ import JobsiteDataEntryForm from './JobsiteDataEntryForm/JobsiteDataEntryForm.ts
 
 import { createJobsite, deleteJobsite, updateJobsite } from '../../api/jobsiteApi.ts';
 
-import { useErrorWrapperStyle, useErrorTextStyle } from '../shared/styles/generalStyles.ts';
+import { getErrorWrapperStyle, getErrorTextStyle } from '../shared/styles/generalStyles.ts';
 
 const JobsitePanel = ({
   initialMode,
@@ -150,8 +150,8 @@ const JobsitePanel = ({
       {mode === 'view' && (
         <Box>
           {apiError && (
-            <Box sx={useErrorWrapperStyle}>
-              {apiError && <Typography sx={useErrorTextStyle}>{apiError}</Typography>}
+            <Box sx={getErrorWrapperStyle}>
+              {apiError && <Typography sx={getErrorTextStyle}>{apiError}</Typography>}
             </Box>
           )}
 

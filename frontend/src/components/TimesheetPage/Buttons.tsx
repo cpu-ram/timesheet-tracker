@@ -8,18 +8,14 @@ import { useEffect } from 'react';
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
 
 export default function Buttons({
-  editMode,
-  addMode,
-  handleSetAddMode,
-  handleSetEditMode,
+  mode,
+  setTimesheetPageMode,
   handleDiscard,
   handleCancelEdit,
   currentDayWorkData,
 }: {
-  editMode: boolean;
-  addMode: boolean;
-  handleSetAddMode: () => void;
-  handleSetEditMode: () => void;
+  mode?: 'add' | 'edit' | 'view';
+  setTimesheetPageMode: (mode: 'add' | 'edit' | 'view') => void;
   handleDiscard: () => void;
   handleCancelEdit: () => void;
   currentDayWorkData: any[] | null;
@@ -37,7 +33,7 @@ export default function Buttons({
       item
       xs={12}
       sx={{
-        display: addMode ? 'none' : 'flex',
+        display: mode === 'add' ? 'none' : 'flex',
 
         flexDirection: {
           xs: 'row-reverse',
@@ -55,9 +51,8 @@ export default function Buttons({
         borderBottom: `0px solid ${theme.palette.divider}`,
       }}
     >
-      {editMode && addMode ? <Typography> Error</Typography> : <></>}
 
-      {!addMode && !editMode ? (
+      {mode === 'view' ? (
         <Grid
           item
           sx={{
@@ -72,7 +67,7 @@ export default function Buttons({
           }}
         >
           <Button
-            onClick={() => handleSetAddMode()}
+            onClick={() => setTimesheetPageMode('add')}
             variant="outlined"
             sx={{
               display: 'flex',
@@ -86,7 +81,7 @@ export default function Buttons({
 
           {currentDayWorkData != null && currentDayWorkData.length > 0 && (
             <Button
-              onClick={() => handleSetEditMode()}
+              onClick={() => setTimesheetPageMode('edit')}
               variant="outlined"
               sx={{
                 backgroundColor: 'white',
@@ -103,7 +98,7 @@ export default function Buttons({
         <></>
       )}
 
-      {editMode ? (
+      {mode === 'edit' ? (
         <Button
           onClick={() => handleCancelEdit()}
           sx={{

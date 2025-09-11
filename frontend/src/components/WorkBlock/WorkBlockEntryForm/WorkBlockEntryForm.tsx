@@ -7,7 +7,7 @@ import { usePopupContext } from '../../../contexts/PopupContext.tsx';
 import { useNotificationContext } from '../../../contexts/NotificationContext.tsx';
 
 import { ApiError } from '../../../errors/ApiError.ts';
-import { useErrorWrapperStyle, useErrorTextStyle } from '../../shared/styles/generalStyles.ts';
+import { getErrorWrapperStyle, getErrorTextStyle } from '../../shared/styles/generalStyles.ts';
 
 import { JOBSITE_ID_MAX_LENGTH } from '../../../utils/validation/jobsiteValidation.ts';
 
@@ -23,7 +23,7 @@ import {
 import { LocalizationProvider, DesktopTimePicker, MobileTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-import { AddWorkBlockFormProps, WorkBlockData } from '../../../types/WorkBlock.types.ts';
+import { WorkBlockEntryFormProps, WorkBlockData } from '../../../types/WorkBlock.types.ts';
 import { JobsiteProps } from '../../Jobsite/types.ts';
 
 import JobsiteSearch from '../../Jobsite/JobsiteSearch/JobsiteSearch.tsx';
@@ -33,10 +33,9 @@ import { fetchJobsite } from '../../../api/jobsiteApi.ts';
 
 export const WorkBlockEntryForm = ({
   workBlockData,
-  formFlags: { mode },
-  handlers,
-}: AddWorkBlockFormProps) => {
-  const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleDiscard } =
+  mode,
+}: WorkBlockEntryFormProps) => {
+  const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleEditWorkBlock, handleDiscard } =
     useTimesheetContext();
   const { displayNotification } = useNotificationContext();
 
@@ -44,21 +43,33 @@ export const WorkBlockEntryForm = ({
     navigator.userAgent,
   );
 
-  let onEnteredData: ((_: any) => void) | null = null;
-  if (mode === 'edit') {
-    if (!handlers?.handleEnteredData) {
-      throw new Error('WorkBlockEntryForm in edit mode requires a handleEnteredData function');
+  type WorkBlockSubmitArgs =
+    | {
+      workBlockData: WorkBlockData;
+      onJobsiteCreated?: (jobsiteId: string) => void;
     }
-    onEnteredData = handlers.handleEnteredData;
-  } else if (mode === 'add') {
-    onEnteredData = handlers?.handleEnteredData ?? handleAddWorkBlock;
-  } else throw new Error('Invalid mode: ' + mode);
+    | {
+      workBlockId: string,
+      workBlockData: WorkBlockData;
+      onJobsiteCreated?: (jobsiteId: string) => void;
+    }
+    ;
+
+  let onEnteredData: (args: WorkBlockSubmitArgs) => void;
+  switch (mode) {
+    case 'add':
+      onEnteredData = handleAddWorkBlock;
+      break;
+    case 'edit':
+      onEnteredData = handleEditWorkBlock;
+      break;
+    default: throw new Error('Invalid mode: ' + mode);
+  }
 
   const workBlockEntryFormTitle = (() => {
     if (mode === 'add') return 'Add work block';
-    if (mode === 'edit') return 'Edit work block';
-
-    throw new Error('Invalid mode: ' + mode);
+    else if (mode === 'edit') return 'Edit work block';
+    else throw new Error('Invalid mode: ' + mode);
   })();
 
   const initializeFormData = () => ({
@@ -223,59 +234,70 @@ export const WorkBlockEntryForm = ({
     return true;
   };
 
+  const handleJobsiteCreated = (jobsiteId: string) => {
+    displayNotification({
+      content: (
+        <>
+          {`New jobsite record created: `}
+          <Box
+            component="span"
+            sx={{
+              fontStyle: 'italic',
+              textUnderlineOffset: '0.2em',
+              boxSizing: 'border-box',
+            }}
+          >
+            <Link
+              href={`jobsites/${jobsiteId}`}
+              sx={{
+                alignItems: 'center',
+                gap: '0.25em',
+                padding: 0,
+                color: 'inherit !important',
+                borderBottom: '1px solid',
+                '&:hover': {
+                  fontWeight: 700,
+                },
+                '&:hover > svg': {},
+                textDecoration: 'none',
+              }}
+            >
+              {jobsiteId}
+              <LinkIcon
+                sx={{
+                  fontSize: '1.5em',
+                  verticalAlign: 'middle',
+                  marginBottom: '0.15em',
+                  marginLeft: '0.15em',
+                }}
+              />
+            </Link>
+          </Box>
+        </>
+      ),
+    });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     if (validateTimes()) {
       if (validationError !== null) setValidationError(null);
-      if (!onEnteredData) throw new Error('Error: Handler for entered work block data not defined');
       try {
-        onEnteredData({
-          workBlockData: formData,
-          onJobsiteCreated: (jobsiteId: string) => {
-            displayNotification({
-              content: (
-                <>
-                  {`New jobsite record created: `}
-                  <Box
-                    component="span"
-                    sx={{
-                      fontStyle: 'italic',
-                      textUnderlineOffset: '0.2em',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    <Link
-                      href={`jobsites/${jobsiteId}`}
-                      sx={{
-                        alignItems: 'center',
-                        gap: '0.25em',
-                        padding: 0,
-                        color: 'inherit !important',
-                        borderBottom: '1px solid',
-                        '&:hover': {
-                          fontWeight: 700,
-                        },
-                        '&:hover > svg': {},
-                        textDecoration: 'none',
-                      }}
-                    >
-                      {jobsiteId}
-                      <LinkIcon
-                        sx={{
-                          fontSize: '1.5em',
-                          verticalAlign: 'middle',
-                          marginBottom: '0.15em',
-                          marginLeft: '0.15em',
-                        }}
-                      />
-                    </Link>
-                  </Box>
-                </>
-              ),
+        switch (mode) {
+          case 'add':
+            await onEnteredData({
+              workBlockData: formData,
+              onJobsiteCreated: handleJobsiteCreated,
             });
-          },
-        });
-
+            break;
+          case 'edit':
+            await onEnteredData({
+              workBlockId: workBlockData?.workBlockId,
+              workBlockData: formData,
+              onJobsiteCreated: handleJobsiteCreated,
+            });
+        }
         handleDiscard();
       } catch (error) {
         if (error instanceof ApiError) {
@@ -351,8 +373,8 @@ export const WorkBlockEntryForm = ({
 
           <Grid container spacing={1}>
             {validationError && (
-              <Grid item xs={12} sx={useErrorWrapperStyle}>
-                {<Typography sx={useErrorTextStyle}>{validationError}</Typography>}
+              <Grid item xs={12} sx={getErrorWrapperStyle}>
+                {<Typography sx={getErrorTextStyle}>{validationError}</Typography>}
               </Grid>
             )}
 
@@ -379,7 +401,7 @@ export const WorkBlockEntryForm = ({
               </Grid>
             )}
 
-            <Grid item xs={7} sm={9.2} md={9.5}>
+            <Grid item xs={7} sm={9} md={10}>
               <Grid xs={12} className="entry-field" container item>
                 <Grid item xs={existingJobsiteRecordId ? 9 : 12} sx={{}}>
                   <TextField
@@ -398,7 +420,7 @@ export const WorkBlockEntryForm = ({
                     }}
                     fullWidth
                     inputProps={{
-                      maxLength: { JOBSITE_ID_MAX_LENGTH },
+                      maxLength: JOBSITE_ID_MAX_LENGTH,
                       autoComplete: 'off',
                     }}
                   />
@@ -488,8 +510,8 @@ export const WorkBlockEntryForm = ({
             <Grid
               item
               xs={5}
-              sm={2.8}
-              md={2.5}
+              sm={3}
+              md={2}
               sx={{
                 height: 'auto',
               }}
@@ -686,14 +708,14 @@ export const WorkBlockEntryForm = ({
                     },
                     ...(multiDaySelectionMode
                       ? {
-                          backgroundColor: theme.palette.warning.light,
-                          color: 'black',
-                        }
+                        backgroundColor: theme.palette.warning.light,
+                        color: 'black',
+                      }
                       : {
-                          backgroundColor: theme.palette.grey[100],
-                          boxShadow: '2px 2px 3px rgba(0,0,0,0.2)',
-                          color: theme.palette.grey[900],
-                        }),
+                        backgroundColor: theme.palette.grey[100],
+                        boxShadow: '2px 2px 3px rgba(0,0,0,0.2)',
+                        color: theme.palette.grey[900],
+                      }),
                   }}
                   onClick={handleSelectMultiDaySelectionMode}
                 >

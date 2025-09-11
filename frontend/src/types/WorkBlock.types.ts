@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 
 export interface WorkBlockData {
-  workBlockId?: number;
+  workBlockId: number;
   workBlockStart?: Temporal.PlainTime | null;
   workBlockEnd?: Temporal.PlainTime | null;
   breakStart?: Temporal.PlainTime | null;
@@ -19,18 +19,17 @@ export interface WorkBlockHandlers {
 }
 
 export interface WorkBlockFlags {
-  editMode?: boolean;
+  showActions?: boolean;
+  expandable?: boolean;
 }
 
 export type WorkBlockProps = WorkBlockData & WorkBlockHandlers & WorkBlockFlags;
 
-export interface AddWorkBlockFormFlags {
-  mode?: 'add' | 'edit';
-  multiDaySelectionMode?: boolean;
-}
+export interface WorkBlockEntryFormProps {
+  workBlockData?: WorkBlockData;
+  mode: 'add' | 'edit';
 
-export interface WorkBlockSubmitHandler {
-  handleEnteredData: ({
+  onEnteredData?: ({
     workBlockData,
     onJobsiteCreated,
   }: {
@@ -38,11 +37,5 @@ export interface WorkBlockSubmitHandler {
     onJobsiteCreated?: (jobsiteId: string) => void;
   }) => void;
   onError?: (error: Error) => void;
-}
 
-export interface AddWorkBlockFormProps {
-  workBlockData?: WorkBlockData;
-  formFlags: AddWorkBlockFormFlags;
-  handlers?: WorkBlockSubmitHandler;
-  suggestedWorkBlockData?: WorkBlockData;
 }

@@ -8,13 +8,13 @@ import { WorkBlock } from '../WorkBlock/WorkBlock.tsx';
 import HoursTotal from './HoursTotal.tsx';
 import WorkBlockEntryForm from '../WorkBlock/WorkBlockEntryForm/WorkBlockEntryForm.tsx';
 
-import { WorkBlockData, AddWorkBlockFormProps } from '../../types/WorkBlock.types.ts';
+import { WorkBlockData, WorkBlockEntryFormProps } from '../../types/WorkBlock.types.ts';
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
 
 const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
   const [selectedForEditId, setSelectedForEditId] = useState<number | null>(null);
 
-  const { editMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
+  const { timesheetPageMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
 
   const handleEnteredData = async ({
     workBlockData,
@@ -34,10 +34,10 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
     setSelectedForEditId(null);
   }, [workData]);
   useEffect(() => {
-    if (!editMode) {
+    if (timesheetPageMode !== 'edit') {
       setSelectedForEditId(null);
     }
-  }, [editMode]);
+  }, [timesheetPageMode]);
 
   const handleSelectForEdit = (workBlockId: number) => {
     setSelectedForEditId(workBlockId);
@@ -52,6 +52,7 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
         sx={{
           padding: '0',
           marginBottom: '0',
+          backgroundColor: 'white',
           borderRadius: '4px',
           border: `1.5px solid ${theme.palette.divider}`,
 
@@ -63,10 +64,10 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
             borderTopRightRadius: '4px',
           },
           '& .work-block-element:last-child, .work-block-entry-form:last-of-type, .hours-total:last-of-type':
-            {
-              borderBottomLeftRadius: '4px',
-              borderBottomRightRadius: '4px',
-            },
+          {
+            borderBottomLeftRadius: '4px',
+            borderBottomRightRadius: '4px',
+          },
         }}
       >
         {workData && workData.length > 0 ? (
@@ -74,27 +75,30 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
             {workData.map((workBlock: WorkBlockData) => {
               if (!workBlock.workBlockId) throw new Error('Error: Work Block id missing');
 
-              const workBlockData: WorkBlockData = {
-                ...workBlock,
-                workBlockStart: workBlock.workBlockStart || null,
-                workBlockEnd: workBlock.workBlockEnd || null,
-              };
+              const workBlockData: WorkBlockData = workBlock;
 
-              const editWorkBlockFormProps: AddWorkBlockFormProps = {
-                workBlockData: workBlockData,
-                formFlags: { mode: 'edit' },
-                handlers: {
-                  handleEnteredData,
-                },
+              const editWorkBlockFormProps: WorkBlockEntryFormProps = {
+                workBlockData,
+                mode: 'edit',
+                onEnteredData: handleEnteredData,
               };
 
               return workBlock ? (
-                editMode && workBlock.workBlockId === selectedForEditId ? (
-                  <WorkBlockEntryForm key={workBlock.workBlockId} {...editWorkBlockFormProps} />
+                timesheetPageMode === 'edit' && workBlock.workBlockId === selectedForEditId ? (
+                  <WorkBlockEntryForm
+                    key={workBlock.workBlockId}
+                    workBlockData={workBlockData}
+                    mode="edit"
+                    onEnteredData={handleEnteredData}
+                  />
                 ) : (
                   <WorkBlock
                     key={workBlock.workBlockId}
-                    {...{ ...workBlock, handleDeleteWorkBlock, handleSelectForEdit, editMode }}
+                    {...{
+                      ...workBlock,
+                      handleDeleteWorkBlock, handleSelectForEdit,
+                      showActions: timesheetPageMode === 'edit'
+                    }}
                   />
                 )
               ) : null;
