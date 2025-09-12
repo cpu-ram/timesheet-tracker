@@ -11,16 +11,18 @@ export interface WorkBlockData {
   jobsiteName?: string | null;
   supervisorName?: string | null;
   additionalNotes?: string | null;
+
+  date?: Temporal.PlainDate;
 }
 
 export interface WorkBlockHandlers {
-  handleDeleteWorkBlock?: (workBlockId: number) => void;
   handleSelectForEdit?: (workBlockId: number) => void;
 }
 
 export interface WorkBlockFlags {
   showActions?: boolean;
   expandable?: boolean;
+  compact?: boolean;
 }
 
 export type WorkBlockProps = WorkBlockData & WorkBlockHandlers & WorkBlockFlags;
@@ -37,5 +39,8 @@ export interface WorkBlockEntryFormProps {
     onJobsiteCreated?: (jobsiteId: string) => void;
   }) => void;
   onError?: (error: Error) => void;
+  handleDiscard?: () => void;
+
+  onSaved?: () => void;
 
 }

@@ -26,15 +26,23 @@ const JobsitePanel = ({
   jobsiteId,
   onClose,
   onUpdateJobsite,
+  titleCallback,
 }: {
   initialMode: 'view' | 'edit' | 'add';
   jobsiteId?: string;
   onClose?: () => void;
   onUpdateJobsite?: (_jobsite: JobsiteProps) => void;
+  titleCallback?: (title: string) => void;
 }) => {
   const [mode, setMode] = useState<'view' | 'add' | 'edit'>(initialMode || 'view');
   const [jobsite, setJobsite] = useState<JobsiteProps | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (titleCallback && ['view', 'edit'].includes(mode) && jobsiteId) {
+      titleCallback(`Jobsites > ${jobsiteId}`);
+    }
+  }, [titleCallback, mode, jobsiteId]);
 
   const navigate = useNavigate();
   const handleClose = onClose || (() => navigate('/jobsites'));
@@ -155,7 +163,7 @@ const JobsitePanel = ({
             </Box>
           )}
 
-          {jobsite && <JobsiteDetails {...jobsite} />}
+          {jobsite && <JobsiteDetails {...jobsite} showJobsiteId={false} />}
 
           <Box
             className="jobsite-panel-actions"
@@ -208,6 +216,7 @@ const JobsitePanel = ({
           }}
           jobsite={mode === 'edit' ? jobsite : null}
           {...{ mode, setMode }}
+          showJobsiteId={false}
         />
       )}
     </Box>

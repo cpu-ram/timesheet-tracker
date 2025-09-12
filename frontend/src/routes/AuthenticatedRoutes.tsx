@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { NotificationProvider } from '../contexts/NotificationContext.tsx';
 
 import TimesheetPage from '../pages/TimesheetPage.tsx';
 import ReportPage from '../pages/ReportPage/ReportPage.tsx';
@@ -13,9 +12,7 @@ const AuthenticatedRoutes = () => {
       <Route
         path="/timesheet"
         element={
-          <NotificationProvider>
-            <TimesheetPage />
-          </NotificationProvider>
+          <TimesheetPage />
         }
       />
 

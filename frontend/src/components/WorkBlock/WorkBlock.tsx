@@ -7,8 +7,13 @@ import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import { usePopupContext } from '../../contexts/PopupContext.tsx';
+
+import WorkBlockPanel from './WorkBlockPanel.tsx';
+
 
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
+import { useTimesheetContext } from '../../contexts/TimesheetContext.tsx';
 
 import { WorkBlockProps } from '../../types/WorkBlock.types.ts';
 import React from 'react';
@@ -22,11 +27,15 @@ const WorkBlock = ({
   jobsiteName,
   additionalNotes,
   showActions,
-  handleDeleteWorkBlock,
-  handleSelectForEdit,
 
   expandable = true,
+  compact = false,
+
+  supervisorName,
+  date,
 }: WorkBlockProps) => {
+  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
+  const { handleDeleteWorkBlock } = useTimesheetContext();
 
   const calculateTotalHours = (
     workBlockStart: Temporal.PlainTime,
@@ -58,9 +67,11 @@ const WorkBlock = ({
     value: string | null | undefined;
     required: boolean;
   }[] = [
-      { label: 'ID', value: jobsiteId, required: false },
-      { label: 'Address', value: jobsiteAddress, required: false },
-      { label: 'Name', value: jobsiteName, required: false },
+      { label: 'Jobsite ID', value: jobsiteId, required: false, showInCompact: true },
+      { label: 'Address', value: jobsiteAddress, required: false, showInCompact: true },
+      { label: 'Name', value: jobsiteName, required: false, showInCompact: true },
+      { label: 'Supervisor', value: supervisorName, required: false, showInCompact: false },
+      { label: 'Notes', value: additionalNotes, required: false, showInCompact: false },
     ];
 
   return (
@@ -161,22 +172,23 @@ const WorkBlock = ({
               </Grid>
             </Grid>
             :
-            fields.map((field, index) => {
-              return (
-                <Grid container item xs={12} key={index}
-                  className="line"
-                >
-                  <Grid item xs={columnWidths[0]}>
-                    <Typography>{field.label}</Typography>
+            fields.filter(x => (!compact || x.showInCompact)).
+              map((field, index) => {
+                return (
+                  <Grid container item xs={12} key={index}
+                    className="line"
+                  >
+                    <Grid item xs={columnWidths[0]}>
+                      <Typography>{field.label}</Typography>
+                    </Grid>
+                    <Grid item xs={columnWidths[1]}>
+                      <FieldValue>
+                        {field.value ?? null}
+                      </FieldValue>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={columnWidths[1]}>
-                    <FieldValue>
-                      {field.value ?? null}
-                    </FieldValue>
-                  </Grid>
-                </Grid>
-              );
-            })
+                );
+              })
 
         }
 
@@ -212,28 +224,51 @@ const WorkBlock = ({
             </Box>
 
             {
-              expandable && (<IconButton sx={{
-                marginLeft: '0.4em',
-                backgroundColor: 'white',
-                color: theme.palette.primary.main,
-                border: `1px solid ${theme.palette.primary.main}`,
-                borderRadius: '50%',
-                padding: '0em',
-                color: theme.palette.primary.main
-              }}>
-                <FullscreenIcon
-                  htmlColor={theme.palette.primary.main}
+              expandable && (
+                <IconButton
                   sx={{
-                    color: 'inherit',
-                    padding: '0.1em',
-                    fontSize: '1.2em',
-                    '& path': {
-                      fill: theme.palette.primary.main,
-                    },
+                    marginLeft: '0.4em',
+                    backgroundColor: 'white',
+                    color: theme.palette.primary.main,
+                    border: `1px solid ${theme.palette.primary.main}`,
+                    borderRadius: '50%',
+                    padding: '0em',
+                    color: theme.palette.primary.main
                   }}
+                  onClick={
+                    () => {
+                      showPopup(
+                        <WorkBlockPanel
+                          workBlockId={workBlockId}
+                          workBlockData={{
+                            workBlockId,
+                            workBlockStart,
+                            workBlockEnd,
+                            jobsiteId,
+                            jobsiteAddress,
+                            jobsiteName,
+                            additionalNotes,
+                          }}
+                          titleCallback={setPopupTitle}
+                          date={date}
+                        />
+                      );
+                    }
+                  }
                 >
-                </FullscreenIcon>
-              </IconButton>)
+                  <FullscreenIcon
+                    htmlColor={theme.palette.primary.main}
+                    sx={{
+                      color: 'inherit',
+                      padding: '0.1em',
+                      fontSize: '1.2em',
+                      '& path': {
+                        fill: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                  </FullscreenIcon>
+                </IconButton>)
             }
 
           </Box>

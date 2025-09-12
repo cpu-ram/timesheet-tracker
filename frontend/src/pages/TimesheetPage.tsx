@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useTimesheetContext } from '../contexts/TimesheetContext.tsx';
 import { useStyleContext } from '../contexts/StyleContext.tsx';
 import { useNotificationContext } from '../contexts/NotificationContext.tsx';
+import { usePopupContext } from '../contexts/PopupContext.tsx';
+
 
 import { Box, Grid, Typography } from '@mui/material';
 
@@ -17,6 +19,7 @@ import { set } from 'date-fns';
 
 const TimesheetPage = () => {
   const { theme } = useStyleContext();
+  const { showPopup, hidePopup } = usePopupContext();
 
   const {
     workData,
@@ -93,6 +96,15 @@ const TimesheetPage = () => {
               handleDiscard,
               handleCancelEdit,
               currentDayWorkData,
+              onAddButtonClick: () => {
+                showPopup(
+                  <WorkBlockEntryForm
+                    mode="add"
+                    onDiscard={() => { hidePopup(); }}
+                    onSaved={() => { hidePopup(); }}
+                  />
+                )
+              },
             }}
           ></Buttons>
 
@@ -133,36 +145,14 @@ const TimesheetPage = () => {
               marginBottom: '5em',
             }}
           >
-            <Grid
-              id="add-work-block"
-              container
-              className="addWorkBlock"
-              sx={{
-                flexDirection: 'column',
-                padding: '0',
-                height: 'auto',
-                backgroundColor: theme.palette.grey[100],
-
-                borderRadius: '0.7em',
-                '& > .work-block-entry-form': {
-                  borderRadius: '0.7em',
-                },
-                margin: '0.5em 0',
-                border: `1px solid ${theme.palette.divider}`,
-                display: timesheetPageMode === 'add' ? 'flex' : 'none',
-              }}
-            >
-              {timesheetPageMode === 'add' && (
-                <WorkBlockEntryForm
-                  mode="add"
-                />
-              )}
-            </Grid>
-
-            <DayWorkBlocks {...{ workData: currentDayWorkData }}></DayWorkBlocks>
+            <DayWorkBlocks {
+              ...{ workData: currentDayWorkData }
+            }
+              date={lastSelectedSingleDate}
+            ></DayWorkBlocks>
           </Box>
         </Box>
-      </Box>
+      </Box >
     </>
   );
 };

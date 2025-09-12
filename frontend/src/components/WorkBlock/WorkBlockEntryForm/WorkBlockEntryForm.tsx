@@ -13,6 +13,7 @@ import { JOBSITE_ID_MAX_LENGTH } from '../../../utils/validation/jobsiteValidati
 
 import LinkIcon from '@mui/icons-material/Link';
 import IconButton from '@mui/material/IconButton';
+import Tile from '../../Tile/Tile.tsx';
 
 import { Temporal } from '@js-temporal/polyfill';
 import {
@@ -34,8 +35,10 @@ import { fetchJobsite } from '../../../api/jobsiteApi.ts';
 export const WorkBlockEntryForm = ({
   workBlockData,
   mode,
+  onDiscard,
+  onSaved,
 }: WorkBlockEntryFormProps) => {
-  const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleEditWorkBlock, handleDiscard } =
+  const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleEditWorkBlock } =
     useTimesheetContext();
   const { displayNotification } = useNotificationContext();
 
@@ -298,7 +301,7 @@ export const WorkBlockEntryForm = ({
               onJobsiteCreated: handleJobsiteCreated,
             });
         }
-        handleDiscard();
+        onSaved && onSaved();
       } catch (error) {
         if (error instanceof ApiError) {
           setApiError(error.message);
@@ -316,351 +319,373 @@ export const WorkBlockEntryForm = ({
 
   const theme = useTheme();
 
-  const { showPopup, hidePopup } = usePopupContext();
+  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box
-        id="workBlockEntryFormRootWrapper"
-        className="work-block-entry-form work-block-element"
+      <Box id="workBlockEntryFormRootWrapper"
         sx={{
-          display: 'flex',
           flexDirection: 'column',
+          padding: '0',
+          height: 'auto',
 
-          maxWidth: '45em',
-          flexGrow: 1,
-
-          padding: '0.5em 1em 1em 1em',
-
-          borderBottom: '1.5px solid ' + theme.palette.divider,
-          margin: '0',
-
-          backgroundColor: 'white',
-
-          '& .entry-field + .entry-field': {
-            marginTop: '0.7em',
-          },
-          '& input, .entry-field, textarea': {
-            backgroundColor: theme.palette.grey[100],
-          },
-          '& div.jobsite-link-wrapper': {
-            backgroundColor: theme.palette.grey[100] + ' !important',
-          },
+          margin: '0 0 1em',
         }}
       >
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            width: '100%',
-            all: 'unset',
-            display: 'contents',
+
+        <Box
+          className="work-block-entry-form work-block-element"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+
+            maxWidth: '45em',
+            flexGrow: 1,
+
+
+
+            margin: '0',
+
+
+
+            '& .entry-field + .entry-field': {
+              marginTop: '0.7em',
+            },
+            '& input, .entry-field, textarea': {
+              backgroundColor: theme.palette.grey[100],
+            },
+            '& div.jobsite-link-wrapper': {
+              backgroundColor: theme.palette.grey[100] + ' !important',
+            },
+            '& .raised': {
+              backgroundColor: 'white',
+              borderRadius: '4px',
+              border: `1.5px solid ${theme.palette.divider}`,
+              padding: '0.7em 0.5em 1em 0.5em',
+            },
           }}
         >
-          <Typography
-            variant="h5"
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
             sx={{
-              display: 'block',
               width: '100%',
-              padding: '0.5em 0',
-
-              fontWeight: 600,
+              display: 'contents',
             }}
           >
-            {workBlockEntryFormTitle}
-          </Typography>
+            <Tile>
+              <JobsiteSearch foundDataCallback={handleSelectJobsite} />
 
-          <JobsiteSearch foundDataCallback={handleSelectJobsite} />
+              <Grid container spacing={1}>
+                {validationError && (
+                  <Grid item xs={12} sx={getErrorWrapperStyle}>
+                    {<Typography sx={getErrorTextStyle}>{validationError}</Typography>}
+                  </Grid>
+                )}
 
-          <Grid container spacing={1}>
-            {validationError && (
-              <Grid item xs={12} sx={getErrorWrapperStyle}>
-                {<Typography sx={getErrorTextStyle}>{validationError}</Typography>}
-              </Grid>
-            )}
-
-            {apiError && (
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  margin: 0,
-                  paddingBottom: 1,
-                  paddingLeft: 1.5,
-                }}
-              >
-                {
-                  <Typography
+                {apiError && (
+                  <Grid
+                    item
+                    xs={12}
                     sx={{
-                      color: 'red',
-                      padding: '0 0.5em',
+                      margin: 0,
+                      paddingBottom: 1,
+                      paddingLeft: 1.5,
                     }}
                   >
-                    {apiError}
-                  </Typography>
-                }
-              </Grid>
-            )}
+                    {
+                      <Typography
+                        sx={{
+                          color: 'red',
+                          padding: '0 0.5em',
+                        }}
+                      >
+                        {apiError}
+                      </Typography>
+                    }
+                  </Grid>
+                )}
 
-            <Grid item xs={7} sm={9} md={10}>
-              <Grid xs={12} className="entry-field" container item>
-                <Grid item xs={existingJobsiteRecordId ? 9 : 12} sx={{}}>
+                <Grid item xs={7} sm={9} md={10}>
+                  <Grid xs={12} className="entry-field" container item>
+                    <Grid item xs={existingJobsiteRecordId ? 9 : 12} sx={{}}>
+                      <TextField
+                        label="ID"
+                        name="jobsiteId"
+                        className="entry-field"
+                        value={formData.jobsiteId ?? ''}
+                        onChange={event => {
+                          const value = event.target.value;
+                          if (value.length <= JOBSITE_ID_MAX_LENGTH) {
+                            handleInputChange(event, { transformUppercase: true });
+                          }
+                        }}
+                        onBlur={event => {
+                          tryUpdateJobsite(event.target.value);
+                        }}
+                        fullWidth
+                        inputProps={{
+                          maxLength: JOBSITE_ID_MAX_LENGTH,
+                          autoComplete: 'off',
+                        }}
+                      />
+                    </Grid>
+
+                    {existingJobsiteRecordId && (
+                      <Grid
+                        className="jobsite-link-wrapper"
+                        item
+                        xs={3}
+                        sx={{
+                          margin: 0,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          display: 'flex',
+                          backgroundColor: theme.palette.grey[100],
+                        }}
+                      >
+                        <IconButton
+                          onClick={() =>
+                            showPopup(
+                              <JobsitePanel
+                                initialMode="view"
+                                jobsiteId={existingJobsiteRecordId}
+                                onClose={hidePopup}
+                                onUpdateJobsite={(jobsiteData: JobsiteProps) => {
+                                  applyJobsiteToFormData(jobsiteData);
+                                  setExistingJobsiteRecordId(jobsiteData.jobsiteId ?? '');
+                                }}
+                                titleCallback={setPopupTitle}
+                              ></JobsitePanel>,
+                            )
+                          }
+                        >
+                          <LinkIcon
+                            sx={{
+                              color: theme.palette.primary.main,
+                              fontSize: '1.25em',
+                              '&:hover': {
+                                color: theme.palette.primary.dark,
+                              },
+                            }}
+                          />
+                        </IconButton>
+                      </Grid>
+                    )}
+                  </Grid>
+
                   <TextField
-                    label="ID"
-                    name="jobsiteId"
+                    label="Address"
                     className="entry-field"
-                    value={formData.jobsiteId ?? ''}
-                    onChange={event => {
-                      const value = event.target.value;
-                      if (value.length <= JOBSITE_ID_MAX_LENGTH) {
-                        handleInputChange(event, { transformUppercase: true });
-                      }
-                    }}
-                    onBlur={event => {
-                      tryUpdateJobsite(event.target.value);
-                    }}
+                    name="jobsiteAddress"
+                    value={formData.jobsiteAddress ?? ''}
+                    onChange={handleInputChange}
                     fullWidth
                     inputProps={{
-                      maxLength: JOBSITE_ID_MAX_LENGTH,
+                      autoComplete: 'off',
+                    }}
+                    disabled={!!existingJobsiteRecordId}
+                    multiline
+                    maxRows={2}
+                  />
+                  <TextField
+                    label="Name"
+                    name="jobsiteName"
+                    className="entry-field"
+                    value={formData.jobsiteName ?? ''}
+                    onChange={handleInputChange}
+                    fullWidth
+                    inputProps={{
+                      autoComplete: 'off',
+                    }}
+                    disabled={!!existingJobsiteRecordId}
+                  />
+                  <TextField
+                    label="Supervisor"
+                    name="supervisorName"
+                    className="entry-field"
+                    value={formData.supervisorName ?? ''}
+                    onChange={handleInputChange}
+                    fullWidth
+                    inputProps={{
                       autoComplete: 'off',
                     }}
                   />
                 </Grid>
 
-                {existingJobsiteRecordId && (
-                  <Grid
-                    className="jobsite-link-wrapper"
-                    item
-                    xs={3}
-                    sx={{
-                      margin: 0,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      display: 'flex',
-                      backgroundColor: theme.palette.grey[100],
-                    }}
-                  >
-                    <IconButton
-                      onClick={() =>
-                        showPopup(
-                          <JobsitePanel
-                            initialMode="view"
-                            jobsiteId={existingJobsiteRecordId}
-                            onClose={hidePopup}
-                            onUpdateJobsite={(jobsiteData: JobsiteProps) => {
-                              applyJobsiteToFormData(jobsiteData);
-                              setExistingJobsiteRecordId(jobsiteData.jobsiteId ?? '');
-                            }}
-                          ></JobsitePanel>,
-                        )
+                <Grid
+                  item
+                  xs={5}
+                  sm={3}
+                  md={2}
+                  sx={{
+                    height: 'auto',
+                  }}
+                >
+                  {!isMobile ? (
+                    <DesktopTimePicker
+                      className="entry-field"
+                      label="From"
+                      name="startTime"
+                      value={
+                        formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
                       }
-                    >
-                      <LinkIcon
-                        sx={{
-                          color: theme.palette.primary.main,
-                          fontSize: '1.25em',
-                          '&:hover': {
-                            color: theme.palette.primary.dark,
+                      onChange={handleStartTimeChange}
+                      slotProps={{
+                        textField: {
+                          onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                            handleStartTimeChange(
+                              event.target.value ? new Date(event.target.value) : null,
+                            );
                           },
-                        }}
+                          InputLabelProps: {
+                            shrink: true,
+                          },
+                          fullWidth: true,
+                          inputProps: {
+                            step: 600,
+                          },
+                        },
+                      }}
+                    />
+                  ) : (
+                    <MobileTimePicker
+                      className="entry-field"
+                      label="From"
+                      name="startTime"
+                      value={
+                        formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
+                      }
+                      onChange={handleStartTimeChange}
+                      slotProps={{
+                        textField: {
+                          onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                            handleStartTimeChange(
+                              event.target.value ? new Date(event.target.value) : null,
+                            );
+                          },
+                          InputLabelProps: {
+                            shrink: true,
+                          },
+                          fullWidth: true,
+                          inputProps: {
+                            step: 600,
+                          },
+                        },
+                        dialog: {
+                          sx: {
+                            zIndex: 100000,
+                          },
+                        },
+                      }}
+                    />
+                  )}
+                  {!isMobile ? (
+                    <DesktopTimePicker
+                      className="entry-field"
+                      label="To"
+                      name="endTime"
+                      value={
+                        formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null
+                      }
+                      onChange={handleEndTimeChange}
+                      slotProps={{
+                        textField: {
+                          onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                            handleEndTimeChange(
+                              event.target.value ? new Date(event.target.value) : null,
+                            );
+                          },
+                          InputLabelProps: {
+                            shrink: true,
+                          },
+                          inputProps: {
+                            step: 600,
+                          },
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  ) : (
+                    <MobileTimePicker
+                      className="entry-field"
+                      label="To"
+                      name="endTime"
+                      value={
+                        formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null
+                      }
+                      onChange={handleEndTimeChange}
+                      slotProps={{
+                        textField: {
+                          onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
+                            handleEndTimeChange(
+                              event.target.value ? new Date(event.target.value) : null,
+                            );
+                          },
+                          InputLabelProps: {
+                            shrink: true,
+                          },
+                          inputProps: {
+                            step: 600,
+                          },
+                          fullWidth: true,
+                        },
+                        dialog: {
+                          sx: {
+                            zIndex: 100000,
+                          },
+                        },
+                      }}
+                    />
+                  )}
+
+                  {suggestedData &&
+                    suggestedData.workBlockStart &&
+                    suggestedData.workBlockEnd &&
+                    !(formData.workBlockStart || formData.workBlockEnd) && (
+                      <SuggestedData
+                        fields={['workBlockStart', 'workBlockEnd']}
+                        suggestedWorkBlockProps={suggestedData}
+                        handleMerge={mergeSuggested}
                       />
-                    </IconButton>
-                  </Grid>
-                )}
-              </Grid>
+                    )}
+                </Grid>
 
-              <TextField
-                label="Address"
-                className="entry-field"
-                name="jobsiteAddress"
-                value={formData.jobsiteAddress ?? ''}
-                onChange={handleInputChange}
-                fullWidth
-                inputProps={{
-                  autoComplete: 'off',
-                }}
-                disabled={!!existingJobsiteRecordId}
-                multiline
-                maxRows={2}
-              />
-              <TextField
-                label="Name"
-                name="jobsiteName"
-                className="entry-field"
-                value={formData.jobsiteName ?? ''}
-                onChange={handleInputChange}
-                fullWidth
-                inputProps={{
-                  autoComplete: 'off',
-                }}
-                disabled={!!existingJobsiteRecordId}
-              />
-              <TextField
-                label="Supervisor"
-                name="supervisorName"
-                className="entry-field"
-                value={formData.supervisorName ?? ''}
-                onChange={handleInputChange}
-                fullWidth
-                inputProps={{
-                  autoComplete: 'off',
-                }}
-              />
-            </Grid>
-
-            <Grid
-              item
-              xs={5}
-              sm={3}
-              md={2}
-              sx={{
-                height: 'auto',
-              }}
-            >
-              {!isMobile ? (
-                <DesktopTimePicker
-                  className="entry-field"
-                  label="From"
-                  name="startTime"
-                  value={
-                    formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
-                  }
-                  onChange={handleStartTimeChange}
-                  slotProps={{
-                    textField: {
-                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                        handleStartTimeChange(
-                          event.target.value ? new Date(event.target.value) : null,
-                        );
-                      },
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                      fullWidth: true,
-                      inputProps: {
-                        step: 600,
-                      },
-                    },
-                  }}
-                />
-              ) : (
-                <MobileTimePicker
-                  className="entry-field"
-                  label="From"
-                  name="startTime"
-                  value={
-                    formData.workBlockStart ? convertPlainTimeToDate(formData.workBlockStart) : null
-                  }
-                  onChange={handleStartTimeChange}
-                  slotProps={{
-                    textField: {
-                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                        handleStartTimeChange(
-                          event.target.value ? new Date(event.target.value) : null,
-                        );
-                      },
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                      fullWidth: true,
-                      inputProps: {
-                        step: 600,
-                      },
-                    },
-                  }}
-                />
-              )}
-              {!isMobile ? (
-                <DesktopTimePicker
-                  className="entry-field"
-                  label="To"
-                  name="endTime"
-                  value={
-                    formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null
-                  }
-                  onChange={handleEndTimeChange}
-                  slotProps={{
-                    textField: {
-                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                        handleEndTimeChange(
-                          event.target.value ? new Date(event.target.value) : null,
-                        );
-                      },
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                      inputProps: {
-                        step: 600,
-                      },
-                      fullWidth: true,
-                    },
-                  }}
-                />
-              ) : (
-                <MobileTimePicker
-                  className="entry-field"
-                  label="To"
-                  name="endTime"
-                  value={
-                    formData.workBlockEnd ? convertPlainTimeToDate(formData.workBlockEnd) : null
-                  }
-                  onChange={handleEndTimeChange}
-                  slotProps={{
-                    textField: {
-                      onBlur: (event: React.FocusEvent<HTMLInputElement>) => {
-                        handleEndTimeChange(
-                          event.target.value ? new Date(event.target.value) : null,
-                        );
-                      },
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                      inputProps: {
-                        step: 600,
-                      },
-                      fullWidth: true,
-                    },
-                  }}
-                />
-              )}
-
-              {suggestedData &&
-                suggestedData.workBlockStart &&
-                suggestedData.workBlockEnd &&
-                !(formData.workBlockStart || formData.workBlockEnd) && (
-                  <SuggestedData
-                    fields={['workBlockStart', 'workBlockEnd']}
-                    suggestedWorkBlockProps={suggestedData}
-                    handleMerge={mergeSuggested}
+                <Grid item xs={12}>
+                  <TextField
+                    label="Notes"
+                    name="additionalNotes"
+                    className="entry-field"
+                    value={formData.additionalNotes ?? ''}
+                    onChange={handleInputChange}
+                    fullWidth
+                    inputProps={{
+                      autoComplete: 'off',
+                    }}
+                    multiline
+                    minRows={1}
+                    maxRows={6}
                   />
-                )}
-            </Grid>
+                </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                label="Additional notes"
-                name="additionalNotes"
-                className="entry-field"
-                value={formData.additionalNotes ?? ''}
-                onChange={handleInputChange}
-                fullWidth
-                inputProps={{
-                  autoComplete: 'off',
-                }}
-                multiline
-                minRows={1}
-                maxRows={6}
-              />
-            </Grid>
 
+              </Grid>
+            </Tile>
             <Grid
               className="buttonsWrapper"
               sx={{
                 display: 'flex',
                 flexDirection: 'row',
+                alignSelf: {
+                  xs: 'flex-end',
+                  md: 'flex-start',
+                },
                 height: 'auto',
-                padding: '0.75em 0.5em !important',
-                marginTop: '0.6em',
-
+                padding: '0.5em 0.5em 0.5em 0.5em',
+                marginTop: '0em',
+                'button': {
+                  backgroundColor: 'white',
+                },
                 '& > button + button': {
                   marginLeft: '0.5em',
                 },
@@ -683,7 +708,7 @@ export const WorkBlockEntryForm = ({
 
               <Button
                 variant="outlined"
-                onClick={handleDiscard}
+                onClick={onDiscard}
                 value="Discard"
                 sx={{
                   backgroundColor: theme.palette.grey[100],
@@ -723,8 +748,8 @@ export const WorkBlockEntryForm = ({
                 </Button>
               )}
             </Grid>
-          </Grid>
-        </form>
+          </Box>
+        </Box>
       </Box>
     </LocalizationProvider>
   );

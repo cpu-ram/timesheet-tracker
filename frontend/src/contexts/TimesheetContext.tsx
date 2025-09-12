@@ -108,23 +108,24 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
     workBlockData: WorkBlockData;
     onJobsiteCreated?: (jobsiteId: string) => void;
   }) => {
-    if (selectedDates.length > 0) {
-      const workBlockCreationResult = await addWorkBlock(workBlockData, selectedDates);
-
-      if (
-        workBlockCreationResult.newJobsiteCreated &&
-        workBlockCreationResult.jobsiteId &&
-        onJobsiteCreated
-      ) {
-        onJobsiteCreated(workBlockCreationResult.jobsiteId);
-      }
-
-      await fetchMultipleDaysTimesheetData(selectedDates);
-      await dateSelectionHandler.multiSelectionOff();
-      setTimesheetPageMode('view');
-    } else if (selectedDates.length === 0) {
-      throw new Error();
+    if (!selectedDates || selectedDates.length === 0) {
+      throw new Error('No dates selected');
     }
+
+    const workBlockCreationResult = await addWorkBlock(workBlockData, selectedDates);
+
+    if (
+      workBlockCreationResult.newJobsiteCreated &&
+      workBlockCreationResult.jobsiteId &&
+      onJobsiteCreated
+    ) {
+      onJobsiteCreated(workBlockCreationResult.jobsiteId);
+    }
+
+    await fetchMultipleDaysTimesheetData(selectedDates);
+    await dateSelectionHandler.multiSelectionOff();
+    setTimesheetPageMode('view');
+
   };
 
   const handleEditWorkBlock = async ({

@@ -14,10 +14,12 @@ const JobsiteDetails = ({
   supervisorName,
   defaultWorkStartTime,
   defaultWorkEndTime,
+
+  showJobsiteId = true,
 }: JobsiteProps) => {
   supervisorName && true;
 
-  const jobsiteDisplayFields = [
+  let jobsiteDisplayFields = [
     { title: 'ID', value: jobsiteId },
     { title: 'Name', value: jobsiteName },
     { title: 'Address', value: jobsiteAddress },
@@ -26,6 +28,10 @@ const JobsiteDetails = ({
     { title: 'Typical start', value: defaultWorkStartTime },
     { title: 'Typical end', value: defaultWorkEndTime },
   ];
+
+  if (!showJobsiteId) {
+    jobsiteDisplayFields = jobsiteDisplayFields.filter(field => field.title !== 'ID');
+  }
 
   const theme = useTheme();
 
@@ -66,12 +72,12 @@ const JobsiteDetails = ({
           value={
             jobsite.value instanceof Temporal.PlainTime
               ? jobsite.value
-                  .toLocaleString('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true,
-                  })
-                  .toLowerCase()
+                .toLocaleString('en-US', {
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true,
+                })
+                .toLowerCase()
               : jobsite.value
           }
         />

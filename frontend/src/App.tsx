@@ -6,6 +6,8 @@ import { useAuthContext } from './contexts/AuthContext.tsx';
 
 import { PopupProvider } from './contexts/PopupContext.tsx';
 import { TimesheetProvider } from './contexts/TimesheetContext.tsx';
+import { NotificationProvider } from './contexts/NotificationContext.tsx';
+
 
 import AuthenticatedRoutes from './routes/AuthenticatedRoutes.tsx';
 import UnauthenticatedRoutes from './routes/UnauthenticatedRoutes.tsx';
@@ -43,11 +45,14 @@ function App() {
       />
       <Router>
         {isAuthenticated && isSignedUp ? (
-          <PopupProvider>
-            <TimesheetProvider>
-              <AuthenticatedRoutes />
-            </TimesheetProvider>
-          </PopupProvider>
+          <TimesheetProvider>
+            <NotificationProvider>
+              <PopupProvider>
+                <AuthenticatedRoutes />
+              </PopupProvider>
+            </NotificationProvider>
+          </TimesheetProvider>
+
         ) : (
           <UnauthenticatedRoutes />
         )}

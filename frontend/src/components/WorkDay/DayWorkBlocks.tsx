@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
+import { Temporal } from '@js-temporal/polyfill';
 
 import { useTimesheetContext } from '../../contexts/TimesheetContext.tsx';
 
@@ -11,10 +12,10 @@ import WorkBlockEntryForm from '../WorkBlock/WorkBlockEntryForm/WorkBlockEntryFo
 import { WorkBlockData, WorkBlockEntryFormProps } from '../../types/WorkBlock.types.ts';
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
 
-const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
+const DayWorkBlocks = ({ workData, date }: { workData: WorkBlockData[], date: Temporal.PlainDate }) => {
   const [selectedForEditId, setSelectedForEditId] = useState<number | null>(null);
 
-  const { timesheetPageMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
+  const { timesheetPageMode, handleEditWorkBlock } = useTimesheetContext();
 
   const handleEnteredData = async ({
     workBlockData,
@@ -56,14 +57,14 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
           borderRadius: '4px',
           border: `1.5px solid ${theme.palette.divider}`,
 
-          '& > .work-block-element + .work-block-element': {
+          '.work-block-element + .work-block-element': {
             borderTop: `1.5px solid ${theme.palette.divider} !important`,
           },
-          '& .work-block-element:first-of-type, .work-block-entry-form:first-of-type': {
+          '.work-block-element:first-of-type, .work-block-entry-form:first-of-type': {
             borderTopLeftRadius: '4px',
             borderTopRightRadius: '4px',
           },
-          '& .work-block-element:last-child, .work-block-entry-form:last-of-type, .hours-total:last-of-type':
+          '.work-block-element:last-of-type, .work-block-entry-form:last-of-type, .hours-total:last-of-type':
           {
             borderBottomLeftRadius: '4px',
             borderBottomRightRadius: '4px',
@@ -72,33 +73,25 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
       >
         {workData && workData.length > 0 ? (
           <>
-            {workData.map((workBlock: WorkBlockData) => {
-              if (!workBlock.workBlockId) throw new Error('Error: Work Block id missing');
+            {workData.map((workBlockData: WorkBlockData) => {
+              if (!workBlockData.workBlockId) throw new Error('Error: Work Block id missing');
 
-              const workBlockData: WorkBlockData = workBlock;
-
-              const editWorkBlockFormProps: WorkBlockEntryFormProps = {
-                workBlockData,
-                mode: 'edit',
-                onEnteredData: handleEnteredData,
-              };
-
-              return workBlock ? (
-                timesheetPageMode === 'edit' && workBlock.workBlockId === selectedForEditId ? (
+              return workBlockData ? (
+                timesheetPageMode === 'edit' && workBlockData.workBlockId === selectedForEditId ? (
                   <WorkBlockEntryForm
-                    key={workBlock.workBlockId}
+                    key={workBlockData.workBlockId}
                     workBlockData={workBlockData}
                     mode="edit"
-                    onEnteredData={handleEnteredData}
                   />
                 ) : (
                   <WorkBlock
-                    key={workBlock.workBlockId}
+                    key={workBlockData.workBlockId}
                     {...{
-                      ...workBlock,
-                      handleDeleteWorkBlock, handleSelectForEdit,
-                      showActions: timesheetPageMode === 'edit'
+                      ...workBlockData,
                     }}
+                    showActions={timesheetPageMode === 'edit'}
+                    compact={true}
+                    date={date}
                   />
                 )
               ) : null;
