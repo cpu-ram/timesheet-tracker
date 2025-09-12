@@ -44,8 +44,9 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
   const [workData, setWorkData] = useState(() => scaffoldWorkDataContainer(dateRange));
   const [multiDaySelectionMode, setMultiDaySelectionMode] = useState(false);
   const [selectedDates, setSelectedDates] = useState<Temporal.PlainDate[]>([]);
-  const [editMode, setEditMode] = useState(false);
-  const [addMode, setAddMode] = useState(false);
+
+  const [timesheetPageMode, setTimesheetPageMode] = useState<'view' | 'add' | 'edit'>('view');
+
   const [lastSelectedSingleDate, setLastSelectedSingleDate] = useState(Temporal.Now.plainDateISO());
   const [calendarMode, setCalendarMode] = useState(true);
 
@@ -120,7 +121,7 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
 
       await fetchMultipleDaysTimesheetData(selectedDates);
       await dateSelectionHandler.multiSelectionOff();
-      setAddMode(false);
+      setTimesheetPageMode('view');
     } else if (selectedDates.length === 0) {
       throw new Error();
     }
@@ -161,8 +162,8 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
 
   const handleDiscard = async function () {
     if (multiDaySelectionMode) await dateSelectionHandler.multiSelectionOff();
-    if (addMode === true) setAddMode(false);
-    if (editMode === true) setEditMode(false);
+
+    setTimesheetPageMode('view');
   };
 
   function getRangeOfSelectedWeek() {
@@ -243,8 +244,7 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
     handleDateClick: function (date: Temporal.PlainDate) {
       if (!multiDaySelectionMode) {
         this.selectSingleDay(date);
-        setEditMode(false);
-        setAddMode(false);
+        setTimesheetPageMode('view');
       } else {
         switch (this.isSelected(date)) {
           case true:
@@ -306,10 +306,6 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
         setMultiDaySelectionMode,
         selectedDates,
         setSelectedDates,
-        editMode,
-        setEditMode,
-        addMode,
-        setAddMode,
         lastSelectedSingleDate,
         setLastSelectedSingleDate,
         dateSelectionHandler,
@@ -319,6 +315,9 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
         workDataAggregator,
         getRangeOfSelectedWeek,
         fetchFullTimesheetData,
+
+        timesheetPageMode,
+        setTimesheetPageMode,
 
         jobsiteSearchResults,
         setJobsiteSearchResults,

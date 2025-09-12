@@ -14,7 +14,7 @@ import { useStyleContext } from '../../contexts/StyleContext.tsx';
 const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
   const [selectedForEditId, setSelectedForEditId] = useState<number | null>(null);
 
-  const { editMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
+  const { timesheetPageMode, handleDeleteWorkBlock, handleEditWorkBlock } = useTimesheetContext();
 
   const handleEnteredData = async ({
     workBlockData,
@@ -34,10 +34,10 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
     setSelectedForEditId(null);
   }, [workData]);
   useEffect(() => {
-    if (!editMode) {
+    if (timesheetPageMode !== 'edit') {
       setSelectedForEditId(null);
     }
-  }, [editMode]);
+  }, [timesheetPageMode]);
 
   const handleSelectForEdit = (workBlockId: number) => {
     setSelectedForEditId(workBlockId);
@@ -89,12 +89,12 @@ const DayWorkBlocks = ({ workData }: { workData: WorkBlockData[] }) => {
               };
 
               return workBlock ? (
-                editMode && workBlock.workBlockId === selectedForEditId ? (
+                timesheetPageMode === 'edit' && workBlock.workBlockId === selectedForEditId ? (
                   <WorkBlockEntryForm key={workBlock.workBlockId} {...editWorkBlockFormProps} />
                 ) : (
                   <WorkBlock
                     key={workBlock.workBlockId}
-                    {...{ ...workBlock, handleDeleteWorkBlock, handleSelectForEdit, editMode }}
+                    {...{ ...workBlock, handleDeleteWorkBlock, handleSelectForEdit, editMode: timesheetPageMode === 'edit' }}
                   />
                 )
               ) : null;
