@@ -214,8 +214,8 @@ const ReportPage = () => {
                   <Box className="day-work-blocks">
                     {day.workBlocks.length > 0
                       ? day.workBlocks.map(workBlock => (
-                          <WorkBlock {...workBlock} editMode={false} key={workBlock.workBlockId} />
-                        ))
+                        <WorkBlock {...workBlock} showActions={false} key={workBlock.workBlockId} expandable={false} />
+                      ))
                       : ''}
                   </Box>
                 </Box>

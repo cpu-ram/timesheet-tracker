@@ -8,4 +8,6 @@ export interface JobsiteProps {
   supervisorName?: string | null;
   defaultWorkStartTime?: Temporal.PlainTime | null;
   defaultWorkEndTime?: Temporal.PlainTime | null;
+
+  showJobsiteId?: boolean;
 }

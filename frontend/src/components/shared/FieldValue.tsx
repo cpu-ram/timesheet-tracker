@@ -6,12 +6,14 @@ interface FieldValueProps {
   isExpected?: boolean;
   children: React.ReactNode;
   additionalStyles?: SxProps<Theme>;
+  compact?: boolean;
 }
 
 export function FieldValue({
   isExpected = false,
   children,
   additionalStyles = {},
+  compact = false,
 }: FieldValueProps) {
   const theme = useTheme();
   const undefinedWarningStatus = isExpected && children == null;
@@ -22,17 +24,26 @@ export function FieldValue({
       sx={
         [
           {
-            display: 'inline-block',
             color: undefinedWarningStatus ? theme.palette.warning.dark : theme.palette.text.primary,
             paddingRight: '0.5em',
-            minWidth: '10em',
+            ...(!compact && { minWidth: '10em' }),
             fontWeight: '450',
+            '& span': {
+              color: undefinedWarningStatus ? theme.palette.warning.dark : theme.palette.text.primary,
+            },
           },
           additionalStyles,
         ] as SxProps<Theme>
       }
     >
-      {children ?? <span style={{ color: theme.palette.text.disabled }}>—</span>}
+      {
+        children ??
+        <span style={{
+          // color: theme.palette.text.disabled 
+        }}>
+          —
+        </span>
+      }
     </Typography>
   );
 }

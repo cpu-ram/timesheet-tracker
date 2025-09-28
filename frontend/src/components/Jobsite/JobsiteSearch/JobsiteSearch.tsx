@@ -27,7 +27,10 @@ export default function JobsiteSearch({
   const [jobsiteSearchQuery, setJobsiteSearchQuery] = useState('');
 
   return (
-    <Grid item xs={12}>
+    <Grid
+      id="jobsite-search-container"
+      item xs={12}
+    >
       <Box
         sx={{
           flexDirection: 'row',
@@ -67,6 +70,7 @@ export default function JobsiteSearch({
           value={null}
           id="jobsite-search-autocomplete"
           sx={{
+            zIndex: 1000,
             padding: '0 0',
             marginBottom: '1em',
 
@@ -106,8 +110,10 @@ export default function JobsiteSearch({
           renderOption={(props, option) => {
             const { key, ...restProps } = props;
             return (
-              <li key={key} {...restProps}>
-                <Box component="span" sx={{}}>
+              <li className="autocomplete-option-line" key={key} {...restProps}>
+                <Box component="span" sx={{
+                  zIndex: 10000,
+                }}>
                   {Object.entries(option)
                     .filter(([, value]) => value != null)
                     .map(([key, value]) => {

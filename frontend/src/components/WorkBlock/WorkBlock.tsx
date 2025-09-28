@@ -1,10 +1,22 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Box, IconButton } from '@mui/material';
 import FieldValue from '../shared/FieldValue.tsx';
 import { Temporal } from '@js-temporal/polyfill';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import ClearIcon from '@mui/icons-material/Clear';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import { usePopupContext } from '../../contexts/PopupContext.tsx';
+
+import WorkBlockPanel from './WorkBlockPanel.tsx';
+
+
+import { useStyleContext } from '../../contexts/StyleContext.tsx';
+import { useTimesheetContext } from '../../contexts/TimesheetContext.tsx';
 
 import { WorkBlockProps } from '../../types/WorkBlock.types.ts';
+import React from 'react';
 
 const WorkBlock = ({
   workBlockId,
@@ -14,14 +26,16 @@ const WorkBlock = ({
   jobsiteAddress,
   jobsiteName,
   additionalNotes,
-  editMode,
-  handleDeleteWorkBlock,
-  handleSelectForEdit,
-}: WorkBlockProps) => {
-  const columnWidths = [0, 12, 4.1, 7.9];
+  showActions,
 
-  const leftSideWidth = 8.3;
-  const rightSideWidth = 3.7;
+  expandable = true,
+  compact = false,
+
+  supervisorName,
+  date,
+}: WorkBlockProps) => {
+  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
+  const { handleDeleteWorkBlock } = useTimesheetContext();
 
   const calculateTotalHours = (
     workBlockStart: Temporal.PlainTime,
@@ -32,158 +46,104 @@ const WorkBlock = ({
     const roundedWorkBlockHours = Math.round(workBlockHours * scale) / scale;
     return roundedWorkBlockHours;
   };
+
+  const formatTime = (time: Temporal.PlainTime): string =>
+    time.toLocaleString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }).toLowerCase();
+
+  const totalHours = workBlockStart && workBlockEnd ?
+    calculateTotalHours(workBlockStart, workBlockEnd) :
+    0;
+
+  const { theme } = useStyleContext();
+
+  const columnWidths = [4, 8];
+
+  const fields: {
+    label: string;
+    value: string | null | undefined;
+    required: boolean;
+  }[] = [
+      { label: 'Jobsite ID', value: jobsiteId, required: false, showInCompact: true },
+      { label: 'Address', value: jobsiteAddress, required: false, showInCompact: true },
+      { label: 'Name', value: jobsiteName, required: false, showInCompact: true },
+      { label: 'Supervisor', value: supervisorName, required: false, showInCompact: false },
+      { label: 'Notes', value: additionalNotes, required: false, showInCompact: false },
+    ];
+
   return (
-    <Grid
-      className="work-block-element"
-      container
+    <Grid container
       key={workBlockId}
+      className="work-block-element"
       sx={{
-        display: 'flex',
-        padding: '1.75em 0.5em',
-        borderColor: 'divider',
-        backgroundColor: 'background.paper',
+        '& .work p, & .line span, & .altFieldValue *': {
+          color: theme.palette.text.primary,
+          fontWeight: 450,
+          lineHeight: 1,
+        },
+        lineHeight: 1,
+        padding: '0.5em 0.7em',
+
+        '& .line': {
+          padding: '0.2em 0 0',
+        }
       }}
-      spacing="0"
     >
-      <style>
-        {`
-            span.fieldTitle{
-              font-style: oblique 20deg;  
-              margin-right: 0.5em;
-              color: #555555; /* Equivalent to gray.600 in Material-UI */
-            }
-            p.field-with-missing-data{
-              color: {theme => theme.palette.warning.dark};
-            },
-            .MuiGrid-item{
-              padding: 0;
-              line-height: 0.4em;
-            },
-          `}
-      </style>
+      <Grid
+        container item xs={9} alignItems="flex-start"
+        sx={{
+          border: '0px solid grey',
+          minHeight: '100%',
+        }}
+      >
 
-      <Grid container item xs={leftSideWidth}>
-        <Grid item xs={columnWidths[2]}>
-          <Typography>
-            <span className="fieldTitle">ID:</span>
-          </Typography>
-        </Grid>
-        <Grid item xs={columnWidths[3]}>
-          <FieldValue isExpected={true}>{jobsiteId ? jobsiteId.toUpperCase() : null}</FieldValue>
-        </Grid>
-
-        <Grid item xs={columnWidths[2]}>
-          <Typography>
-            <span className="fieldTitle">Address:</span>
-          </Typography>
-        </Grid>
-        <Grid item xs={columnWidths[3]}>
-          <FieldValue isExpected={false}>{jobsiteAddress}</FieldValue>
-        </Grid>
-
-        <Grid item xs={columnWidths[2]}>
-          <Typography>
-            <span className="fieldTitle">Name:</span>
-          </Typography>
-        </Grid>
-
-        <Grid item xs={columnWidths[3]}>
-          <FieldValue>{jobsiteName}</FieldValue>
-        </Grid>
-      </Grid>
-
-      <Grid container item xs={rightSideWidth} alignItems="flex-start" sx={{}}>
-        <Grid container item xs={12}>
-          <Grid item xs={columnWidths[0]} alignItems="flex-start"></Grid>
-          <Grid item xs={columnWidths[1]} alignItems="flex-start">
-            <FieldValue key={`${workBlockId}-start-time`} isExpected={true}>
-              {workBlockStart
-                ? workBlockStart
-                    .toLocaleString('en-US', {
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      hour12: true,
-                    })
-                    .toLowerCase()
-                : null}
-            </FieldValue>
-          </Grid>
-        </Grid>
-
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            paddingLeft: '0.7rem',
-          }}
-        >
-          <Grid
-            item
-            xs={9}
-            alignItems="flex-start"
-            sx={{
-              borderLeft: '1px solid black',
-              minHeight: '4.5em',
-              height: '100%',
-              margin: '0.5em 0',
-              alignContent: 'center',
-            }}
-          >
-            <Typography
-              component="div"
+        {
+          showActions ?
+            <Grid
+              container item xs={12}
               sx={{
-                paddingLeft: 1,
-                fontWeight: 'bold',
+                minHeight: '100%',
+                height: '100%',
               }}
             >
-              {workBlockStart && workBlockEnd ? (
-                <>{calculateTotalHours(workBlockStart, workBlockEnd)}h</>
-              ) : (
-                <i>0</i>
-              )}
-            </Typography>
-          </Grid>
+              <Grid container item xs={columnWidths[0]}
+                sx={{
+                  justifyContent: 'left',
+                  alignItems: 'center',
 
-          <Grid item xs={3} alignItems="flex-start">
-            <Typography
-              sx={{
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                display: 'flex',
-              }}
-            >
-              {editMode ? (
-                <>
-                  <EditIcon
+                  paddingLeft: '1em',
+                  minHeight: '100%',
+                }}
+              >
+                <Typography
+                  sx={{
+                    display: 'flex',
+
+                    height: '2em',
+                    width: '2em',
+                    fontSize: '0.8em',
+                    fontWeight: '1000',
+                    color: 'white !important',
+                    backgroundColor: theme.palette.error.dark,
+                    borderRadius: '50%',
+
+                    justifyContent: 'center',
+                    alignItems: 'center',
+
+                    '& svg, svg path': {
+                      color: 'white !important',
+                    },
+                    '& path': {
+                    }
+                  }}
+                >
+                  <ClearIcon
                     sx={{
-                      color: 'info.main',
-                      paddingRight: 0,
-                      fontSize: '1.6em',
-                      filter: 'drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.4))',
-                      '&:active, &:hover': {
-                        cursor: 'pointer',
-                        boxShadow: '0 0 0 0.2rem rgba(23, 162, 184, 0.5)',
-                      },
-                      marginBottom: '0.7em',
-                      marginTop: '0.3em',
-                    }}
-                    onClick={() => {
-                      if (!workBlockId) throw new Error('Error: Work block ID is missing');
-                      if (!handleSelectForEdit)
-                        throw new Error('Error: work block selection handler is missing');
-                      handleSelectForEdit(workBlockId);
-                    }}
-                  />
-                  <DeleteIcon
-                    sx={{
-                      color: 'error.main',
-                      fontSize: '1.6em',
-                      '&:active, &:hover': {
-                        cursor: 'pointer',
-                        boxShadow: '0 0 0 0.2rem rgba(220, 53, 69, 0.5)',
-                      },
-                      filter: 'drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.4))',
+                      fontSize: '1.2em',
+                      fontWeight: '1000',
                     }}
                     onClick={() => {
                       if (!handleDeleteWorkBlock)
@@ -191,47 +151,137 @@ const WorkBlock = ({
                       if (!workBlockId) throw new Error('Error: Work block ID is missing');
                       handleDeleteWorkBlock(workBlockId);
                     }}
-                  />
-                </>
-              ) : null}
-            </Typography>
-          </Grid>
-        </Grid>
+                  >
+                  </ClearIcon>
+                </Typography>
+              </Grid>
+              <Grid container item xs={columnWidths[1]}>
+                {
+                  fields.map((field, index) => {
+                    return (
+                      <Grid container item xs={12} key={index}
+                        className="line"
+                      >
+                        <FieldValue>
+                          {field.value ?? null}
+                        </FieldValue>
+                      </Grid>
+                    );
+                  })
+                }
+              </Grid>
+            </Grid>
+            :
+            fields.filter(x => (!compact || x.showInCompact)).
+              map((field, index) => {
+                return (
+                  <Grid container item xs={12} key={index}
+                    className="line"
+                  >
+                    <Grid item xs={columnWidths[0]}>
+                      <Typography>{field.label}</Typography>
+                    </Grid>
+                    <Grid item xs={columnWidths[1]}>
+                      <FieldValue>
+                        {field.value ?? null}
+                      </FieldValue>
+                    </Grid>
+                  </Grid>
+                );
+              })
 
-        <Grid container item xs={12}>
-          <Grid item xs={columnWidths[0]}></Grid>
-          <Grid item xs={columnWidths[1]}>
-            <FieldValue key={`${workBlockId}-end-time`} isExpected={true}>
-              {workBlockEnd
-                ? workBlockEnd
-                    .toLocaleString('en-US', {
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      hour12: true,
-                    })
-                    .toLowerCase()
-                : null}
-            </FieldValue>
-          </Grid>
-        </Grid>
+        }
+
       </Grid>
 
-      <Grid
-        item
-        xs={12}
-        sx={{
-          height: 'auto',
-          marginTop: '1em',
-          textWrap: 'wrap',
-          width: '100%',
-        }}
-      >
-        <Typography sx={{}}>
-          <span className="fieldTitle">Additional notes:</span>
-          {additionalNotes || <>[—]</>}
-        </Typography>
+      <Grid container item xs={3} sx={{ border: '0px solid grey' }} >
+
+        <Grid item xs={12}>
+          <FieldValue>
+            {workBlockStart ? formatTime(workBlockStart) : null}
+          </FieldValue>
+        </Grid>
+
+        <Grid item xs={12}
+          sx={{
+            paddingLeft: '0.7em',
+          }}
+        >
+          <Box component="span"
+            className="altFieldValue"
+            sx={{
+              borderLeft: '1px solid grey',
+              padding: '0.2em 0 0.2em 0.5em',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}>
+            <Box
+              sx={{
+                width: '1.5em',
+              }}
+            >
+              {totalHours}h
+            </Box>
+
+            {
+              expandable && (
+                <IconButton
+                  sx={{
+                    marginLeft: '0.4em',
+                    backgroundColor: 'white',
+                    color: theme.palette.primary.main,
+                    border: `1px solid ${theme.palette.primary.main}`,
+                    borderRadius: '50%',
+                    padding: '0em',
+                    color: theme.palette.primary.main
+                  }}
+                  onClick={
+                    () => {
+                      showPopup(
+                        <WorkBlockPanel
+                          workBlockId={workBlockId}
+                          workBlockData={{
+                            workBlockId,
+                            workBlockStart,
+                            workBlockEnd,
+                            jobsiteId,
+                            jobsiteAddress,
+                            jobsiteName,
+                            additionalNotes,
+                          }}
+                          titleCallback={setPopupTitle}
+                          date={date}
+                        />
+                      );
+                    }
+                  }
+                >
+                  <FullscreenIcon
+                    htmlColor={theme.palette.primary.main}
+                    sx={{
+                      color: 'inherit',
+                      padding: '0.1em',
+                      fontSize: '1.2em',
+                      '& path': {
+                        fill: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                  </FullscreenIcon>
+                </IconButton>)
+            }
+
+          </Box>
+        </Grid>
+
+        <Grid item xs={12}>
+          <FieldValue>
+            {workBlockEnd ? formatTime(workBlockEnd) : null}
+          </FieldValue>
+        </Grid>
+
       </Grid>
-    </Grid>
+    </Grid >
   );
 };
 

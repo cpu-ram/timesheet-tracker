@@ -1,4 +1,4 @@
-export const useEntryFieldTextStyle = () => {
+export const getEntryFieldTextStyle = () => {
   return {
     backgroundColor: 'white',
     display: 'flex',

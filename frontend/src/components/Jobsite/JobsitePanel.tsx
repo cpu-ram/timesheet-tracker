@@ -19,22 +19,30 @@ import JobsiteDataEntryForm from './JobsiteDataEntryForm/JobsiteDataEntryForm.ts
 
 import { createJobsite, deleteJobsite, updateJobsite } from '../../api/jobsiteApi.ts';
 
-import { useErrorWrapperStyle, useErrorTextStyle } from '../shared/styles/generalStyles.ts';
+import { getErrorWrapperStyle, getErrorTextStyle } from '../shared/styles/generalStyles.ts';
 
 const JobsitePanel = ({
   initialMode,
   jobsiteId,
   onClose,
   onUpdateJobsite,
+  titleCallback,
 }: {
   initialMode: 'view' | 'edit' | 'add';
   jobsiteId?: string;
   onClose?: () => void;
   onUpdateJobsite?: (_jobsite: JobsiteProps) => void;
+  titleCallback?: (title: string) => void;
 }) => {
   const [mode, setMode] = useState<'view' | 'add' | 'edit'>(initialMode || 'view');
   const [jobsite, setJobsite] = useState<JobsiteProps | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (titleCallback && ['view', 'edit'].includes(mode) && jobsiteId) {
+      titleCallback(`Jobsites > ${jobsiteId}`);
+    }
+  }, [titleCallback, mode, jobsiteId]);
 
   const navigate = useNavigate();
   const handleClose = onClose || (() => navigate('/jobsites'));
@@ -150,12 +158,12 @@ const JobsitePanel = ({
       {mode === 'view' && (
         <Box>
           {apiError && (
-            <Box sx={useErrorWrapperStyle}>
-              {apiError && <Typography sx={useErrorTextStyle}>{apiError}</Typography>}
+            <Box sx={getErrorWrapperStyle}>
+              {apiError && <Typography sx={getErrorTextStyle}>{apiError}</Typography>}
             </Box>
           )}
 
-          {jobsite && <JobsiteDetails {...jobsite} />}
+          {jobsite && <JobsiteDetails {...jobsite} showJobsiteId={false} />}
 
           <Box
             className="jobsite-panel-actions"
@@ -208,6 +216,7 @@ const JobsitePanel = ({
           }}
           jobsite={mode === 'edit' ? jobsite : null}
           {...{ mode, setMode }}
+          showJobsiteId={false}
         />
       )}
     </Box>

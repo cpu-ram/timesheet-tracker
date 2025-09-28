@@ -10,21 +10,17 @@ import { useStyleContext } from '../../contexts/StyleContext.tsx';
 export default function Buttons({
   mode,
   setTimesheetPageMode,
-  handleDiscard,
   handleCancelEdit,
   currentDayWorkData,
+  onAddButtonClick,
 }: {
   mode?: 'add' | 'edit' | 'view';
   setTimesheetPageMode: (mode: 'add' | 'edit' | 'view') => void;
-  handleDiscard: () => void;
   handleCancelEdit: () => void;
   currentDayWorkData: any[] | null;
+  onAddButtonClick: () => void;
 }) {
   const { theme } = useStyleContext();
-
-  useEffect(() => {
-    handleDiscard();
-  }, []);
 
   return (
     <Grid
@@ -67,7 +63,7 @@ export default function Buttons({
           }}
         >
           <Button
-            onClick={() => setTimesheetPageMode('add')}
+            onClick={() => onAddButtonClick()}
             variant="outlined"
             sx={{
               display: 'flex',
@@ -120,6 +116,7 @@ export default function Buttons({
       ) : (
         <></>
       )}
+
     </Grid>
   );
 }

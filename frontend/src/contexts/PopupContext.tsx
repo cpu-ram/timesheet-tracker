@@ -7,6 +7,7 @@ import Popup from '../components/Popup/Popup';
 type PopupContextType = {
   showPopup: (content: React.ReactNode) => void;
   hidePopup: () => void;
+  setPopupTitle: (title: string) => void;
 };
 
 const PopupContext = createContext<PopupContextType | null>(null);
@@ -19,32 +20,69 @@ export function usePopupContext() {
   return context;
 }
 
+type PopupEntry = {
+  content: React.ReactNode;
+  title: string;
+};
+
 export function PopupProvider({ children }: { children: React.ReactNode }) {
-  const [popupContent, setPopupContent] = useState<React.ReactNode | null>(null);
+
+  const [popupStack, setPopupStack] = useState<PopupEntry[]>([]);
+
+  const setPopupTitle = (title: string) => {
+    setPopupStack(prevStack => {
+      if (prevStack.length === 0) return prevStack;
+      const newStack = [...prevStack];
+      newStack[newStack.length - 1] = {
+        ...newStack[newStack.length - 1],
+        title,
+      };
+      return newStack;
+    }
+    );
+  };
+
+  const getPopupTitle = () => {
+    return popupStack.length > 0 ? popupStack[popupStack.length - 1].title : '';
+  }
+
+  const getPreviousPopupTitle = () => {
+    return popupStack.length > 1 ? popupStack[popupStack.length - 2].title : '';
+  }
 
   const showPopup = (content: React.ReactNode) => {
-    setPopupContent(content);
+    setPopupStack(prevStack => [...prevStack, { content, title: '' }]);
   };
 
   const hidePopup = () => {
-    setPopupContent(null);
+    if (popupStack.length === 0) return;
+    setPopupStack(prevStack => prevStack.slice(0, -1));
   };
+
+  const currentPopupContent = popupStack.length > 0 ? popupStack[popupStack.length - 1].content : null;
 
   return (
     <PopupContext.Provider
       value={{
         showPopup,
         hidePopup,
+        setPopupTitle,
       }}
     >
       <Box
         sx={{
-          display: popupContent ? 'none' : 'inherit',
+          display: popupStack.length > 0 ? 'none' : 'inherit',
         }}
       >
         {children}
       </Box>
-      {popupContent && <Popup onClose={hidePopup}>{popupContent}</Popup>}
+      {popupStack.length > 0 &&
+        <Popup title={getPopupTitle()} parentPopupTitle={getPreviousPopupTitle()} onClose={hidePopup}>
+          {
+            currentPopupContent
+          }
+        </Popup>
+      }
     </PopupContext.Provider>
   );
 }

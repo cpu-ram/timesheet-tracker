@@ -19,6 +19,8 @@ import { FormStructure } from './types.ts';
 import createTextEntryFieldFactory from './TextEntryFieldFactory.tsx';
 import { JobsiteFieldValue } from '../JobsiteFieldValue.tsx';
 
+import { JobsiteFieldDisplay } from '../JobsiteFieldDisplay.tsx';
+
 import {
   getErrorWrapperStyle,
   getErrorTextStyle,
@@ -205,29 +207,10 @@ const JobsiteDataEntryForm = ({
               },
             }}
           >
-            {mode === 'edit' && (
-              <Box
-                sx={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  padding: '0.5em 0 1em 0.56em !important',
-                }}
-              >
-                <Typography
-                  component="span"
-                  sx={{
-                    ...getFieldTitleStyle,
-                    display: 'inline-block',
-                    width: '7.5em',
-                    fontStyle: 'italic',
-                  }}
-                >
-                  ID
-                </Typography>
-                <JobsiteFieldValue isExpected>{jobsite?.jobsiteId ?? null}</JobsiteFieldValue>
-              </Box>
+            {mode === 'edit' && false && (
+              <JobsiteFieldDisplay title="ID" value={jobsite?.jobsiteId ?? null} />
             )}
-            {mode === 'add' && (
+            {mode === 'add' && false && (
               <>
                 {textEntryFieldFactory.createField({
                   name: 'jobsiteId',

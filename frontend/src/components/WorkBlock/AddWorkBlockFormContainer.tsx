@@ -5,9 +5,7 @@ export const AddWorkBlockFormContainer = () => {
   return (
     <Box>
       <WorkBlockEntryForm
-        formFlags={{
-          mode: 'add',
-        }}
+        mode="add"
       />
     </Box>
   );
