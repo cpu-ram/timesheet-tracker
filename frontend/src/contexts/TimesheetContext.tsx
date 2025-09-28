@@ -120,6 +120,7 @@ export function TimesheetProvider({ children }: { children: React.ReactNode }) {
       onJobsiteCreated
     ) {
       onJobsiteCreated(workBlockCreationResult.jobsiteId);
+
     }
 
     await fetchMultipleDaysTimesheetData(selectedDates);
