@@ -9,29 +9,15 @@ import { WorkBlock } from '../WorkBlock/WorkBlock.tsx';
 import HoursTotal from './HoursTotal.tsx';
 import WorkBlockEntryForm from '../WorkBlock/WorkBlockEntryForm/WorkBlockEntryForm.tsx';
 
-import { WorkBlockData, WorkBlockEntryFormProps } from '../../types/WorkBlock.types.ts';
+import { WorkBlockData} from '../../types/WorkBlock.types.ts';
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
 
 const DayWorkBlocks = ({ workData, date }: { workData: WorkBlockData[], date: Temporal.PlainDate }) => {
   const [selectedForEditId, setSelectedForEditId] = useState<number | null>(null);
 
-  const { timesheetPageMode, handleEditWorkBlock } = useTimesheetContext();
+  const { timesheetPageMode} = useTimesheetContext();
 
-  const handleEnteredData = async ({
-    workBlockData,
-    onJobsiteCreated,
-  }: {
-    workBlockData: WorkBlockData;
-    onJobsiteCreated?: (jobsiteId: string) => void;
-  }) => {
-    await handleEditWorkBlock({
-      workBlockId: selectedForEditId,
-      workBlockData,
-      onJobsiteCreated,
-    });
-  };
-
-  useEffect(() => {
+   useEffect(() => {
     setSelectedForEditId(null);
   }, [workData]);
   useEffect(() => {
@@ -39,10 +25,6 @@ const DayWorkBlocks = ({ workData, date }: { workData: WorkBlockData[], date: Te
       setSelectedForEditId(null);
     }
   }, [timesheetPageMode]);
-
-  const handleSelectForEdit = (workBlockId: number) => {
-    setSelectedForEditId(workBlockId);
-  };
 
   const { theme } = useStyleContext();
 

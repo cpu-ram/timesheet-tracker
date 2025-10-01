@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 
 export interface WorkBlockData {
-  workBlockId: number;
+  workBlockId?: number ;
   workBlockStart?: Temporal.PlainTime | null;
   workBlockEnd?: Temporal.PlainTime | null;
   breakStart?: Temporal.PlainTime | null;
@@ -39,7 +39,7 @@ export interface WorkBlockEntryFormProps {
     onJobsiteCreated?: (jobsiteId: string) => void;
   }) => void;
   onError?: (error: Error) => void;
-  handleDiscard?: () => void;
+  onDiscard?: () => void;
 
   onSaved?: () => void;
 

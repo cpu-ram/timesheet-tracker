@@ -1,11 +1,7 @@
 import { Grid, Typography, Box, IconButton } from '@mui/material';
 import FieldValue from '../shared/FieldValue.tsx';
 import { Temporal } from '@js-temporal/polyfill';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import ClearIcon from '@mui/icons-material/Clear';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { usePopupContext } from '../../contexts/PopupContext.tsx';
 
@@ -16,7 +12,6 @@ import { useStyleContext } from '../../contexts/StyleContext.tsx';
 import { useTimesheetContext } from '../../contexts/TimesheetContext.tsx';
 
 import { WorkBlockProps } from '../../types/WorkBlock.types.ts';
-import React from 'react';
 
 const WorkBlock = ({
   workBlockId,
@@ -34,7 +29,7 @@ const WorkBlock = ({
   supervisorName,
   date,
 }: WorkBlockProps) => {
-  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
+  const { showPopup, setPopupTitle } = usePopupContext();
   const { handleDeleteWorkBlock } = useTimesheetContext();
 
   const calculateTotalHours = (
@@ -66,6 +61,7 @@ const WorkBlock = ({
     label: string;
     value: string | null | undefined;
     required: boolean;
+    showInCompact: boolean,
   }[] = [
       { label: 'Jobsite ID', value: jobsiteId, required: false, showInCompact: true },
       { label: 'Address', value: jobsiteAddress, required: false, showInCompact: true },
@@ -229,7 +225,6 @@ const WorkBlock = ({
                   sx={{
                     marginLeft: '0.4em',
                     backgroundColor: 'white',
-                    color: theme.palette.primary.main,
                     border: `1px solid ${theme.palette.primary.main}`,
                     borderRadius: '50%',
                     padding: '0em',

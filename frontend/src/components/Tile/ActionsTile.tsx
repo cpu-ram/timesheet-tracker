@@ -1,13 +1,12 @@
-import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
+import { ReactNode } from 'react';
 
-const ActionsTile = ({ children }) => {
+const ActionsTile = ({ children}: {children: ReactNode}) => {
   return (
     <Box
       className="buttonsWrapper"
       sx={{
         display: 'flex',
-        flexDirection: 'row',
         flexDirection: {
           xs: 'row-reverse',
           sm: 'row',

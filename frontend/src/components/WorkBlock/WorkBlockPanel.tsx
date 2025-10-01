@@ -19,7 +19,7 @@ const WorkBlockPanel = ({
   titleCallback,
   date,
 }: {
-  workBlockId?: string;
+  workBlockId?: number;
   workBlockData?: WorkBlockData;
   titleCallback?: (title: string) => void;
   date?: Temporal.PlainDate;

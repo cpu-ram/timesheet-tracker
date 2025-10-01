@@ -17,7 +17,6 @@ import { initializeFormData, validateTimes } from './utils.ts';
 
 import { FormStructure } from './types.ts';
 import createTextEntryFieldFactory from './TextEntryFieldFactory.tsx';
-import { JobsiteFieldValue } from '../JobsiteFieldValue.tsx';
 
 import { JobsiteFieldDisplay } from '../JobsiteFieldDisplay.tsx';
 
@@ -27,7 +26,6 @@ import {
   getSubmitButtonStyle,
   getDiscardButtonStyle,
 } from './styles.ts';
-import { getFieldTitleStyle } from '../../shared/styles/recordStyles.ts';
 
 import { ApiError } from '../../../errors/ApiError.ts';
 

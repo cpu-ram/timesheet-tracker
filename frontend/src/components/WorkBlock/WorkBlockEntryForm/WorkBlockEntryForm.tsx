@@ -52,7 +52,7 @@ export const WorkBlockEntryForm = ({
       onJobsiteCreated?: (jobsiteId: string) => void;
     }
     | {
-      workBlockId: string,
+      workBlockId: number,
       workBlockData: WorkBlockData;
       onJobsiteCreated?: (jobsiteId: string) => void;
     }
@@ -69,13 +69,8 @@ export const WorkBlockEntryForm = ({
     default: throw new Error('Invalid mode: ' + mode);
   }
 
-  const workBlockEntryFormTitle = (() => {
-    if (mode === 'add') return 'Add work block';
-    else if (mode === 'edit') return 'Edit work block';
-    else throw new Error('Invalid mode: ' + mode);
-  })();
 
-  const initializeFormData = () => ({
+  const initializeFormData = ():Partial<WorkBlockData> => ({
     workBlockStart: workBlockData?.workBlockStart || null,
     workBlockEnd: workBlockData?.workBlockEnd || null,
     jobsiteId: workBlockData?.jobsiteId || null,
@@ -90,8 +85,8 @@ export const WorkBlockEntryForm = ({
     suggestedData,
   }: {
     fields: K[];
-    suggestedData: WorkBlockData;
-  }) {
+    suggestedData: Partial<WorkBlockData>;
+  }): void {
     if (!suggestedData) throw new Error('Error: Suggested jobsite data missing');
 
     const updates: Partial<WorkBlockData> = {};
@@ -113,7 +108,7 @@ export const WorkBlockEntryForm = ({
   }
 
   const [formData, setFormData] = useState<WorkBlockData>(initializeFormData());
-  const [suggestedData, setSuggestedData] = useState<WorkBlockData | null>(null);
+  const [suggestedData, setSuggestedData] = useState<Partial<WorkBlockData> | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -295,6 +290,7 @@ export const WorkBlockEntryForm = ({
             });
             break;
           case 'edit':
+	    if(!workBlockData?.workBlockId) throw new Error();
             await onEnteredData({
               workBlockId: workBlockData?.workBlockId,
               workBlockData: formData,

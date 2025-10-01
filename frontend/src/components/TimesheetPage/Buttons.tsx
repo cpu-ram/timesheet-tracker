@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { useEffect } from 'react';
 
 import { useStyleContext } from '../../contexts/StyleContext.tsx';
 

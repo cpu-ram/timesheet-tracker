@@ -1,7 +1,8 @@
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { ReactNode } from 'react';
 
-const Tile = ({ children }) => {
+const Tile = ({ children}: {children: ReactNode}) => {
   const theme = useTheme();
   return (
     <Box sx={{

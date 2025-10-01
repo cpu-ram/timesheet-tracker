@@ -216,7 +216,6 @@ const JobsitePanel = ({
           }}
           jobsite={mode === 'edit' ? jobsite : null}
           {...{ mode, setMode }}
-          showJobsiteId={false}
         />
       )}
     </Box>
