@@ -37,6 +37,7 @@ export const WorkBlockEntryForm = ({
   mode,
   onDiscard,
   onSaved,
+  titleCallback,
 }: WorkBlockEntryFormProps) => {
   const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleEditWorkBlock } =
     useTimesheetContext();
@@ -70,7 +71,7 @@ export const WorkBlockEntryForm = ({
   }
 
 
-  const initializeFormData = ():Partial<WorkBlockData> => ({
+  const initializeFormData = (): Partial<WorkBlockData> => ({
     workBlockStart: workBlockData?.workBlockStart || null,
     workBlockEnd: workBlockData?.workBlockEnd || null,
     jobsiteId: workBlockData?.jobsiteId || null,
@@ -290,7 +291,7 @@ export const WorkBlockEntryForm = ({
             });
             break;
           case 'edit':
-	    if(!workBlockData?.workBlockId) throw new Error();
+            if (!workBlockData?.workBlockId) throw new Error();
             await onEnteredData({
               workBlockId: workBlockData?.workBlockId,
               workBlockData: formData,

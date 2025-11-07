@@ -16,8 +16,6 @@ const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
   const { theme } = useStyleContext();
   const handleClose = () => onClose();
 
-  console.log('parentPopupTitle:', parentPopupTitle);
-
   return (
     <Box
       sx={{

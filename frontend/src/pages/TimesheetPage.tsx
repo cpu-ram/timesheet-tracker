@@ -15,10 +15,11 @@ import WorkBlockEntryForm from '../components/WorkBlock/WorkBlockEntryForm/WorkB
 import DayWorkBlocks from '../components/WorkDay/DayWorkBlocks.tsx';
 
 import { TimesheetDayRecord } from '../types/TimesheetDayRecord.ts';
+import { set } from 'date-fns';
 
 const TimesheetPage = () => {
   const { theme } = useStyleContext();
-  const { showPopup, hidePopup } = usePopupContext();
+  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
 
   const {
     workData,
@@ -101,8 +102,11 @@ const TimesheetPage = () => {
                     mode="add"
                     onDiscard={() => { hidePopup(); }}
                     onSaved={() => { hidePopup(); }}
-                  />
-                )
+                    titleCallback={setPopupTitle}
+                  />,
+                  'Calendar'
+                );
+                setPopupTitle('Adding Work Block');
               },
             }}
           ></Buttons>

@@ -28,6 +28,7 @@ type PopupEntry = {
 export function PopupProvider({ children }: { children: React.ReactNode }) {
 
   const [popupStack, setPopupStack] = useState<PopupEntry[]>([]);
+  const [invokerTitle, setInvokerTitle] = useState<string>('');
 
   const setPopupTitle = (title: string) => {
     setPopupStack(prevStack => {
@@ -50,8 +51,14 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     return popupStack.length > 1 ? popupStack[popupStack.length - 2].title : '';
   }
 
-  const showPopup = (content: React.ReactNode) => {
+  const getParentTitle = () => {
+    if (popupStack.length < 2) return invokerTitle;
+    else return getPreviousPopupTitle();
+  }
+
+  const showPopup = (content: React.ReactNode, invokerTitle: string) => {
     setPopupStack(prevStack => [...prevStack, { content, title: '' }]);
+    setInvokerTitle(invokerTitle || '');
   };
 
   const hidePopup = () => {
@@ -77,7 +84,7 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
         {children}
       </Box>
       {popupStack.length > 0 &&
-        <Popup title={getPopupTitle()} parentPopupTitle={getPreviousPopupTitle()} onClose={hidePopup}>
+        <Popup title={getPopupTitle()} parentPopupTitle={getParentTitle()} onClose={hidePopup}>
           {
             currentPopupContent
           }
