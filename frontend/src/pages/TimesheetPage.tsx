@@ -104,7 +104,7 @@ const TimesheetPage = () => {
                     onSaved={() => { hidePopup(); }}
                     titleCallback={setPopupTitle}
                   />,
-                  'Calendar'
+                  'Timesheet'
                 );
                 setPopupTitle('Adding Work Block');
               },

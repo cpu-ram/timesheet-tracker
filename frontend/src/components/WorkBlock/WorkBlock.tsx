@@ -232,6 +232,12 @@ const WorkBlock = ({
                   }}
                   onClick={
                     () => {
+                      const dateString = date.toLocaleString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: '2-digit',
+                      });
+
                       showPopup(
                         <WorkBlockPanel
                           workBlockId={workBlockId}
@@ -246,7 +252,8 @@ const WorkBlock = ({
                           }}
                           titleCallback={setPopupTitle}
                           date={date}
-                        />
+                        />,
+                        `Timesheet > ${dateString}`
                       );
                     }
                   }

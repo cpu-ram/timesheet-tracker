@@ -30,21 +30,17 @@ const WorkBlockPanel = ({
     if (!(date && titleCallback)) return;
 
     let title = '';
-    const dateString = date.toLocaleString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: '2-digit',
-    });
+
 
     switch (mode) {
       case 'view':
-        title = dateString + ' > Viewing Work Block';
+        title = 'Viewing Work Block';
         break;
       case 'edit':
-        title = dateString + ' > Editing Work Block';
+        title = 'Editing Work Block';
         break;
       default:
-        title = 'asd';
+        title = '';
     }
 
     titleCallback(title);

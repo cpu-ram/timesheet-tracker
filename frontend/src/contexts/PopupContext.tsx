@@ -62,8 +62,7 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
   };
 
   const hidePopup = () => {
-    if (popupStack.length === 0) return;
-    setPopupStack(prevStack => prevStack.slice(0, -1));
+    setPopupStack(prevStack => prevStack.length > 0 ? prevStack.slice(0, -1) : prevStack);
   };
 
   const currentPopupContent = popupStack.length > 0 ? popupStack[popupStack.length - 1].content : null;
