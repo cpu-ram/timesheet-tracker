@@ -52,13 +52,13 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getParentTitle = () => {
-    if (popupStack.length < 2) return invokerTitle;
+    if (popupStack.length < 2) return invokerTitle || null;
     else return getPreviousPopupTitle();
   }
 
   const showPopup = (content: React.ReactNode, invokerTitle: string) => {
     setPopupStack(prevStack => [...prevStack, { content, title: '' }]);
-    setInvokerTitle(invokerTitle || '');
+    setInvokerTitle((prevInvokerTitle) => invokerTitle ? invokerTitle : prevInvokerTitle);
   };
 
   const hidePopup = () => {
@@ -83,9 +83,13 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
         {children}
       </Box>
       {popupStack.length > 0 &&
-        <Popup title={getPopupTitle()} parentPopupTitle={getParentTitle()} onClose={hidePopup}>
+        <Popup title={getPopupTitle()} parentTitle={getParentTitle()} onClose={hidePopup}>
           {
-            currentPopupContent
+            popupStack.map((popup, index) => (
+              <Box key={index} sx={{ display: index === popupStack.length - 1 ? 'block' : 'none' }}>
+                {popup.content}
+              </Box>
+            ))
           }
         </Popup>
       }

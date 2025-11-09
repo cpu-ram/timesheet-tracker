@@ -8,11 +8,11 @@ import CloseIcon from '@mui/icons-material/Close';
 interface PopupProps {
   onClose: () => void;
   title: string;
-  parentPopupTitle?: string | null;
+  parentTitle?: string | null;
   children: React.ReactNode;
 }
 
-const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
+const Popup = ({ onClose, title, parentTitle, children }: PopupProps) => {
   const { theme } = useStyleContext();
   const handleClose = () => onClose();
 
@@ -44,9 +44,9 @@ const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
 
           border: `1px solid ${theme.palette.divider}`,
 
-          display: parentPopupTitle ? 'block' : 'none',
+          display: parentTitle ? 'block' : 'none',
         }}>
-        {parentPopupTitle}
+        {parentTitle}
       </Typography>
 
       <Box
@@ -59,7 +59,7 @@ const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
 
           padding: '3.8em 0.5em 0 0.5em',
 
-          ...(parentPopupTitle && {
+          ...(parentTitle && {
             top: '1.65em',
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: '10px 10px 0 0',
