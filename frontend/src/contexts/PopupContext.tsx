@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import Popup from '../components/Popup/Popup';
 
@@ -29,6 +29,12 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
 
   const [popupStack, setPopupStack] = useState<PopupEntry[]>([]);
   const [invokerTitle, setInvokerTitle] = useState<string>('');
+
+  useEffect(() => {
+    if (popupStack.length === 0) {
+      setInvokerTitle('');
+    }
+  }, [popupStack.length]);
 
   const setPopupTitle = (title: string) => {
     setPopupStack(prevStack => {
