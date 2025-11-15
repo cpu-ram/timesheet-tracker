@@ -37,7 +37,6 @@ export const WorkBlockEntryForm = ({
   mode,
   onDiscard,
   onSaved,
-  titleCallback,
 }: WorkBlockEntryFormProps) => {
   const { multiDaySelectionMode, dateSelectionHandler, handleAddWorkBlock, handleEditWorkBlock } =
     useTimesheetContext();
