@@ -13,17 +13,19 @@ import EditIcon from '@mui/icons-material/Edit';
 import Tile from '../Tile/Tile.tsx';
 import ActionsTile from '../Tile/ActionsTile.tsx';
 
+interface WorkBlockPanelProps {
+  workBlockId?: number;
+  workBlockData?: WorkBlockData;
+  titleCallback?: (title: string) => void;
+  date?: Temporal.PlainDate;
+}
+
 const WorkBlockPanel = ({
   workBlockId,
   workBlockData,
   titleCallback,
   date,
-}: {
-  workBlockId?: number;
-  workBlockData?: WorkBlockData;
-  titleCallback?: (title: string) => void;
-  date?: Temporal.PlainDate;
-}) => {
+}: WorkBlockPanelProps) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
 
   useEffect(() => {
