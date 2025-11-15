@@ -232,6 +232,8 @@ const WorkBlock = ({
                   }}
                   onClick={
                     () => {
+                      if (!date) throw new Error('Error: date is missing for work block popup');
+
                       const dateString = date.toLocaleString('en-US', {
                         weekday: 'short',
                         month: 'short',
