@@ -1,4 +1,4 @@
-import { Box, AppBar, Button, IconButton } from '@mui/material';
+import { Box, AppBar, IconButton } from '@mui/material';
 import { useStyleContext } from '../../contexts/StyleContext';
 import { alpha } from '@mui/material/styles';
 import { Typography } from '@mui/material';
@@ -45,7 +45,8 @@ const Popup = ({ onClose, title, parentTitle, children }: PopupProps) => {
           border: `1px solid ${theme.palette.divider}`,
 
           display: parentTitle ? 'block' : 'none',
-        }}>
+        }}
+      >
         {parentTitle}
       </Typography>
 
@@ -55,7 +56,6 @@ const Popup = ({ onClose, title, parentTitle, children }: PopupProps) => {
           position: 'fixed',
 
           boxSizing: 'border-box',
-
 
           padding: '3.8em 0.5em 0 0.5em',
 
@@ -88,7 +88,7 @@ const Popup = ({ onClose, title, parentTitle, children }: PopupProps) => {
             borderRadius: 'inherit',
 
             padding: '0.5em 0.5em 0 0.7em',
-            backgroundColor: (theme) => alpha(theme.palette.grey[100], 0.82),
+            backgroundColor: theme => alpha(theme.palette.grey[100], 0.82),
 
             boxShadow: 'none',
             justifyContent: 'space-between',
@@ -101,62 +101,30 @@ const Popup = ({ onClose, title, parentTitle, children }: PopupProps) => {
             color: theme.palette.text.primary,
           }}
         >
-          <Typography
-            variant="h6"
-          >
-            {title}
-          </Typography>
-          <Button
+          <Typography variant="h6">{title}</Typography>
+          <IconButton
             sx={{
               display: 'flex',
               alignSelf: 'flex-end',
-              alignItems: 'center',
-              justifyContent: 'center',
-              maxWidth: '3em',
-              maxHeight: '3em',
-              minWidth: '1.5em',
-              minHeight: '1.5em',
-
-              width: '2.7em',
-              height: '2.7em',
 
               backgroundColor: theme.palette.grey[500],
               color: 'white',
-              fontWeight: 800,
-
               borderRadius: '50%',
-              padding: '0',
-              marginRight: '0.5em',
-              boxSizing: 'border-box',
+              padding: '0.3em',
+              marginRight: '0.2em',
+
+              '&svg': {
+                fontSize: '1.4em'
+              },
               '&:hover, &:focus, &:active': {
                 cursor: 'pointer',
                 backgroundColor: theme.palette.grey[600],
-                '&svg': {
-                  fontSize: '1.7em',
-                  fontWeight: 900,
-                  transition: 'font-size 0.25s ease-out, font-weight 0.25s ease-out',
-                }
               },
-              '.Mui-focusVisible:focus': {
-                outline: `2.5px solid ${theme.palette.primary.main}`,
-                backgroundColor: `${theme.palette.grey[600]} !important`,
-
-              }
             }}
             onClick={handleClose}
           >
-            <CloseIcon
-              sx={{
-
-                fontSize: '1.5em',
-                fontWeight: 800,
-                margin: '0',
-                padding: '0',
-
-              }}
-
-            />
-          </Button>
+            <CloseIcon />
+          </IconButton>
         </AppBar>
 
         <Box
