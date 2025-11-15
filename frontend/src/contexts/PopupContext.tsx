@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import Popup from '../components/Popup/Popup';
 
 type PopupContextType = {
-  showPopup: (content: React.ReactNode) => void;
+  showPopup: (content: React.ReactNode, invokerTitle: string) => void;
   hidePopup: () => void;
   setPopupTitle: (title: string) => void;
 };
