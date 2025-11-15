@@ -1,4 +1,4 @@
-import { Box, AppBar } from '@mui/material';
+import { Box, AppBar, Button, IconButton } from '@mui/material';
 import { useStyleContext } from '../../contexts/StyleContext';
 import { alpha } from '@mui/material/styles';
 import { Typography } from '@mui/material';
@@ -106,36 +106,57 @@ const Popup = ({ onClose, title, parentTitle, children }: PopupProps) => {
           >
             {title}
           </Typography>
-          <Box
+          <Button
             sx={{
               display: 'flex',
-              height: 'auto',
               alignSelf: 'flex-end',
+              alignItems: 'center',
+              justifyContent: 'center',
+              maxWidth: '3em',
+              maxHeight: '3em',
+              minWidth: '1.5em',
+              minHeight: '1.5em',
 
-              width: 'auto',
-              maxWidth: '45em',
+              width: '2.7em',
+              height: '2.7em',
+
+              backgroundColor: theme.palette.grey[500],
+              color: 'white',
+              fontWeight: 800,
+
+              borderRadius: '50%',
+              padding: '0',
+              marginRight: '0.5em',
+              boxSizing: 'border-box',
+              '&:hover, &:focus, &:active': {
+                cursor: 'pointer',
+                backgroundColor: theme.palette.grey[600],
+                '&svg': {
+                  fontSize: '1.7em',
+                  fontWeight: 900,
+                  transition: 'font-size 0.25s ease-out, font-weight 0.25s ease-out',
+                }
+              },
+              '.Mui-focusVisible:focus': {
+                outline: `2.5px solid ${theme.palette.primary.main}`,
+                backgroundColor: `${theme.palette.grey[600]} !important`,
+
+              }
             }}
+            onClick={handleClose}
           >
             <CloseIcon
               sx={{
 
                 fontSize: '1.5em',
-
-                backgroundColor: theme.palette.grey[500],
-                color: 'white',
                 fontWeight: 800,
+                margin: '0',
+                padding: '0',
 
-                borderRadius: '50%',
-                padding: '0.32em',
-                boxSizing: 'content-box',
-                '&:hover, &:focus, &:active': {
-                  cursor: 'pointer',
-                  backgroundColor: theme.palette.grey[600],
-                },
               }}
-              onClick={handleClose}
+
             />
-          </Box>
+          </Button>
         </AppBar>
 
         <Box
