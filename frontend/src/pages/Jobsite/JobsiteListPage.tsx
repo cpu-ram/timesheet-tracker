@@ -101,7 +101,17 @@ function JobsiteListPage() {
           jobsites.map((jobsite: JobsiteProps) => (
             <Box
               className="jobsite-preview"
-              onClick={() => navigate(`/jobsites/${jobsite.jobsiteId}`)}
+              onClick={
+                () => showPopup(
+                  <JobsitePanel
+                    initialMode='view'
+                    jobsiteId={jobsite.jobsiteId}
+                    titleCallback={setPopupTitle}
+                    onClose={() => hidePopup()}
+                  />,
+                  'Jobsites'
+                )
+              }
               key={jobsite.jobsiteId}
               role="button"
               tabIndex={0}
@@ -158,7 +168,7 @@ function JobsiteListPage() {
             </Box>
           ))}
       </Box>
-    </Box>
+    </Box >
   );
 }
 
