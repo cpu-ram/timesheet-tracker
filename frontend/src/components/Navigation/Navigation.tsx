@@ -3,7 +3,13 @@ import { Box } from '@mui/material';
 import SideMenu from '../SideMenu/SideMenu.tsx';
 import HeaderNav from '../HeaderNav/HeaderNav.tsx';
 
-const Navigation = ({ resourceNameList = [] }: { resourceNameList?: string[] }) => {
+const Navigation = ({
+  title,
+  resourceNameList = [],
+}: {
+  title?: string;
+  resourceNameList?: string[]
+}) => {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const toggleMenu = () => setMenuIsOpen(!menuIsOpen);
 
@@ -18,7 +24,7 @@ const Navigation = ({ resourceNameList = [] }: { resourceNameList?: string[] }) 
         zIndex: 999,
       }}
     >
-      <HeaderNav {...{ resourceNameList }} onMenuToggle={toggleMenu} />
+      <HeaderNav {...{ resourceNameList }} title={title} onMenuToggle={toggleMenu} />
       <SideMenu isOpen={menuIsOpen} onMenuToggle={toggleMenu} />
     </Box>
   );

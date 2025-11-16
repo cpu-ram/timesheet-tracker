@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import {
   getReportPageStyle,
   getMainContentStyle,
-  getWeekTitleContainerStyle,
   getWorkDayStyle,
   getWorkDayHeaderStyle,
   getWorkDayDateStyle,
@@ -140,6 +139,17 @@ const ReportPage = () => {
     window.scrollTo({ top, behavior: 'smooth' });
   }
 
+  let weekRangeString =
+    `${selectedWeekDateRange.from.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: '2-digit',
+    })} — ${selectedWeekDateRange.to.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: '2-digit',
+    })}`;
+
   return (
     <Box className="report-page" sx={getReportPageStyle()}>
       <style>
@@ -154,23 +164,7 @@ const ReportPage = () => {
             }
         `}
       </style>
-      <Navigation resourceNameList={['timesheet']} />
-
-      <Box key="title" className="week-title-container" sx={getWeekTitleContainerStyle()}>
-        <Typography variant="h5">
-          {selectedWeekDateRange.from.toLocaleString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: '2-digit',
-          })}
-          —
-          {selectedWeekDateRange.to.toLocaleString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: '2-digit',
-          })}
-        </Typography>
-      </Box>
+      <Navigation title={weekRangeString} resourceNameList={['timesheet']} />
 
       <Grid className="main-content" container justifyContent="center" sx={getMainContentStyle()}>
         <Box

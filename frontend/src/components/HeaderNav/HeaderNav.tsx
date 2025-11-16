@@ -1,7 +1,7 @@
 import { useTheme, alpha } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 
-import { AppBar, Toolbar, IconButton, Box } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Box, Typography } from '@mui/material';
 import NavButton from './NavButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -9,11 +9,16 @@ import PrintIcon from '@mui/icons-material/Print';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 interface HeaderNavProps {
+  title?: string;
   resourceNameList: string[];
   onMenuToggle: () => void;
 }
 
-const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
+const HeaderNav = ({
+  title,
+  resourceNameList,
+  onMenuToggle,
+}: HeaderNavProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -77,14 +82,16 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
             boxSizing: 'border-box',
             px: 1,
             display: 'flex',
-            justifyContent: 'space-between',
+            //justifyContent: 'flex-start',
             alignItems: 'center',
 
             backgroundColor: 'transparent',
             borderBottom: '1px solid #ccc',
           }}
         >
-          <IconButton sx={{}} onClick={onMenuToggle}>
+          <IconButton sx={{
+            alignSelf: 'left',
+          }} onClick={onMenuToggle}>
             <MenuIcon
               sx={{
                 fontSize: '1em',
@@ -96,7 +103,23 @@ const HeaderNav = ({ resourceNameList, onMenuToggle }: HeaderNavProps) => {
             ></MenuIcon>
           </IconButton>
 
-          <Box sx={{}}>
+          {title && (
+            <Typography variant="h6"
+              sx={{
+                fontWeight: 500,
+                fontSize: '1em',
+                color: 'black',
+
+                alignSelf: 'left',
+                ml: '0.5em',
+              }}>
+              {title}
+            </Typography>
+          )}
+
+          <Box sx={{
+            ml: 'auto',
+          }}>
             {resourceNameList?.map(resourceName => {
               if (navButtonsConfig.some(item => item.name === resourceName)) {
                 const navButton = navButtonsConfig.find(item => item.name === resourceName);
