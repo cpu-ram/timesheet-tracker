@@ -232,6 +232,14 @@ const WorkBlock = ({
                   }}
                   onClick={
                     () => {
+                      if (!date) throw new Error('Error: date is missing for work block popup');
+
+                      const dateString = date.toLocaleString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: '2-digit',
+                      });
+
                       showPopup(
                         <WorkBlockPanel
                           workBlockId={workBlockId}
@@ -246,7 +254,8 @@ const WorkBlock = ({
                           }}
                           titleCallback={setPopupTitle}
                           date={date}
-                        />
+                        />,
+                        `Timesheet > ${dateString}`
                       );
                     }
                   }

@@ -1,4 +1,4 @@
-import { Box, AppBar } from '@mui/material';
+import { Box, AppBar, IconButton } from '@mui/material';
 import { useStyleContext } from '../../contexts/StyleContext';
 import { alpha } from '@mui/material/styles';
 import { Typography } from '@mui/material';
@@ -8,15 +8,13 @@ import CloseIcon from '@mui/icons-material/Close';
 interface PopupProps {
   onClose: () => void;
   title: string;
-  parentPopupTitle?: string | null;
+  parentTitle?: string | null;
   children: React.ReactNode;
 }
 
-const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
+const Popup = ({ onClose, title, parentTitle, children }: PopupProps) => {
   const { theme } = useStyleContext();
   const handleClose = () => onClose();
-
-  console.log('parentPopupTitle:', parentPopupTitle);
 
   return (
     <Box
@@ -46,9 +44,10 @@ const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
 
           border: `1px solid ${theme.palette.divider}`,
 
-          display: parentPopupTitle ? 'block' : 'none',
-        }}>
-        {parentPopupTitle}
+          display: parentTitle ? 'block' : 'none',
+        }}
+      >
+        {parentTitle}
       </Typography>
 
       <Box
@@ -58,10 +57,9 @@ const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
 
           boxSizing: 'border-box',
 
-
           padding: '3.8em 0.5em 0 0.5em',
 
-          ...(parentPopupTitle && {
+          ...(parentTitle && {
             top: '1.65em',
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: '10px 10px 0 0',
@@ -90,7 +88,7 @@ const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
             borderRadius: 'inherit',
 
             padding: '0.5em 0.5em 0 0.7em',
-            backgroundColor: (theme) => alpha(theme.palette.grey[100], 0.82),
+            backgroundColor: theme => alpha(theme.palette.grey[100], 0.82),
 
             boxShadow: 'none',
             justifyContent: 'space-between',
@@ -103,41 +101,30 @@ const Popup = ({ onClose, title, parentPopupTitle, children }: PopupProps) => {
             color: theme.palette.text.primary,
           }}
         >
-          <Typography
-            variant="h6"
-          >
-            {title}
-          </Typography>
-          <Box
+          <Typography variant="h6">{title}</Typography>
+          <IconButton
             sx={{
               display: 'flex',
-              height: 'auto',
               alignSelf: 'flex-end',
 
-              width: 'auto',
-              maxWidth: '45em',
+              backgroundColor: theme.palette.grey[500],
+              color: 'white',
+              borderRadius: '50%',
+              padding: '0.3em',
+              marginRight: '0.2em',
+
+              '&svg': {
+                fontSize: '1.4em'
+              },
+              '&:hover, &:focus, &:active': {
+                cursor: 'pointer',
+                backgroundColor: theme.palette.grey[600],
+              },
             }}
+            onClick={handleClose}
           >
-            <CloseIcon
-              sx={{
-
-                fontSize: '1.5em',
-
-                backgroundColor: theme.palette.grey[500],
-                color: 'white',
-                fontWeight: 800,
-
-                borderRadius: '50%',
-                padding: '0.32em',
-                boxSizing: 'content-box',
-                '&:hover, &:focus, &:active': {
-                  cursor: 'pointer',
-                  backgroundColor: theme.palette.grey[600],
-                },
-              }}
-              onClick={handleClose}
-            />
-          </Box>
+            <CloseIcon />
+          </IconButton>
         </AppBar>
 
         <Box

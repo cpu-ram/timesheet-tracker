@@ -18,7 +18,7 @@ import { TimesheetDayRecord } from '../types/TimesheetDayRecord.ts';
 
 const TimesheetPage = () => {
   const { theme } = useStyleContext();
-  const { showPopup, hidePopup } = usePopupContext();
+  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
 
   const {
     workData,
@@ -101,8 +101,11 @@ const TimesheetPage = () => {
                     mode="add"
                     onDiscard={() => { hidePopup(); }}
                     onSaved={() => { hidePopup(); }}
-                  />
-                )
+                    titleCallback={setPopupTitle}
+                  />,
+                  'Timesheet'
+                );
+                setPopupTitle('Adding Work Block');
               },
             }}
           ></Buttons>

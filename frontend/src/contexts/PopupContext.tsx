@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import Popup from '../components/Popup/Popup';
 
 type PopupContextType = {
-  showPopup: (content: React.ReactNode) => void;
+  showPopup: (content: React.ReactNode, invokerTitle?: string) => void;
   hidePopup: () => void;
   setPopupTitle: (title: string) => void;
 };
@@ -28,6 +28,13 @@ type PopupEntry = {
 export function PopupProvider({ children }: { children: React.ReactNode }) {
 
   const [popupStack, setPopupStack] = useState<PopupEntry[]>([]);
+  const [invokerTitle, setInvokerTitle] = useState<string>('');
+
+  useEffect(() => {
+    if (popupStack.length === 0) {
+      setInvokerTitle('');
+    }
+  }, [popupStack.length]);
 
   const setPopupTitle = (title: string) => {
     setPopupStack(prevStack => {
@@ -50,24 +57,30 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     return popupStack.length > 1 ? popupStack[popupStack.length - 2].title : '';
   }
 
-  const showPopup = (content: React.ReactNode) => {
+  const getParentTitle = () => {
+    if (popupStack.length < 2) return invokerTitle || null;
+    else return getPreviousPopupTitle();
+  }
+
+  const showPopup = (content: React.ReactNode, invokerTitle?: string) => {
     setPopupStack(prevStack => [...prevStack, { content, title: '' }]);
+    setInvokerTitle((prevInvokerTitle) => invokerTitle ? invokerTitle : prevInvokerTitle);
   };
 
   const hidePopup = () => {
-    if (popupStack.length === 0) return;
-    setPopupStack(prevStack => prevStack.slice(0, -1));
+    setPopupStack(prevStack => prevStack.length > 0 ? prevStack.slice(0, -1) : prevStack);
   };
 
-  const currentPopupContent = popupStack.length > 0 ? popupStack[popupStack.length - 1].content : null;
+  const value: PopupContextType = {
+    showPopup,
+    hidePopup,
+    setPopupTitle,
+  };
+
 
   return (
     <PopupContext.Provider
-      value={{
-        showPopup,
-        hidePopup,
-        setPopupTitle,
-      }}
+      value={value}
     >
       <Box
         sx={{
@@ -77,9 +90,13 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
         {children}
       </Box>
       {popupStack.length > 0 &&
-        <Popup title={getPopupTitle()} parentPopupTitle={getPreviousPopupTitle()} onClose={hidePopup}>
+        <Popup title={getPopupTitle()} parentTitle={getParentTitle()} onClose={hidePopup}>
           {
-            currentPopupContent
+            popupStack.map((popup, index) => (
+              <Box key={index} sx={{ display: index === popupStack.length - 1 ? 'block' : 'none' }}>
+                {popup.content}
+              </Box>
+            ))
           }
         </Popup>
       }
