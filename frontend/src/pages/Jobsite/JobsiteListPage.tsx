@@ -68,7 +68,7 @@ function JobsiteListPage() {
             display: 'flex',
             backgroundColor: 'white',
           }}
-          onClick={() => showPopup(<JobsitePanel initialMode='add' titleCallback={setPopupTitle} />, 'Jobsites')}
+          onClick={() => showPopup(<JobsitePanel initialMode='add' titleCallback={setPopupTitle} onCreateJobsite={() => fetchData()} />, 'Jobsites')}
         >
           <AddIcon sx={{ color: 'black' }} />
         </Button>
