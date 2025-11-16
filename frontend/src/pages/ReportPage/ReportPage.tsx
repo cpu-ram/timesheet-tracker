@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import {
   getReportPageStyle,
   getMainContentStyle,
-  getWeekTitleContainerStyle,
   getWorkDayStyle,
   getWorkDayHeaderStyle,
   getWorkDayDateStyle,

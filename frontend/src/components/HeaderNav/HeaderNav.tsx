@@ -104,7 +104,7 @@ const HeaderNav = ({
           </IconButton>
 
           {title && (
-            <Typography variant="h7"
+            <Typography variant="h6"
               sx={{
                 fontWeight: 500,
                 fontSize: '1em',

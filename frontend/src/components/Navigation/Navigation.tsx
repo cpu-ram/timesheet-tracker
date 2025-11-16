@@ -24,7 +24,7 @@ const Navigation = ({
         zIndex: 999,
       }}
     >
-      <HeaderNav {...{ resourceNameList }} title={title ?? null} onMenuToggle={toggleMenu} />
+      <HeaderNav {...{ resourceNameList }} title={title} onMenuToggle={toggleMenu} />
       <SideMenu isOpen={menuIsOpen} onMenuToggle={toggleMenu} />
     </Box>
   );
