@@ -80,7 +80,7 @@ const TimesheetPage = () => {
           WebkitOverflowScrolling: 'touch',
         }}
       >
-        <Navigation resourceNameList={['weekly_report']} />
+        <Navigation title="Timesheet" resourceNameList={['weekly_report']} />
         <Box
           sx={{
             maxWidth: '45em',

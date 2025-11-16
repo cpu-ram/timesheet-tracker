@@ -15,7 +15,7 @@ export const getReportPageStyle = () => {
     alignItems: 'center',
     flexDirection: 'column',
 
-    padding: '3.5em 0.5em 7em',
+    padding: '3.45em 0.5em 7em',
     marginBottom: '2em',
     marginTop: 0,
   };

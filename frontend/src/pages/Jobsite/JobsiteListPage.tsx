@@ -37,37 +37,12 @@ function JobsiteListPage() {
         boxSizing: 'border-box',
         alignItems: 'stretch',
         justifyContent: 'flex-start',
-        padding: '3.2em 0.6em',
+        padding: '3.5em 0.6em',
         margin: '0 auto',
         backgroundColor: theme.palette.grey[100],
       }}
     >
-      <Navigation />
-
-      <Box
-        className="breadcrumbs"
-        sx={{
-          display: 'flex',
-          width: '100%',
-          padding: '0.95em 0.3em 0 0.3em',
-          borderBottom: '0px solid #ccc',
-          margin: '0 auto 0.5em',
-        }}
-      >
-        <Typography
-          variant="h4"
-          sx={{
-            width: '100%',
-            maxWidth: '45em',
-            fontWeight: '700',
-            fontSize: '1.8em',
-            borderRadius: '4px',
-            padding: '0',
-          }}
-        >
-          Jobsites
-        </Typography>
-      </Box>
+      <Navigation title="Jobsites" />
 
       <Box
         className="icons"
