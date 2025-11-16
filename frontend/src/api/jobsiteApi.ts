@@ -61,7 +61,15 @@ export const fetchJobsitePreviews = async () => {
   }
 };
 
-export const createJobsite = async (jobsiteProps: JobsiteProps) => {
+export const createJobsite = async (
+  {
+    jobsiteData,
+    onSuccess,
+  }: {
+    jobsiteData: JobsiteProps;
+    onSuccess?: () => void;
+  }
+) => {
   const {
     jobsiteId,
     jobsiteName,
@@ -70,7 +78,7 @@ export const createJobsite = async (jobsiteProps: JobsiteProps) => {
     supervisorName,
     defaultWorkStartTime,
     defaultWorkEndTime,
-  } = jobsiteProps;
+  } = jobsiteData;
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   const timesheetDataSubPath = `/jobsites`;
@@ -96,6 +104,7 @@ export const createJobsite = async (jobsiteProps: JobsiteProps) => {
     const error = new ApiError(response.status, responseData.message);
     throw error;
   }
+  onSuccess?.();
   return responseData;
 };
 

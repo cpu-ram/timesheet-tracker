@@ -26,12 +26,14 @@ const JobsitePanel = ({
   jobsiteId,
   onClose,
   onUpdateJobsite,
+  onCreateJobsite,
   titleCallback,
 }: {
   initialMode: 'view' | 'edit' | 'add';
   jobsiteId?: string;
   onClose?: () => void;
   onUpdateJobsite?: (_jobsite: JobsiteProps) => void;
+  onCreateJobsite?: () => void;
   titleCallback?: (title: string) => void;
 }) => {
   const [mode, setMode] = useState<'view' | 'add' | 'edit'>(initialMode || 'view');
@@ -41,6 +43,9 @@ const JobsitePanel = ({
   useEffect(() => {
     if (titleCallback && ['view', 'edit'].includes(mode) && jobsiteId) {
       titleCallback(`Jobsites > ${jobsiteId}`);
+    }
+    if (titleCallback && mode === 'add') {
+      titleCallback('Add New Jobsite');
     }
   }, [titleCallback, mode, jobsiteId]);
 
@@ -112,7 +117,14 @@ const JobsitePanel = ({
 
   switch (mode) {
     case 'add':
-      handleEnteredData = createJobsite;
+      handleEnteredData = (jobsiteProps: JobsiteProps) =>
+        createJobsite({
+          jobsiteData: jobsiteProps,
+          onSuccess: () => {
+            onCreateJobsite?.();
+            handleClose();
+          }
+        });
       break;
     case 'edit':
       handleEnteredData = callUpdateJobsite;

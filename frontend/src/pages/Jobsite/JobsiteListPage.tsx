@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Typography, Grid, Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme } from '@mui/material/styles';
 import { fetchJobsitePreviews } from '../../api/jobsiteApi';
 import Navigation from '../../components/Navigation/Navigation.tsx';
+import { usePopupContext } from '../../contexts/PopupContext.tsx';
+
+import JobsitePanel from '../../components/Jobsite/JobsitePanel.tsx';
 
 import { JobsiteProps } from '../../components/Jobsite/types.ts';
 import { FieldValue } from '../../components/shared/FieldValue.tsx';
@@ -12,18 +14,20 @@ import { FieldTitle } from './FieldTitle.tsx';
 
 function JobsiteListPage() {
   const [jobsites, setJobsites] = useState<JobsiteProps[]>([]);
-  const navigate = useNavigate();
   const theme = useTheme();
 
+  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
+
+  const fetchData = async () => {
+    try {
+      const data = await fetchJobsitePreviews();
+      setJobsites(data);
+    } catch (error) {
+      console.error('Error fetching jobsite previews:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchJobsitePreviews();
-        setJobsites(data);
-      } catch (error) {
-        console.error('Error fetching jobsite previews:', error);
-      }
-    };
     fetchData();
   }, []);
 
@@ -62,7 +66,15 @@ function JobsiteListPage() {
             display: 'flex',
             backgroundColor: 'white',
           }}
-          onClick={() => navigate('/jobsites/new')}
+          onClick={() => showPopup(
+            <JobsitePanel
+              initialMode='add'
+              titleCallback={setPopupTitle}
+              onCreateJobsite={() => fetchData()}
+              onClose={() => hidePopup()}
+            />,
+            'Jobsites'
+          )}
         >
           <AddIcon sx={{ color: 'black' }} />
         </Button>
@@ -87,7 +99,20 @@ function JobsiteListPage() {
           jobsites.map((jobsite: JobsiteProps) => (
             <Box
               className="jobsite-preview"
-              onClick={() => navigate(`/jobsites/${jobsite.jobsiteId}`)}
+              onClick={
+                () => {
+                  if (!jobsite.jobsiteId) throw new Error('Jobsite ID is missing');
+                  showPopup(
+                    <JobsitePanel
+                      initialMode='view'
+                      jobsiteId={jobsite.jobsiteId}
+                      titleCallback={setPopupTitle}
+                      onClose={() => hidePopup()}
+                    />,
+                    'Jobsites'
+                  )
+                }
+              }
               key={jobsite.jobsiteId}
               role="button"
               tabIndex={0}
@@ -144,7 +169,7 @@ function JobsiteListPage() {
             </Box>
           ))}
       </Box>
-    </Box>
+    </Box >
   );
 }
 
