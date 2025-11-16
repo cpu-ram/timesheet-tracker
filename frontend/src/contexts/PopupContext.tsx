@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import Popup from '../components/Popup/Popup';
 
 type PopupContextType = {
-  showPopup: (content: React.ReactNode, invokerTitle: string) => void;
+  showPopup: (content: React.ReactNode, invokerTitle?: string) => void;
   hidePopup: () => void;
   setPopupTitle: (title: string) => void;
 };
@@ -62,7 +62,7 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     else return getPreviousPopupTitle();
   }
 
-  const showPopup = (content: React.ReactNode, invokerTitle: string) => {
+  const showPopup = (content: React.ReactNode, invokerTitle?: string) => {
     setPopupStack(prevStack => [...prevStack, { content, title: '' }]);
     setInvokerTitle((prevInvokerTitle) => invokerTitle ? invokerTitle : prevInvokerTitle);
   };
@@ -71,15 +71,16 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     setPopupStack(prevStack => prevStack.length > 0 ? prevStack.slice(0, -1) : prevStack);
   };
 
-  const currentPopupContent = popupStack.length > 0 ? popupStack[popupStack.length - 1].content : null;
+  const value: PopupContextType = {
+    showPopup,
+    hidePopup,
+    setPopupTitle,
+  };
+
 
   return (
     <PopupContext.Provider
-      value={{
-        showPopup,
-        hidePopup,
-        setPopupTitle,
-      }}
+      value={value}
     >
       <Box
         sx={{
