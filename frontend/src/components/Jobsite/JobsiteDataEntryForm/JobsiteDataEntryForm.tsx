@@ -93,7 +93,7 @@ const JobsiteDataEntryForm = ({
 
     setFormData(prevData => ({
       ...prevData,
-      [name]: name === 'jobsiteId' ? value.toUpperCase() : value,
+      [name]: name === 'jobsiteId' ? (value?.toUpperCase() ?? '') : value,
     }));
   };
 
@@ -208,7 +208,7 @@ const JobsiteDataEntryForm = ({
             {mode === 'edit' && false && (
               <JobsiteFieldDisplay title="ID" value={jobsite?.jobsiteId ?? null} />
             )}
-            {mode === 'add' && false && (
+            {mode === 'add' && (
               <>
                 {textEntryFieldFactory.createField({
                   name: 'jobsiteId',
