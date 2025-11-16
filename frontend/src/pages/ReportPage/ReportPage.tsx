@@ -189,13 +189,11 @@ const ReportPage = () => {
                     <Typography className="work-day-date" variant="h6" sx={getWorkDayDateStyle()}>
                       <b>
                         {day.date.toLocaleString('en-US', {
-                          weekday: 'short',
-                          month: 'short',
-                          day: '2-digit',
-                          year: 'numeric',
+                          weekday: 'long',
                         })}
                       </b>
                     </Typography>
+
                     <Typography
                       className="work-day-hours"
                       variant="subtitle1"
@@ -208,7 +206,7 @@ const ReportPage = () => {
                   <Box className="day-work-blocks">
                     {day.workBlocks.length > 0
                       ? day.workBlocks.map(workBlock => (
-                        <WorkBlock {...workBlock} showActions={false} key={workBlock.workBlockId} expandable={false} />
+                        <WorkBlock {...workBlock} showActions={false} key={workBlock.workBlockId} compact={true} expandable={false} />
                       ))
                       : ''}
                   </Box>

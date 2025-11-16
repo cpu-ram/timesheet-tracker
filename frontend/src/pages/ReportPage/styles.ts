@@ -75,7 +75,7 @@ export const getWeekTitleContainerStyle = () => {
 };
 
 export const getWorkDayStyle = () => {
-  return { marginBottom: '1em' };
+  return { marginBottom: '0em' };
 };
 
 export const getWorkDayHeaderStyle = () => {
@@ -88,6 +88,8 @@ export const getWorkDayHeaderStyle = () => {
 export const getWorkDayDateStyle = () => {
   return {
     textAlign: 'left',
+    fontSize: '1em',
+    fontWeight: 400,
   };
 };
 
