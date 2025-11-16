@@ -65,20 +65,20 @@ const JobsiteDetails = ({
         },
       }}
     >
-      {jobsiteDisplayFields.map(jobsite => (
+      {jobsiteDisplayFields.map(jobsiteField => (
         <JobsiteFieldDisplay
-          key={jobsite.title}
-          title={jobsite.title}
+          key={jobsiteField.title}
+          title={jobsiteField.title}
           value={
-            jobsite.value instanceof Temporal.PlainTime
-              ? jobsite.value
+            jobsiteField.value instanceof Temporal.PlainTime
+              ? jobsiteField.value
                 .toLocaleString('en-US', {
                   hour: 'numeric',
                   minute: '2-digit',
                   hour12: true,
                 })
                 .toLowerCase()
-              : jobsite.value
+              : jobsiteField.value
           }
         />
       ))}
