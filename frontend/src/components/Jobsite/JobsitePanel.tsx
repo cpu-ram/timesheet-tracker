@@ -42,6 +42,9 @@ const JobsitePanel = ({
     if (titleCallback && ['view', 'edit'].includes(mode) && jobsiteId) {
       titleCallback(`Jobsites > ${jobsiteId}`);
     }
+    if (titleCallback && mode === 'add') {
+      titleCallback('Add New Jobsite');
+    }
   }, [titleCallback, mode, jobsiteId]);
 
   const navigate = useNavigate();

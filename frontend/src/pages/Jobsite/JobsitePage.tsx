@@ -9,7 +9,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { useSearchParams } from 'react-router-dom';
 
-import JobsitePanel from '../../components/Jobsite/JobsitePanel.tsx';
+import JobsitePanel from '../../components/Jobsite/JobsitePanel';
 
 const JobsitePage = (props: { initialMode: 'view' | 'add' | 'edit' }) => {
   const { jobsiteId } = useParams();

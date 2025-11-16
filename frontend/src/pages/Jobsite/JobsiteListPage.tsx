@@ -5,6 +5,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { useTheme } from '@mui/material/styles';
 import { fetchJobsitePreviews } from '../../api/jobsiteApi';
 import Navigation from '../../components/Navigation/Navigation.tsx';
+import { usePopupContext } from '../../contexts/PopupContext.tsx';
+
+import JobsitePanel from '../../components/Jobsite/JobsitePanel.tsx';
 
 import { JobsiteProps } from '../../components/Jobsite/types.ts';
 import { FieldValue } from '../../components/shared/FieldValue.tsx';
@@ -14,6 +17,8 @@ function JobsiteListPage() {
   const [jobsites, setJobsites] = useState<JobsiteProps[]>([]);
   const navigate = useNavigate();
   const theme = useTheme();
+
+  const { showPopup, setPopupTitle } = usePopupContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,7 +67,7 @@ function JobsiteListPage() {
             display: 'flex',
             backgroundColor: 'white',
           }}
-          onClick={() => navigate('/jobsites/new')}
+          onClick={() => showPopup(<JobsitePanel initialMode='add' titleCallback={setPopupTitle} />, 'Jobsites')}
         >
           <AddIcon sx={{ color: 'black' }} />
         </Button>
