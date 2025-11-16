@@ -20,15 +20,16 @@ function JobsiteListPage() {
 
   const { showPopup, setPopupTitle } = usePopupContext();
 
+  const fetchData = async () => {
+    try {
+      const data = await fetchJobsitePreviews();
+      setJobsites(data);
+    } catch (error) {
+      console.error('Error fetching jobsite previews:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchJobsitePreviews();
-        setJobsites(data);
-      } catch (error) {
-        console.error('Error fetching jobsite previews:', error);
-      }
-    };
     fetchData();
   }, []);
 
