@@ -121,7 +121,7 @@ const JobsitePanel = ({
         createJobsite({
           jobsiteData: jobsiteProps,
           onSuccess: () => {
-            onCreateJobsite();
+            onCreateJobsite?.();
             handleClose();
           }
         });

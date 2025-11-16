@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Typography, Grid, Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme } from '@mui/material/styles';
@@ -15,7 +14,6 @@ import { FieldTitle } from './FieldTitle.tsx';
 
 function JobsiteListPage() {
   const [jobsites, setJobsites] = useState<JobsiteProps[]>([]);
-  const navigate = useNavigate();
   const theme = useTheme();
 
   const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
@@ -102,15 +100,18 @@ function JobsiteListPage() {
             <Box
               className="jobsite-preview"
               onClick={
-                () => showPopup(
-                  <JobsitePanel
-                    initialMode='view'
-                    jobsiteId={jobsite.jobsiteId}
-                    titleCallback={setPopupTitle}
-                    onClose={() => hidePopup()}
-                  />,
-                  'Jobsites'
-                )
+                () => {
+                  if (!jobsite.jobsiteId) throw new Error('Jobsite ID is missing');
+                  showPopup(
+                    <JobsitePanel
+                      initialMode='view'
+                      jobsiteId={jobsite.jobsiteId}
+                      titleCallback={setPopupTitle}
+                      onClose={() => hidePopup()}
+                    />,
+                    'Jobsites'
+                  )
+                }
               }
               key={jobsite.jobsiteId}
               role="button"
