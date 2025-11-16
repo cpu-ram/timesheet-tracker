@@ -18,7 +18,7 @@ function JobsiteListPage() {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const { showPopup, setPopupTitle } = usePopupContext();
+  const { showPopup, hidePopup, setPopupTitle } = usePopupContext();
 
   const fetchData = async () => {
     try {
@@ -68,7 +68,15 @@ function JobsiteListPage() {
             display: 'flex',
             backgroundColor: 'white',
           }}
-          onClick={() => showPopup(<JobsitePanel initialMode='add' titleCallback={setPopupTitle} onCreateJobsite={() => fetchData()} />, 'Jobsites')}
+          onClick={() => showPopup(
+            <JobsitePanel
+              initialMode='add'
+              titleCallback={setPopupTitle}
+              onCreateJobsite={() => fetchData()}
+              onClose={() => hidePopup()}
+            />,
+            'Jobsites'
+          )}
         >
           <AddIcon sx={{ color: 'black' }} />
         </Button>

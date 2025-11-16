@@ -117,7 +117,14 @@ const JobsitePanel = ({
 
   switch (mode) {
     case 'add':
-      handleEnteredData = (jobsiteProps: JobsiteProps) => createJobsite({ jobsiteData: jobsiteProps, onSuccess: onCreateJobsite });
+      handleEnteredData = (jobsiteProps: JobsiteProps) =>
+        createJobsite({
+          jobsiteData: jobsiteProps,
+          onSuccess: () => {
+            onCreateJobsite();
+            handleClose();
+          }
+        });
       break;
     case 'edit':
       handleEnteredData = callUpdateJobsite;
